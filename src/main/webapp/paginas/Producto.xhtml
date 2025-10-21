@@ -130,15 +130,24 @@
                                                  readonly="true"
                                                  disabled="true"/>
 
-                                    <p:outputLabel for="cmbTipoProducto" value="Tipo de producto:"/>
-                                    <p:selectOneMenu id="cmbTipoProducto"
-                                                     value="#{productoFrm.productoTipoProductoFrm.idTipoProductoSeleccionado}">
-                                        <f:selectItem itemLabel="Seleccionar" itemValue=""/>
-                                        <f:selectItems value="#{productoFrm.productoTipoProductoFrm.listaTipoProducto}"
-                                                       var="tp"
-                                                       itemLabel="#{tp.nombre}" itemValue="#{tp.idTipoProducto}"/>
+                                    <h:outputLabel for="txtNombre" value="Tipo:"/>
+                                    <p:selectOneMenu id="txtNombre"
+                                                     value="#{productoFrm.productoTipoProductoFrm.registro.idTipoProducto.nombre}">
                                     </p:selectOneMenu>
 
+                                    <h:outputLabel for="chkActivo" value="Activo:"/>
+                                    <p:selectBooleanCheckbox id="chkActivo"
+                                                             value="#{productoFrm.productoTipoProductoFrm.registro.activo}"/>
+
+                                    <h:outputLabel for="txtFechaCreacion" value="Fecha de Creacion:"/>
+                                    <p:datePicker value="#{productoFrm.productoTipoProductoFrm.registro.fechaCreacion}"
+                                                  id="txtFechaCreacion"
+                                                  pattern="dd/MM/yyyy HH:mm:ssXXX" showTime="true"/>
+
+                                    <h:outputLabel for="txtComentarios" value="Comentarios:"/>
+                                    <p:inputTextarea id="txtComentarios"
+                                                     value="#{productoFrm.productoTipoProductoFrm.registro.observaciones}"
+                                                     rows="4" cols="50"/>
 
                                 </h:panelGrid>
 
@@ -146,12 +155,13 @@
                                                   actualizar=":tabProducto:pnlTipoProducto :tabProducto:pnlDetalleProducto"/>
                             </h:form>
                         </h:panelGrid>
-
                     </h:panelGroup>
                 </h:panelGrid>
             </p:tab>
         </p:tabView>
 
-
     </ui:define>
+
+
+
 </ui:composition>
