@@ -10,6 +10,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProducto;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Stateless
@@ -84,6 +85,21 @@ public class TipoProductoDAO extends InventarioDefaultDataAccess<TipoProducto, O
             }
         }
         return Collections.emptyList().size();
+    }
+
+    public List<TipoProducto> findByNameLike(final String nombre , int first, int max){
+        try{
+            if(nombre!=null && !nombre.isBlank() && first>=0 && max>0){
+                TypedQuery<TipoProducto> q = em.createNamedQuery("TipoProducto.findByNombreLike", TipoProducto.class);
+                q.setParameter("nombre", "%" + nombre.trim().toUpperCase() + "%");
+                q.setFirstResult(first);
+                q.setMaxResults(max);
+                return q.getResultList();
+            }
+        }catch(Exception ex){
+            Logger.getLogger(TipoProductoDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return List.of();
     }
 
 }

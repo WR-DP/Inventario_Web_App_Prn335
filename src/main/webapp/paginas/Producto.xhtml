@@ -131,9 +131,15 @@
                                                  disabled="true"/>
 
                                     <h:outputLabel for="txtNombre" value="Tipo:"/>
-                                    <p:selectOneMenu id="txtNombre"
-                                                     value="#{productoFrm.productoTipoProductoFrm.registro.idTipoProducto.nombre}">
-                                    </p:selectOneMenu>
+                                    <h:panelGroup id="pnlTipoProducto">
+                                        <h:panelGrid columns="2">
+                                            <p:selectOneMenu id="txtNombre"
+                                                             value="#{productoFrm.productoTipoProductoFrm.registro.idTipoProducto.nombre}"
+                                                             size="75" readonly="true" disabled="true"/>
+                                            <p:commandButton type="button" onclick="PF('dlgTipoProducto').show();"
+                                                             value="Seleccionar Tipo" icon="pi pi-external-link" />
+                                        </h:panelGrid>
+                                    </h:panelGroup>
 
                                     <h:outputLabel for="chkActivo" value="Activo:"/>
                                     <p:selectBooleanCheckbox id="chkActivo"
@@ -150,7 +156,8 @@
                                                   converter="offsetDateTimeConverter"
                                                   required="true"
                                                   requiredMessage="La fecha es obligatoria"
-                                                  touchUI="false" />
+                                                  touchUI="false"
+                                    />
 
                                     <h:outputLabel for="txtComentarios" value="Comentarios:"/>
                                     <p:inputTextarea id="txtComentarios"
@@ -169,7 +176,23 @@
         </p:tabView>
 
     </ui:define>
-
+<ui:define name="extra">
+    <p:dialog id="dlgTipoProducto" widgetVar="dlgTipoProducto" modal="true" closable="true">
+        <h:form id="frmDlgTipoProducto">
+            <h:panelGrid columns="2">
+                <p:outputLabel value="Seleccione el Tipo de Producto:" for="txtTipoProducto"/>
+                <p:autoComplete id="txtTipoProducto"
+                                completeMethod="#{productoFrm.productoTipoProductoFrm.busccarTiposPorNombres}"
+                                var="tp"
+                                itemLabel="#{tp.nombre}"
+                                itemValue="#{tp}"
+                                forceSelection="true"
+                                dropdown="true"
+                                size="40"/>
+            </h:panelGrid>
+        </h:form>
+    </p:dialog>
+</ui:define>
 
 
 </ui:composition>

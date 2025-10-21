@@ -22,7 +22,6 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
         super(Producto.class);
     }
 
-
     @Override
     public EntityManager getEntityManager() {
         return em;
@@ -36,6 +35,8 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
     public int count() throws IllegalStateException {
         return super.count();
     }
+
+
 
     public List<Producto> findByIdProducto(UUID idProducto, int first, int max) {
        if(idProducto != null){
