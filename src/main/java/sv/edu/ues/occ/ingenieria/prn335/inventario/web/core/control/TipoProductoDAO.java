@@ -1,0 +1,89 @@
+package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control;
+
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProducto;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Logger;
+
+@Stateless
+@LocalBean
+public class TipoProductoDAO extends InventarioDefaultDataAccess<TipoProducto, Object>  implements Serializable {
+    @PersistenceContext(unitName = "InventarioPU")
+    private EntityManager em;
+
+    public TipoProductoDAO() {
+        super (TipoProducto.class);
+    }
+
+    @Override
+    public EntityManager getEntityManager() {
+        return em;
+    }
+
+    @Override
+    public Class<TipoProducto> getEntityClass() {
+        return TipoProducto.class;
+    }
+
+    @Override
+    public TipoProducto findById(Object id) {
+        return super.findById(id);
+    }
+
+    @Override
+    public int count() throws IllegalStateException {
+        return super.count();
+    }
+
+
+
+
+    private static final Logger log = Logger.getLogger(TipoProductoDAO.class.getName());
+
+    public List<TipoProducto> findAllTipoProducto(int first, int max) {
+        try{
+            TypedQuery<TipoProducto> q = em.createNamedQuery("TipoProducto.findAllTipoProducto", TipoProducto.class);
+            q.setFirstResult(first);
+            q.setMaxResults(max);
+            return q.getResultList();
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("El parametro no es valido",ex);
+        }
+    }
+
+    public List<TipoProducto> findByIdTipoProducto(Integer idTipoProducto, int first, int max) {
+       if(idTipoProducto != null){
+        try{
+            TypedQuery<TipoProducto> q = em.createNamedQuery("TipoProducto.findByIdTipoProducto", TipoProducto.class);
+            q.setParameter("id", idTipoProducto);
+            q.setFirstResult(first);
+            q.setMaxResults(max);
+            return q.getResultList();
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("El parametro no es valido",ex);
+        }
+       }
+       return Collections.emptyList();
+    }
+
+    public int countByIdTipoProducto(Integer idTipoProducto) {
+        if(idTipoProducto != null){
+            try{
+                TypedQuery<Long> q = em.createNamedQuery("TipoProducto.countByIdTipoProducto", Long.class);
+                q.setParameter("idTipoProducto", idTipoProducto);
+                return q.getSingleResult().intValue();
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("El parametro no es valido",ex);
+            }
+        }
+        return Collections.emptyList().size();
+    }
+
+}

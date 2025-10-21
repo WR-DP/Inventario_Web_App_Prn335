@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="InventarioWebAppPrn335">
+
+    <featureManager>
+        <feature>jakartaee-10.0</feature>
+    </featureManager>
+
+    <httpEndpoint id="defaultHttpEndpoint" httpPort="9080" httpsPort="9443" />
+
+    <library id="postgres-library">
+        <file name="${server.config.dir}/postgresql-42.7.7.jar" />
+    </library>
+    <jdbcDriver id="postgres-driver" libraryRef="postgres-library" />
+
+    <dataSource id="DefaultDataSource"
+                jndiName="jdbc/pgdb"
+                jdbcDriverRef="postgres-driver"
+                type="javax.sql.ConnectionPoolDataSource"
+                transactional="true">
+
+        <properties serverName="localhost"
+                    databaseName="inventario_prn335"
+                    portNumber="5432"
+                    user="postgres"
+                    password="postgresmy"/>
+    </dataSource>
+
+
+    <basicRegistry id="basic" realm="BasicRealm">
+        <user name="admin" password="admin123"/>
+        <user name="dev" password="dev1234"/>
+    </basicRegistry>
+
+    <applicationManager autoExpand="true"/>
+
+    <ssl id="defaultSSLConfig" trustDefaultCerts="true" />
+
+</server>

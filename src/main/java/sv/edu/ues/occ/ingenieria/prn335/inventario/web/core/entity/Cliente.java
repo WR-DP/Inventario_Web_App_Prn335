@@ -1,0 +1,77 @@
+package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
+
+import java.util.UUID;
+
+@Entity
+@Table(name = "cliente", schema = "public")
+@NamedQueries({
+        @NamedQuery(name="Cliente.findByIdCliente", query = "SELECT c FROM Cliente c WHERE c.id = :idCliente"),
+        @NamedQuery(name="Cliente.findAllCliente", query = "SELECT c FROM Cliente c"),
+        @NamedQuery(name="Cliente.findByActivo", query = "SELECT c FROM Cliente c WHERE c.activo = :activo"),
+        @NamedQuery(name="Cliente.countAllCliente", query = "SELECT COUNT(c) FROM Cliente c"),
+        @NamedQuery(name="Cliente.countByActivo", query = "SELECT COUNT(c) FROM Cliente c WHERE c.activo = :activo")
+})
+public class Cliente {
+    @Id
+    @Column(name = "id_cliente", nullable = false)
+    private UUID id;
+
+    @Size(max = 155)
+    @Column(name = "nombre", length = 155)
+    private String nombre;
+
+    @Size(max = 9)
+    @Column(name = "dui", length = 9)
+    private String dui;
+
+    @Size(max = 14)
+    @Column(name = "nit", length = 14)
+    private String nit;
+
+    @Column(name = "activo")
+    private Boolean activo;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDui() {
+        return dui;
+    }
+
+    public void setDui(String dui) {
+        this.dui = dui;
+    }
+
+    public String getNit() {
+        return nit;
+    }
+
+    public void setNit(String nit) {
+        this.nit = nit;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
+
+}

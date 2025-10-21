@@ -1,0 +1,112 @@
+package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
+//import org.hibernate.annotations.OnDelete;
+//import org.hibernate.annotations.OnDeleteAction;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+@Entity
+@Table(name = "venta_detalle", schema = "public")
+@NamedQueries({
+        @NamedQuery(name = "VentaDetalle.findByIdVentaDetalle", query = "SELECT vd FROM VentaDetalle vd WHERE vd.id = :idVentaDetalle"),
+        @NamedQuery(name = "VentaDetalle.findAllVentaDetalle", query = "SELECT vd FROM VentaDetalle vd"),
+        @NamedQuery(name = "VentaDetalle.findByIdVenta", query = "SELECT vd FROM VentaDetalle vd WHERE vd.idVenta.id = :idVenta"),
+        @NamedQuery(name = "VentaDetalle.findByIdProducto", query = "SELECT vd FROM VentaDetalle vd WHERE vd.idProducto.id = :idProducto"),
+        @NamedQuery(name = "VentaDetalle.findByCantidad", query = "SELECT vd FROM VentaDetalle vd WHERE vd.cantidad = :cantidad"),
+        @NamedQuery(name = "VentaDetalle.findByPrecioRange", query = "SELECT vd FROM VentaDetalle vd WHERE vd.precio BETWEEN :minPrecio AND :maxPrecio"),
+        @NamedQuery(name = "VentaDetalle.findByEstado", query = "SELECT vd FROM VentaDetalle vd WHERE vd.estado = :estado"),
+        @NamedQuery(name = "VentaDetalle.countAllVentaDetalle", query = "SELECT COUNT(vd) FROM VentaDetalle vd"),
+        @NamedQuery(name = "VentaDetalle.countByIdVenta", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.idVenta.id = :idVenta"),
+        @NamedQuery(name = "VentaDetalle.countByIdProducto", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.idProducto.id = :idProducto"),
+        @NamedQuery(name = "VentaDetalle.countByCantidad", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.cantidad = :cantidad"),
+        @NamedQuery(name = "VentaDetalle.countByPrecioRange", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.precio BETWEEN :minPrecio AND :maxPrecio"),
+        @NamedQuery(name = "VentaDetalle.countByEstado", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.estado = :estado")
+})
+public class VentaDetalle {
+    @Id
+    @Column(name = "id_venta_detalle", nullable = false)
+    private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+//    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "id_venta")
+    private Venta idVenta;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+//    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "id_producto")
+    private Producto idProducto;
+
+    @Column(name = "cantidad", precision = 8, scale = 2)
+    private BigDecimal cantidad;
+
+    @Column(name = "precio", precision = 8, scale = 2)
+    private BigDecimal precio;
+
+    @Size(max = 10)
+    @Column(name = "estado", length = 10)
+    private String estado;
+
+    @Column(name = "observaciones", length = Integer.MAX_VALUE)
+    private String observaciones;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Venta getIdVenta() {
+        return idVenta;
+    }
+
+    public void setIdVenta(Venta idVenta) {
+        this.idVenta = idVenta;
+    }
+
+    public Producto getIdProducto() {
+        return idProducto;
+    }
+
+    public void setIdProducto(Producto idProducto) {
+        this.idProducto = idProducto;
+    }
+
+    public BigDecimal getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(BigDecimal cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+}

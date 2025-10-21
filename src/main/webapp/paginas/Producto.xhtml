@@ -1,0 +1,157 @@
+<ui:composition
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:f="jakarta.faces.core"
+        xmlns:h="jakarta.faces.html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ues="jakarta.faces.composite/ues"
+        xmlns="http://www.w3.org/1999/xhtml"
+        template="../WEB-INF/plantilla/default.xhtml"
+>
+
+    <ui:define name="header">
+        <h1>#{defaultfrm['page.producto']}</h1>
+    </ui:define>
+    <ui:define name="contenido-tabla">
+        <h:panelGrid>
+            <h:form id="frmTop">
+                <p:dataTable value="#{productoFrm.modelo}" var="r"
+                             paginator="true"
+                             paginatorPosition="bottom"
+                             lazy="true"
+                             selectionMode="single"
+                             selection="#{productoFrm.registro}"
+                             rows="#{productoFrm.pageSize}"
+                             rendered="#{productoFrm.estado == 'NADA'}"
+                             styleClass="tabla-crud"
+                >
+                    <p:column headerText="ID">
+                        <h:outputText value="#{r.id}"/>
+                    </p:column>
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{r.nombreProducto}"/>
+                    </p:column>
+                    <p:column headerText="Referencia externa">
+                        <h:outputText value="#{r.referenciaExterna}"/>
+                    </p:column>
+                    <p:column headerText="Estado">
+                        <h:outputText value="#{r.activo ? 'Activo' : 'Inactivo'}"/>
+                    </p:column>
+                    <p:column headerText="Observacion">
+                        <h:outputText value="#{r.comentarios}"/>
+                    </p:column>
+
+                    <p:ajax event="rowSelect" listener="#{productoFrm.seleccionarRegistro}"
+                            update=":pnlDetalle :pnlTabla"/>
+                </p:dataTable>
+
+                <ues:botones-top formulario="#{productoFrm}" actualizar=":pnlDetalle :pnlTabla"/>
+            </h:form>
+        </h:panelGrid>
+    </ui:define>
+
+    <ui:define name="contenido-detalle">
+
+        <p:tabView id="tabProducto" cache="false" dynamic="true" rendered="#{productoFrm.estado != 'NADA'}">
+            <p:tab closable="false" title="Generalidades">
+                <h:form id="frmCrear">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="txtId" value="ID:"/>
+                        <p:inputText id="txtId" value="#{productoFrm.registro.id}" readonly="true"
+                                     disabled="true"/>
+                        <p:outputLabel for="txtNombre" value="Nombre:"/>
+                        <p:inputText id="txtNombre" value="#{productoFrm.registro.nombreProducto}" size="75"
+                                     required="true"/>
+                        <p:outputLabel for="chkActivo" value="Activo:"/>
+                        <p:selectBooleanCheckbox id="chkActivo" value="#{productoFrm.registro.activo}"/>
+                        <p:outputLabel for="txtObservacion" value="Observacion:"/>
+                        <p:inputTextarea id="txtObservacion" value="#{productoFrm.registro.comentarios}" cols="75"
+                                         rows="4"/>
+                    </h:panelGrid>
+                    <ues:botones-crud formulario="#{productoFrm}" actualizar=":pnlDetalle :pnlTabla :tabProducto"/>
+                </h:form>
+            </p:tab>
+
+            <p:tab closable="false" title="Tipos de producto" disabled="#{productoFrm.estado != 'MODIFICAR'}">
+                <h:panelGrid>
+                    <h:panelGroup id="pnlTipoProducto">
+                        <h2>#{productoFrm.registro.nombreProducto}</h2>
+                        <h:form id="frmTablaProducto">
+                            <p:dataTable value="#{productoFrm.productoTipoProductoFrm.modelo}" var="tp"
+                                         paginator="true"
+                                         paginatorPosition="bottom"
+                                         lazy="true"
+                                         selection="#{productoFrm.productoTipoProductoFrm.registro}"
+                                         selectionMode="single"
+                                         rows="#{productoFrm.productoTipoProductoFrm.pageSize}"
+                                         rendered="#{productoFrm.productoTipoProductoFrm.estado == 'NADA'}">
+
+                                <p:ajax event="rowSelect"
+                                        process="@this"
+                                        listener="#{productoFrm.productoTipoProductoFrm.seleccionarRegistro}"
+                                        update=":tabProducto:pnlTipoProducto :tabProducto:pnlDetalleProducto"/>
+
+                                <p:column headerText="ID">
+                                    <h:outputText value="#{tp.id}"/>
+                                </p:column>
+                                <p:column headerText="Tipo">
+                                    <h:outputText value="#{tp.idTipoProducto.nombre}"/>
+                                </p:column>
+                                <p:column headerText="Fecha de creacion">
+                                    <h:outputText value="#{tp.fechaCreacion}">
+                                        <f:convertDateTime type="offsetDateTime" pattern="dd/MM/yyyy HH:mm:ss"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Activo">
+                                    <h:outputText value="#{tp.activo?'ACTIVO':'INACTIVO'}"/>
+                                </p:column>
+                                <p:column headerText="Observacion">
+                                    <h:outputText value="#{tp.observaciones}"/>
+                                </p:column>
+
+                            </p:dataTable>
+                            <h:panelGrid>
+                                <ues:botones-top formulario="#{productoFrm.productoTipoProductoFrm}"
+                                                 actualizar=":tabProducto:pnlTipoProducto :tabProducto:pnlDetalleProducto"/>
+                            </h:panelGrid>
+                        </h:form>
+                    </h:panelGroup>
+
+
+                    <h:panelGroup id="pnlDetalleProducto">
+                        <p:growl id="growlDetalleProducto" showDetail="true"/>
+                        <p:growl id="growl-stickyDetalleProducto" for="sticky-key" showDetail="true" sticky="true"/>
+
+                        <h:panelGrid rendered="#{productoFrm.productoTipoProductoFrm.estado != 'NADA'}">
+                            <h:form id="frmDetalleProducto">
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel for="txtIdProductoTipoProducto" value="ID:"/>
+                                    <p:inputText id="txtIdProductoTipoProducto"
+                                                 value="#{productoFrm.productoTipoProductoFrm.registro.id}"
+                                                 readonly="true"
+                                                 disabled="true"/>
+
+                                    <p:outputLabel for="cmbTipoProducto" value="Tipo de producto:"/>
+                                    <p:selectOneMenu id="cmbTipoProducto"
+                                                     value="#{productoFrm.productoTipoProductoFrm.idTipoProductoSeleccionado}">
+                                        <f:selectItem itemLabel="Seleccionar" itemValue=""/>
+                                        <f:selectItems value="#{productoFrm.productoTipoProductoFrm.listaTipoProducto}"
+                                                       var="tp"
+                                                       itemLabel="#{tp.nombre}" itemValue="#{tp.idTipoProducto}"/>
+                                    </p:selectOneMenu>
+
+
+                                </h:panelGrid>
+
+                                <ues:botones-crud formulario="#{productoFrm.productoTipoProductoFrm}"
+                                                  actualizar=":tabProducto:pnlTipoProducto :tabProducto:pnlDetalleProducto"/>
+                            </h:form>
+                        </h:panelGrid>
+
+                    </h:panelGroup>
+                </h:panelGrid>
+            </p:tab>
+        </p:tabView>
+
+
+    </ui:define>
+</ui:composition>
