@@ -139,10 +139,18 @@
                                     <p:selectBooleanCheckbox id="chkActivo"
                                                              value="#{productoFrm.productoTipoProductoFrm.registro.activo}"/>
 
-                                    <h:outputLabel for="txtFechaCreacion" value="Fecha de Creacion:"/>
-                                    <p:datePicker value="#{productoFrm.productoTipoProductoFrm.registro.fechaCreacion}"
-                                                  id="txtFechaCreacion"
-                                                  pattern="dd/MM/yyyy HH:mm:ssXXX" showTime="true"/>
+                                    <p:outputLabel for="dpFechaCreacion" value="Fecha de creación"/>
+                                    <p:datePicker id="dpFechaCreacion"
+                                                  value="#{productoFrm.productoTipoProductoFrm.registro.fechaCreacion}"
+                                                  showTime="true"
+                                                  hourFormat="24"
+                                                  timeInput="true"
+                                                  timeZone="America/El_Salvador"
+                                                  pattern="yyyy-MM-dd'T'HH:mm"
+                                                  converter="offsetDateTimeConverter"
+                                                  required="true"
+                                                  requiredMessage="La fecha es obligatoria"
+                                                  touchUI="false" />
 
                                     <h:outputLabel for="txtComentarios" value="Comentarios:"/>
                                     <p:inputTextarea id="txtComentarios"
