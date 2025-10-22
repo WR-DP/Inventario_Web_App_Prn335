@@ -46,4 +46,5 @@ public class ProductoTipoProductoCaracteristicaDAO extends InventarioDefaultData
 
     //metodo para buscar por el id del padre
 
+
 }

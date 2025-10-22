@@ -26,6 +26,7 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
     public EntityManager getEntityManager() {
         return em;
     }
+
     @Override
     protected Class<TipoProductoCaracteristica> getEntityClass() {
         return TipoProductoCaracteristica.class;
@@ -42,7 +43,7 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
 //        return em.createQuery("select count(t) from TipoProductoCaracteristica t", Integer.class).getSingleResult();
 //    }
 
-//si no obtiene resultado deseado revisar la query
+    //si no obtiene resultado deseado revisar la query
     public List<TipoProductoCaracteristica> findByTipoIdProducto(final Long idTipoProducto, int first, int max) {
         if (idTipoProducto != null) {
             try {
@@ -59,5 +60,9 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
     }
 
     //countByTipoIdProducto
+
+    //busqueda por id padre
+
+    //busqueda por nombre
 
 }

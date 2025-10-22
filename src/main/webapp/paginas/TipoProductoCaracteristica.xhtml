@@ -27,10 +27,10 @@
                     <p:ajax event="rowSelect" listener="#{tipoProductoFrm.selectionHandler}"
                             update=":pnlDetalle :pnlTabla"/>
 
-                    <p:column headerText="ID">
+                    <p:column headerText="ID Tipo">
                         <h:outputText value="#{reg.idTipoProducto}"/>
                     </p:column>
-                    <p:column headerText="Tipo">
+                    <p:column headerText="Tipo Producto Padre">
                         <h:outputText rendered="#{empty reg.idTipoProductoPadre}" value="NADA"/>
                         <h:outputText rendered="#{not empty reg.idTipoProductoPadre}"
                                       value="#{tipoProductoFrm.getAncestrosAsString(reg.idTipoProductoPadre)}"/>
