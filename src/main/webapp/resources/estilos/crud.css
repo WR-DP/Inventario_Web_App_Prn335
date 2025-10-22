@@ -1,11 +1,11 @@
 /* ==== Estilo General ==== */
 body {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-image: url('https://images.pexels.com/photos/18395054/pexels-photo-18395054.jpeg?_gl=1*nwl3sn*_ga*OTEzODQ0NjE5LjE3NjAzMDQ2NjE.*_ga_8JE65Q40S6*czE3NjAzMDQ2NjAkbzEkZzEkdDE3NjAzMDUzODIkajU5JGwwJGgw');
+    background-image: url("#{resource['imagenes/pexels-photo-18395054.jpeg']}");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    color: #333;
+    color: rgba(189, 161, 73, 0.1);
     margin: 0;
     padding: 20px;
 }
@@ -43,12 +43,8 @@ h1, h2, h3 {
 /* ==== Formularios ==== */
 form {
     display: grid;
-    gap: 15px;
-    margin-bottom: 30px;
-    background: rgba(139, 69, 19, 0.1);
-    padding: 20px;
+    background: rgba(9, 0, 0, 0.1);
     border-radius: 10px;
-    border: 2px solid #A0522D;
 }
 
 label {
@@ -59,7 +55,7 @@ label {
 input, select {
     padding: 10px;
     background: rgba(255, 255, 255, 0.7);
-    border: 2px solid #8B4513;
+    border: 2px solid rgb(173, 71, 38);
     border-radius: 8px;
     outline: none;
     transition: all 0.3s ease;
@@ -119,7 +115,6 @@ button.delete:hover {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
     background: rgba(170, 78, 46, 0.94);
     border: 2px solid #8B4513;
     border-radius: 10px;

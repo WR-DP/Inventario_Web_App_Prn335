@@ -21,6 +21,8 @@ public class MenuFrm implements Serializable {
 
     @PostConstruct
     public void init() {
+
+        //voy a agregar los de mas items del menu, hacer parte de los especificos
         model = new DefaultMenuModel();
         DefaultSubMenu tipos = DefaultSubMenu.builder().label("Tipos").expanded(true).build();
         DefaultMenuItem itemAlmacen = DefaultMenuItem.builder()
