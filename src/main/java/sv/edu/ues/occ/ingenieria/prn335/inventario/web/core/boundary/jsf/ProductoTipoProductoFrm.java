@@ -2,15 +2,11 @@ package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.jsf;
 
 import jakarta.enterprise.context.Dependent;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProductoTipoProductoDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoProductoDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Producto;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.ProductoTipoProducto;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProducto;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.*;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.*;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
@@ -34,6 +30,14 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
 
     @Inject
     TipoProductoDAO tipoProductoDAO;
+
+    @Inject
+    ProductoTipoProductoCaracteristicaDAO productoTipoProductoCaracteristicaDAO;
+
+    @Inject
+    TipoProductoCaracteristicaDAO tipoProductoCaracteristicaDAO;
+
+    List<TipoProductoCaracteristica> posibleCaracteristicas;
 
     protected UUID idProducto;
 
@@ -136,8 +140,7 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
 
     //Implementar funcionabilidad y verificacion del conversor de fecha
 
-
-    public List<TipoProducto> busccarTiposPorNombres(final String nombres){
+    public List<TipoProducto> buscarTiposPorNombres(final String nombres){
         try{
             if(nombres!=null && !nombres.isBlank()){
                 return tipoProductoDAO.findByNameLike(nombres, 0, 25);
@@ -148,6 +151,22 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
         return List.of();
     }
 
+    public void btnSeleccionarTipoProductoHandler(ActionEvent event){
+        //if(this.registro != null && this.registro.getIdTipoProducto() != null){
+        try{
+            //si no obtiene resultado deseado revisar la query de findByTipoIdProducto
+            this.posibleCaracteristicas = tipoProductoCaracteristicaDAO.findByTipoIdProducto(this.registro.getIdTipoProducto().getId(), 0, Integer.MAX_VALUE);
+            return;
+        }catch(Exception ex){
+            Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+         this.posibleCaracteristicas = List.of();
+        //}
+    }
+
+    public List<TipoProductoCaracteristica> getPosibleCaracteristicas() {
+        return posibleCaracteristicas;
+    }
 
     @Override
     public InventarioDefaultDataAccess getDataAccess() {
@@ -176,5 +195,6 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
     public String getNombreBean() {
         return nombreBean;
     }
+
 
 }

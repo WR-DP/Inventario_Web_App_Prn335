@@ -14,6 +14,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+//Este conversor no es inyectable, se usa directamente en la vista con su nombre
+//si luego se quiere hacer inyectable, cambiar @ApplicationScuped por @Dependent
+//pero se tiene que ajustar la vista para inyectarlo en el backing bean, osea cambiar toda la logica
 @FacesConverter(value="offsetDateTimeConverter", managed = true)
 @ApplicationScoped
 public class OffsetDateTimeConverter implements Converter<OffsetDateTime> {

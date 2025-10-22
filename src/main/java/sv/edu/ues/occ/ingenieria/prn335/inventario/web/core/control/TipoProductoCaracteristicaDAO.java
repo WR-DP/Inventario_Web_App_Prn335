@@ -7,6 +7,9 @@ import jakarta.persistence.PersistenceContext;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProductoCaracteristica;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless
 @LocalBean
@@ -38,5 +41,23 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
 //    public int count(TipoProductoCaracteristicaDAO registro) throws IllegalStateException {
 //        return em.createQuery("select count(t) from TipoProductoCaracteristica t", Integer.class).getSingleResult();
 //    }
+
+//si no obtiene resultado deseado revisar la query
+    public List<TipoProductoCaracteristica> findByTipoIdProducto(final Long idTipoProducto, int first, int max) {
+        if (idTipoProducto != null) {
+            try {
+                return em.createNamedQuery("TipoProductoCaracteristica.findByIdTipoProducto", TipoProductoCaracteristica.class)
+                        .setParameter("idTipoProducto", idTipoProducto)
+                        .setFirstResult(first)
+                        .setMaxResults(max)
+                        .getResultList();
+            } catch (Exception ex) {
+                Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        }
+        return List.of();
+    }
+
+    //countByTipoIdProducto
 
 }
