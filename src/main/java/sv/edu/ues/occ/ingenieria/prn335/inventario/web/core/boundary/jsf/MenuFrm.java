@@ -76,6 +76,26 @@ public class MenuFrm implements Serializable {
                 .ajax(true)
                 .command("#{menuFrm.navegar('Proveedor.jsf')}")
                 .build();
+        DefaultMenuItem itemECaracteristica = DefaultMenuItem.builder()
+                .value("Caracterticas")
+                .icon("")
+                .ajax(true)
+                .command("#{menuFrm.navegar('Proveedor.jsf')}")
+                .build();
+        DefaultMenuItem itemECompras = DefaultMenuItem.builder()
+                .value("Compras")
+                .icon("")
+                .ajax(true)
+                .command("#{menuFrm.navegar('Compras.jsf')}")
+                .build();
+        DefaultMenuItem itemEVentas = DefaultMenuItem.builder()
+                .value("Ventas")
+                .icon("")
+                .ajax(true)
+                .command("#{menuFrm.navegar('Ventas.jsf')}")
+                .build();
+
+
 
         //Tipos
         tipos.getElements().add(itemAlmacen);
@@ -88,6 +108,9 @@ public class MenuFrm implements Serializable {
         especificos.getElements().add(itemEProducto);
         especificos.getElements().add(itemECliente);
         especificos.getElements().add(itemEProveedor);
+        especificos.getElements().add(itemECaracteristica);
+        especificos.getElements().add(itemECompras);
+        especificos.getElements().add(itemEVentas);
 
         model.getElements().add(tipos);
         model.getElements().add(especificos);
