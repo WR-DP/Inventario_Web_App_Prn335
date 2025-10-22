@@ -8,16 +8,8 @@
     <div class="ui-g">
         <p:growl/>
 
-        <div class="ui-g-12 ui-md-2">
-            <h:form id="frmMenuPrincipal">
-                <p:menu model="#{menuFrm.model}" appendTo="body" toggleable="true"/>
-            </h:form>
-        </div>
 
-        <div class="ui-g-12 ui-md-10 ui-g-nopad">
-            <div class="ui-g-12" id="sesion">
-                <p:toolbar>
-                    <p:toolbarGroup align="right">
+            <div >
                         <h:form id="frmIdioma" style="display: flex; align-items: center; gap: 0.5rem; margin: 0;">
                             <p:selectOneMenu value="#{sesionUsuarioBean.idiomaSeleccionado}"
                                              valueChangeListener="#{sesionUsuarioBean.cambiarIdioma}"
@@ -33,12 +25,14 @@
                             </p:selectOneMenu>
                             <p:commandButton type="button" icon="pi pi-user" styleClass="mr-2" style="margin: 0"/>
                         </h:form>
-                    </p:toolbarGroup>
-                </p:toolbar>
-
-
             </div>
+
+        <div>
+            <h:form id="frmMenuPrincipal">
+                <p:menu model="#{menuFrm.model}" appendTo="body" toggleable="true"/>
+            </h:form>
         </div>
+
     </div>
 
 </ui:composition>
