@@ -1,0 +1,79 @@
+<ui:composition
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:f="jakarta.faces.core"
+        xmlns:h="jakarta.faces.html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ues="jakarta.faces.composite/ues"
+        xmlns="http://www.w3.org/1999/xhtml"
+        template="../WEB-INF/plantilla/default.xhtml">
+
+    <ui:define name="header">
+        <h1>#{defaultfrm['page.tipounidadmedida']}</h1>
+    </ui:define>
+
+    <ui:define name="contenido-tabla">
+        <h:panelGrid>
+            <h:form id="frmTop">
+                <p:dataTable id="tabla-top"
+                             lazy="true"
+                             rendered="#{tipoUnidadMedidaFrm.estado == 'NADA'}"
+                             styleClass="tabla-crud"
+                             rows="#{tipoUnidadMedidaFrm.pageSize}"
+                             paginator="true"
+                             paginatorPosition="bottom"
+                             value="#{tipoUnidadMedidaFrm.modelo}" var="reg"
+                             selectionMode="single"
+                             selection="#{tipoUnidadMedidaFrm.registro}">
+                    <p:ajax event="rowSelect" listener="#{tipoUnidadMedidaFrm.selectionHandler}"
+                            update=":pnlDetalle :pnlTabla"/>
+
+                    <p:column headerText="ID">
+                        <h:outputText value="#{reg.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{reg.nombre}"/>
+                    </p:column>
+
+                    <p:column headerText="Unidad base">
+                        <h:outputText value="#{reg.unidadBase}"/>
+                    </p:column>
+
+                    <p:column headerText="Activo">
+                        <h:outputText value="#{reg.activo ? 'Activo' : 'Inactivo'}"/>
+                    </p:column>
+
+                    <p:column headerText="Comentarios">
+                        <h:outputText value="#{reg.comentarios}"/>
+                    </p:column>
+                </p:dataTable>
+
+                <ues:botones-top formulario="#{tipoUnidadMedidaFrm}" actualizar=":pnlDetalle :pnlTabla"/>
+            </h:form>
+        </h:panelGrid>
+    </ui:define>
+
+    <ui:define name="contenido-detalle">
+        <h:form id="frmCrear" rendered="#{tipoUnidadMedidaFrm.estado != 'NADA'}">
+            <h:panelGrid columns="2">
+
+                <p:outputLabel for="txtId" value="ID:"/>
+                <p:inputText id="txtId" value="#{tipoUnidadMedidaFrm.registro.id}" readonly="true" disabled="true"/>
+
+                <p:outputLabel for="txtNombre" value="Nombre:"/>
+                <p:inputText id="txtNombre" value="#{tipoUnidadMedidaFrm.registro.nombre}" maxlength="155" required="true"/>
+
+                <p:outputLabel for="txtUnidadBase" value="Unidad base:"/>
+                <p:inputText id="txtUnidadBase" value="#{tipoUnidadMedidaFrm.registro.unidadBase}" maxlength="155"/>
+
+                <p:outputLabel for="chkActivo" value="Activo:"/>
+                <h:selectBooleanCheckbox id="chkActivo" value="#{tipoUnidadMedidaFrm.registro.activo}"/>
+
+                <p:outputLabel for="txtComentarios" value="Comentarios:"/>
+                <p:inputTextarea id="txtComentarios" value="#{tipoUnidadMedidaFrm.registro.comentarios}" rows="4" cols="50"/>
+            </h:panelGrid>
+
+            <ues:botones-crud formulario="#{tipoUnidadMedidaFrm}" actualizar=":pnlDetalle :pnlTabla"/>
+        </h:form>
+    </ui:define>
+</ui:composition>
