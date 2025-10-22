@@ -30,7 +30,7 @@ public class ProductoTipoProductoCaracteristicaDAO extends InventarioDefaultData
         return ProductoTipoProductoCaracteristica.class;
     }
 
-    // Buscar las caracteristicas de un producto por su idProducto, pero en realidad no le siento utilidad real a este metodo, pero lo vamos a dejar de base por si acaso
+
     public List<ProductoTipoProductoCaracteristica> findByIdProducto(Integer idProducto) {
         if(idProducto != null){
             try {
@@ -43,4 +43,7 @@ public class ProductoTipoProductoCaracteristicaDAO extends InventarioDefaultData
         }
         return List.of();
     }
+
+    //metodo para buscar por el id del padre
+
 }

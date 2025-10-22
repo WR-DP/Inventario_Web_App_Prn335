@@ -124,21 +124,59 @@
                         <h:panelGrid rendered="#{productoFrm.productoTipoProductoFrm.estado != 'NADA'}">
                             <h:form id="frmDetalleProducto">
                                 <h:panelGrid columns="2">
-                                    <p:outputLabel for="txtIdProductoTipoProducto" value="ID:"/>
-                                    <p:inputText id="txtIdProductoTipoProducto"
+                                    <p:outputLabel for="txtID" value="ID:"/>
+                                    <p:inputText id="txtID"
                                                  value="#{productoFrm.productoTipoProductoFrm.registro.id}"
                                                  readonly="true"
                                                  disabled="true"/>
+                                    <h:outputLabel for="txtNombre" value="Tipo:"/>
+                                    <h:panelGroup id="pnlTipoProducto">
+                                        <h:panelGrid columns="2">
+                                            <p:inputText id="txtNombre"
+                                                         value="#{productoFrm.productoTipoProductoFrm.registro.idTipoProducto.nombre}"
+                                                         size="10" readonly="true" disabled="true"/>
+                                            <p:commandButton type="button" onclick="PF('dlgTipoProducto').show();"
+                                                             value="Seleccionar Tipo" icon="pi pi-external-link"/>
+                                            <p:outputLabel value="Caracteristica"/>
+                                            <h:panelGrid comlumns="3">
+                                                <h:panelGrid>
+                                                    <h:outputLabel value="Disponibles"/>
+                                                    <h:selectOneListbox>
+                                                        <f:selectItems
+                                                                value="#{productoFrm.productoTipoProductoFrm.posibleCaracteristicas}"
+                                                                var="pc"
+                                                                itemLabel="#{pc.idCaracteristica.nombre}"
+                                                                itemValue="#{pc}"
+                                                        />
+                                                    </h:selectOneListbox>
 
-                                    <p:outputLabel for="cmbTipoProducto" value="Tipo de producto:"/>
-                                    <p:selectOneMenu id="cmbTipoProducto"
-                                                     value="#{productoFrm.productoTipoProductoFrm.idTipoProductoSeleccionado}">
-                                        <f:selectItem itemLabel="Seleccionar" itemValue=""/>
-                                        <f:selectItems value="#{productoFrm.productoTipoProductoFrm.listaTipoProducto}"
-                                                       var="tp"
-                                                       itemLabel="#{tp.nombre}" itemValue="#{tp.idTipoProducto}"/>
-                                    </p:selectOneMenu>
+                                                </h:panelGrid>
+                                            </h:panelGrid>
+                                        </h:panelGrid>
+                                    </h:panelGroup>
 
+                                    <h:outputLabel for="chkActivo" value="Activo:"/>
+                                    <p:selectBooleanCheckbox id="chkActivo"
+                                                             value="#{productoFrm.productoTipoProductoFrm.registro.activo}"/>
+
+                                    <p:outputLabel for="dpFechaCreacion" value="Fecha de creación"/>
+                                    <p:datePicker id="dpFechaCreacion"
+                                                  value="#{productoFrm.productoTipoProductoFrm.registro.fechaCreacion}"
+                                                  showTime="true"
+                                                  hourFormat="24"
+                                                  timeInput="true"
+                                                  timeZone="America/El_Salvador"
+                                                  pattern="yyyy-MM-dd'T'HH:mm"
+                                                  converter="offsetDateTimeConverter"
+                                                  required="true"
+                                                  requiredMessage="La fecha es obligatoria"
+                                                  touchUI="false"
+                                    />
+
+                                    <h:outputLabel for="txtComentarios" value="Comentarios:"/>
+                                    <p:inputTextarea id="txtComentarios"
+                                                     value="#{productoFrm.productoTipoProductoFrm.registro.observaciones}"
+                                                     rows="4" cols="50"/>
 
                                 </h:panelGrid>
 
@@ -146,12 +184,37 @@
                                                   actualizar=":tabProducto:pnlTipoProducto :tabProducto:pnlDetalleProducto"/>
                             </h:form>
                         </h:panelGrid>
-
                     </h:panelGroup>
                 </h:panelGrid>
             </p:tab>
         </p:tabView>
 
-
     </ui:define>
+    <ui:define name="extra">
+        <p:dialog id="dlgTipoProducto" widgetVar="dlgTipoProducto" modal="true" closable="true">
+            <h:form id="frmDlgTipoProducto">
+                <h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Seleccione el Tipo de Producto:" for="txtTipoProducto"/>
+                        <p:autoComplete id="txtTipoProducto"
+                                        completeMethod="#{productoFrm.productoTipoProductoFrm.buscarTiposPorNombres}"
+                                        value="#{productoFrm.productoTipoProductoFrm.registro.idTipoProducto}"
+                                        var="tp"
+                                        converter="tipoProductoConverter"
+                                        itemLabel="#{tp.nombre} (#{tp.id})"
+                                        itemValue="#{tp}"
+                                        forceSelection="true"
+                                        dropdown="true"
+                                        size="40"/>
+                    </h:panelGrid>
+                    <h:commandButton value="Seleccionar" procces="@from"
+                                     actionListener="#{productoFrm.productoTipoProductoFrm.btnSeleccionarTipoProductoHandler}"
+                                     update=":tabProducto:frmDetalleTipoProducto:pnlTipoProducto"
+                                     oncomplete="PF('dlgTipoProducto').hide();"/>
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+
 </ui:composition>

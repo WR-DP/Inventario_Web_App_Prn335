@@ -14,7 +14,8 @@ import java.awt.image.BufferedImageOp;
         @NamedQuery(name = "TipoProducto.findAllTipoProducto", query = "SELECT t FROM TipoProducto t"),
         @NamedQuery(name = "TipoProducto.findByIdTipoProducto", query = "SELECT t FROM TipoProducto t WHERE t.id = :id"),
         @NamedQuery(name = "TipoProducto.findByActivo", query = "SELECT t FROM TipoProducto t WHERE t.activo = :activo"),
-        @NamedQuery(name = "TipoProducto.countByIdTipoProducto", query = "SELECT COUNT(t.id) FROM TipoProducto t where t.idTipoProductoPadre.id = :idTipoProducto")// a lo mejor no funciona bien
+        @NamedQuery(name = "TipoProducto.countByIdTipoProducto", query = "SELECT COUNT(t.id) FROM TipoProducto t where t.idTipoProductoPadre.id = :idTipoProducto"), // a lo mejor no funciona bien
+        @NamedQuery(name="TipoProducto.findByNombreLike", query = "SELECT t FROM TipoProducto t WHERE upper(t.nombre) like :nombre")
 })
 public class TipoProducto {
     @Id
