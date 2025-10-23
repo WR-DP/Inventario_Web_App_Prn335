@@ -44,12 +44,6 @@ public class AlmacenFrm extends DefaultFrm<Almacen> implements Serializable {
 
     }
 
-//ahorita lo vamos a dejar quemado pero areglarlo
-    @Override
-    public String getTituloPag() {
-        return "Almacenes";
-    }
-
     @Override
     protected FacesContext getFacesContext() {
         return facesContext;

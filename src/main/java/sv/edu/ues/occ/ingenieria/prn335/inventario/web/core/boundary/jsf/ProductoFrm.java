@@ -26,17 +26,11 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
     @Inject
     ProductoDAO productoDAO;
 
-    //inyectaar el bakingbean del dependiente
     @Inject
     protected ProductoTipoProductoFrm productoTipoProductoFrm;
 
     List<Producto> productos;
     public ProductoFrm() {}
-
-    @Override
-    public String getTituloPag() {
-        return "Productos";
-    }
 
     @Override
     protected FacesContext getFacesContext() {

@@ -26,11 +26,6 @@ public class TipoAlmacenFrm extends DefaultFrm<TipoAlmacen> implements Serializa
     TipoAlmacenDAO tipoAlmacenDAO;
 
     @Override
-    public String getTituloPag() {
-        return "Tipo de almacenes";
-    }
-
-    @Override
     public FacesContext getFacesContext() {
         return facesContext;
     }

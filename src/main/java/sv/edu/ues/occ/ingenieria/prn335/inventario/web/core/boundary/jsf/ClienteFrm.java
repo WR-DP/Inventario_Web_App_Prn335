@@ -31,11 +31,6 @@ public class ClienteFrm extends DefaultFrm<Cliente> implements Serializable {
     public ClienteFrm() {}
 
     @Override
-    public String getTituloPag() {
-        return "Clientes";
-    }
-
-    @Override
     protected FacesContext getFacesContext() {
         return facesContext;
     }

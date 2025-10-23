@@ -27,26 +27,26 @@ public class MenuFrm implements Serializable {
         DefaultSubMenu tipos = DefaultSubMenu.builder().label("Tipos").expanded(true).build();
         DefaultMenuItem itemAlmacen = DefaultMenuItem.builder()
                 .value("Tipo Almacén")
-                .icon("pi pi-inbox")
+                .icon("pi pi-building")
                 .ajax(true)
                 .command("#{menuFrm.navegar('TipoAlmacen.jsf')}")
                 .build();
         DefaultMenuItem itemProducto = DefaultMenuItem.builder()
                 .value("Tipo Producto")
-                .icon("pi pi-box")
+                .icon("pi pi-th-large")
                 .ajax(true)
                 .command("#{menuFrm.navegar('TipoProducto.jsf')}")
                 .build();
         DefaultMenuItem itemTUnidadMedida = DefaultMenuItem.builder()
                 .value("Tipo de Unidad de Medida")
-                .icon("")
+                .icon("pi pi-calculator")
                 .ajax(true)
                 .command("#{menuFrm.navegar('TipoUnidadMedida.jsf')}")
                 .build();
 
         DefaultMenuItem itemTCaracteristica = DefaultMenuItem.builder()
                 .value("Tipo de Producto Caracteristica")
-                .icon("")
+                .icon("pi pi-tags")
                 .ajax(true)
                 .command("#{menuFrm.navegar('TipoProductoCaracteristica.jsf')}")
                 .build();
@@ -54,43 +54,43 @@ public class MenuFrm implements Serializable {
         DefaultSubMenu especificos = DefaultSubMenu.builder().label("Especificos").expanded(true).build();
         DefaultMenuItem itemEAlmacen = DefaultMenuItem.builder()
                 .value("Almacen")
-                .icon("")
+                .icon("pi pi-warehouse")
                 .ajax(true)
                 .command("#{menuFrm.navegar('Almacen.jsf')}")
                 .build();
         DefaultMenuItem itemEProducto = DefaultMenuItem.builder()
                 .value("Producto")
-                .icon("")
+                .icon("pi pi-box")
                 .ajax(true)
                 .command("#{menuFrm.navegar('Producto.jsf')}")
                 .build();
         DefaultMenuItem itemECliente = DefaultMenuItem.builder()
                 .value("Cliente")
-                .icon("")
+                .icon("pi pi-user")
                 .ajax(true)
                 .command("#{menuFrm.navegar('Cliente.jsf')}")
                 .build();
         DefaultMenuItem itemEProveedor = DefaultMenuItem.builder()
                 .value("Proveedor")
-                .icon("")
+                .icon("pi pi-briefcase")
                 .ajax(true)
                 .command("#{menuFrm.navegar('Proveedor.jsf')}")
                 .build();
         DefaultMenuItem itemECaracteristica = DefaultMenuItem.builder()
                 .value("Caracterticas")
-                .icon("")
+                .icon("pi pi-list")
                 .ajax(true)
                 .command("#{menuFrm.navegar('Proveedor.jsf')}")
                 .build();
         DefaultMenuItem itemECompras = DefaultMenuItem.builder()
                 .value("Compras")
-                .icon("")
+                .icon("pi pi-shopping-cart")
                 .ajax(true)
                 .command("#{menuFrm.navegar('Compras.jsf')}")
                 .build();
         DefaultMenuItem itemEVentas = DefaultMenuItem.builder()
                 .value("Ventas")
-                .icon("")
+                .icon("pi pi-dollar")
                 .ajax(true)
                 .command("#{menuFrm.navegar('Ventas.jsf')}")
                 .build();

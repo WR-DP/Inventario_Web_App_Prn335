@@ -10,6 +10,9 @@ import java.time.OffsetDateTime;
 @Table(name = "tipo_producto_caracteristica", schema = "public")
 @NamedQueries({
         @NamedQuery(name = "TipoProductoCaracteristica.findByIdTipoProducto", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipoProducto"),
+        @NamedQuery(name = "TipoProductoCaracteristica.findByNombreCaracteristica", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idCaracteristica.nombre = :nombreCaracteristica"),
+        @NamedQuery(name = "TipoProductoCaracteristica.findByIdPadre", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.idTipoProductoPadre = :idTipoProductoPadre"),
+        @NamedQuery(name = "TipoProductoCaracteristica.countByIdProducto", query = "SELECT COUNT(tpc) FROM TipoProductoCaracteristica tpc WHERE tpc.id = :id")
 })
 public class TipoProductoCaracteristica {
     @Id

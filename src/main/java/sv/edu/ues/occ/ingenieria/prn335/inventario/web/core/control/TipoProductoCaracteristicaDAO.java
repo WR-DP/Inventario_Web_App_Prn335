@@ -4,9 +4,12 @@ import jakarta.ejb.LocalBean;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProducto;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProductoCaracteristica;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -59,10 +62,51 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         return List.of();
     }
 
-    //countByTipoIdProducto
+    //contar por id tipo producto caracteristica
+    public int countByIdProducto(final Long id) {
+        if (id != null) {
+            try {
+                TypedQuery<Long> q = em.createNamedQuery("TipoProductoCaracteristica.countByIdProducto", Long.class);
+                q.setParameter("id", id);
+                return q.getSingleResult().intValue();
+            } catch (Exception ex) {
+                Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        }
+        return 0;
+    }
 
-    //busqueda por id padre
+    //Si no funciona la busqueda por id padre, revisar la query
+    //busqueda por id padre.... podria el tipo de variable TipoProducto o Long
+    public List<TipoProductoCaracteristica> findByIdPadre(final TipoProducto idPadre, int first, int max) {
+        if (idPadre != null) {
+            try {
+                return em.createNamedQuery("TipoProductoCaracteristica.findByIdPadre", TipoProductoCaracteristica.class)
+                        .setParameter("idTipoProductoPadre", idPadre)
+                        .setFirstResult(first)
+                        .setMaxResults(max)
+                        .getResultList();
+            } catch (Exception ex) {
+                Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        }
+        return List.of();
+    }
 
     //busqueda por nombre
+    public List<TipoProductoCaracteristica> findByNombreCaracteristica(final String nombreCaracteristica, int first, int max) {
+        if (nombreCaracteristica != null && !nombreCaracteristica.isBlank()) {
+            try {
+                return em.createNamedQuery("TipoProductoCaracteristica.findByNombreCaracteristica", TipoProductoCaracteristica.class)
+                        .setParameter("nombreCaracteristica", "%" + nombreCaracteristica + "%")
+                        .setFirstResult(first)
+                        .setMaxResults(max)
+                        .getResultList();
+            } catch (Exception ex) {
+                Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        }
+        return List.of();
+    }
 
 }

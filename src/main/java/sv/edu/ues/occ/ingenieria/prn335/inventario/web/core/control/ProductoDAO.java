@@ -50,7 +50,6 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
             throw new IllegalArgumentException("El parametro no es valido",ex);
         }
        }
-//       return Collections.emptyList();
         return List.of();
     }
 
@@ -103,7 +102,7 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
                 throw new IllegalArgumentException("El parametro no es valido",ex);
             }
         }
-        return List.of().size();
+        return 0;
     }
 
     public int countByIdProducto(UUID idProducto) {
@@ -116,7 +115,7 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
                 throw new IllegalArgumentException("El parametro no es valido",ex);
             }
         }
-        return List.of().size();
+        return 0;
     }
 
 

@@ -66,11 +66,6 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
     }
 
     @Override
-    public String getTituloPag() {
-        return "Tipos de Producto por Producto";
-    }
-
-    @Override
     protected FacesContext getFacesContext() {
         return facesContext;
     }
@@ -137,8 +132,6 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
                     .orElse(null).getIdTipoProducto());
         }
     }
-
-    //Implementar funcionabilidad y verificacion del conversor de fecha
 
     public List<TipoProducto> buscarTiposPorNombres(final String nombres){
         try{
