@@ -76,4 +76,8 @@ public class TipoProductoCaracteristica {
         this.fechaCreacion = fechaCreacion;
     }
 
+    public java.util.stream.Stream<TipoProductoCaracteristica> stream() {
+        return java.util.stream.Stream.of(this);
+    }
+
 }
