@@ -72,6 +72,7 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
     protected TipoProducto nuevoRegistro() {
         TipoProducto tipoProducto = new TipoProducto();
         tipoProducto.setActivo(true);
+        //corregir el setIdTipoProductoPadre
         tipoProducto.setIdTipoProductoPadre(null);
         tipoProducto.setComentarios("Comentario");
         return tipoProducto;

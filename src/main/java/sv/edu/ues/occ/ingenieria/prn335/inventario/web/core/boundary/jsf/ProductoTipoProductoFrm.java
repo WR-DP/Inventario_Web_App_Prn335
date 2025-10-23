@@ -133,8 +133,6 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
         }
     }
 
-    //Implementar funcionabilidad y verificacion del conversor de fecha
-
     public List<TipoProducto> buscarTiposPorNombres(final String nombres){
         try{
             if(nombres!=null && !nombres.isBlank()){
