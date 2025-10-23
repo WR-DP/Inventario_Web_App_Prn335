@@ -22,8 +22,6 @@ public abstract class DefaultFrm<T> implements Serializable {
 
     protected String nombreBean;
 
-    public abstract String getTituloPag();
-
     protected abstract FacesContext getFacesContext();
 
     protected abstract InventarioDAOInterface<T, Object> getDao();

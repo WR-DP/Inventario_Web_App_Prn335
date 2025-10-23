@@ -66,11 +66,6 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
     }
 
     @Override
-    public String getTituloPag() {
-        return "Tipos de Producto por Producto";
-    }
-
-    @Override
     protected FacesContext getFacesContext() {
         return facesContext;
     }

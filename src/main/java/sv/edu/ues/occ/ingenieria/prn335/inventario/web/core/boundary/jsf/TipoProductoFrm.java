@@ -25,11 +25,6 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
     TipoProductoDAO tipoProductoDAO;
 
     @Override
-    public String getTituloPag() {
-        return "Tipo de Productos";
-    }
-
-    @Override
     protected FacesContext getFacesContext() {
         return facesContext;
     }

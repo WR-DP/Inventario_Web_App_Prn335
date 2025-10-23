@@ -34,11 +34,6 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
     public ProductoFrm() {}
 
     @Override
-    public String getTituloPag() {
-        return "Productos";
-    }
-
-    @Override
     protected FacesContext getFacesContext() {
         return facesContext;
     }

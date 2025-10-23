@@ -22,16 +22,15 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
     @Inject
     TipoProductoCaracteristicaDAO  tipoProductoCaracteristicaDAO;
 
-
-
     //implementar las funcionalidad de cada metodo
     //agregar la verificacion de los datos y objetos qeu se van a traer e inyectar
-
 
     protected String nombrebean="page.tipoproductocaracteristica";
     public String getNombrebean() {
         return nombrebean;
     }
+
+    public TipoProductoCaracteristicaFrm() {}
 
     List<TipoProductoCaracteristica> listaTipoProductoCaracteristica;
 
@@ -39,15 +38,10 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
         return listaTipoProductoCaracteristica;
     }
 
-    //set
     public void setListaTipoProductoCaracteristica(List<TipoProductoCaracteristica> listaTipoProductoCaracteristica) {
         this.listaTipoProductoCaracteristica = listaTipoProductoCaracteristica;
     }
 
-    @Override
-    public String getTituloPag() {
-        return "";
-    }
 
     @Override
     protected FacesContext getFacesContext() {
