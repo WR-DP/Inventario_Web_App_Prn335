@@ -35,7 +35,7 @@ h1, h2, h3 {
     color: rgba(248, 218, 124, 0.82);
     text-align: center;
     margin-bottom: 20px;
-    background: rgba(48, 31, 23, 0.65);
+    background: rgba(173, 71, 38, 0.54);
     padding: 25px;
     border-radius: 12px;
 }
@@ -43,7 +43,6 @@ h1, h2, h3 {
 /* ==== Formularios ==== */
 form {
     display: grid;
-    background: rgba(9, 0, 0, 0.1);
     border-radius: 10px;
 }
 
