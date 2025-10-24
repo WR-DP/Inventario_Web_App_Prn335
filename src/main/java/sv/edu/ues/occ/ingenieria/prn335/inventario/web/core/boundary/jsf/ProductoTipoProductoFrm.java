@@ -39,6 +39,9 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
 
     List<TipoProductoCaracteristica> posibleCaracteristicas;
 
+    //cuando ya se tenga caracteristica<-------------------
+    List<TipoProductoCaracteristica> caracteristicasAsignadas;
+
     protected UUID idProducto;
 
     @Override
@@ -123,7 +126,6 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
         return null;
     }
 
-    //refactorizar este metodo
     public void setIdTipoProductoSeleccionado(final Long idTipoProducto){
         if(this.registro != null && this.listaTipoProducto != null && !this.listaTipoProducto.isEmpty()){
             this.registro.setIdTipoProducto(this.listaTipoProducto.stream()
@@ -145,7 +147,6 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
     }
 
     public void btnSeleccionarTipoProductoHandler(ActionEvent event){
-        //if(this.registro != null && this.registro.getIdTipoProducto() != null){
         try{
             //si no obtiene resultado deseado revisar la query de findByTipoIdProducto
             this.posibleCaracteristicas = tipoProductoCaracteristicaDAO.findByTipoIdProducto(this.registro.getIdTipoProducto().getId(), 0, Integer.MAX_VALUE);
@@ -154,7 +155,12 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
             Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
          this.posibleCaracteristicas = List.of();
-        //}
+    }
+
+
+    //implementar funcionalidad cuando ya este caracteristica
+    public List<TipoProductoCaracteristica> getCaracteristicasAsignadas() {
+        return caracteristicasAsignadas;
     }
 
     public List<TipoProductoCaracteristica> getPosibleCaracteristicas() {

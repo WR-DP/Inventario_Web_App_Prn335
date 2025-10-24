@@ -9,6 +9,7 @@ import java.util.UUID;
 @NamedQueries({
         //tiene que traer los campos caracteristicas de un producto especifico por medio del id del producto, por ende primero necesitamos mapear bien las entidades
         @NamedQuery(name = "ProductoTipoProductoCaracteristica.findByIdProducto", query = "SELECT p.idTipoProductoCaracteristica.idCaracteristica FROM ProductoTipoProductoCaracteristica p WHERE p.idProductoTipoProducto.idProducto.id = :idProducto"),
+        @NamedQuery(name = "ProductoTipoProductoCaracteristica.findByProductoTipoProductoId", query = "SELECT p.idTipoProductoCaracteristica FROM ProductoTipoProductoCaracteristica p WHERE p.idProductoTipoProducto.id = :idProductoTipoProducto"),
 })
 public class ProductoTipoProductoCaracteristica {
     @Id
