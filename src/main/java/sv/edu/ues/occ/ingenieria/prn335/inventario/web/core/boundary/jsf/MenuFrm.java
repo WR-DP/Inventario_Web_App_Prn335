@@ -44,13 +44,6 @@ public class MenuFrm implements Serializable {
                 .command("#{menuFrm.navegar('TipoUnidadMedida.jsf')}")
                 .build();
 
-        DefaultMenuItem itemTCaracteristica = DefaultMenuItem.builder()
-                .value("Tipo de Producto Caracteristica")
-                .icon("pi pi-tags")
-                .ajax(true)
-                .command("#{menuFrm.navegar('TipoProductoCaracteristica.jsf')}")
-                .build();
-
         DefaultSubMenu especificos = DefaultSubMenu.builder().label("Especificos").expanded(true).build();
         DefaultMenuItem itemEAlmacen = DefaultMenuItem.builder()
                 .value("Almacen")
@@ -78,7 +71,7 @@ public class MenuFrm implements Serializable {
                 .build();
         DefaultMenuItem itemECaracteristica = DefaultMenuItem.builder()
                 .value("Caracterticas")
-                .icon("pi pi-list")
+                .icon("pi pi-tags")
                 .ajax(true)
                 .command("#{menuFrm.navegar('Proveedor.jsf')}")
                 .build();
@@ -101,7 +94,6 @@ public class MenuFrm implements Serializable {
         tipos.getElements().add(itemAlmacen);
         tipos.getElements().add(itemProducto);
         tipos.getElements().add(itemTUnidadMedida);
-        tipos.getElements().add(itemTCaracteristica);
 
         //Especificos
         especificos.getElements().add(itemEAlmacen);

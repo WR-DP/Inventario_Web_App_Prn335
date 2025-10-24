@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless
 @LocalBean
@@ -47,7 +49,7 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
             q.setMaxResults(max);
             return q.getResultList();
         } catch (Exception ex) {
-            throw new IllegalArgumentException("El parametro no es valido",ex);
+            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
        }
         return List.of();
@@ -61,8 +63,9 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
             q.setMaxResults(max);
             return q.getResultList();
         } catch (Exception ex) {
-            throw new IllegalArgumentException("El parametro no es valido",ex);
+            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
+        return List.of();
     }
 
     //buscar por activo
@@ -75,7 +78,7 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
              q.setMaxResults(max);
              return q.getResultList();
          } catch (Exception ex) {
-             throw new IllegalArgumentException("El parametro no es valido",ex);
+             Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
          }
         }
         return List.of();
@@ -87,8 +90,9 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
             TypedQuery<Long> q = em.createNamedQuery("Producto.countAllProducto", Long.class);
             return q.getSingleResult().intValue();
         } catch (Exception ex) {
-            throw new IllegalArgumentException("El parametro no es valido",ex);
+            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
+        return 0;
     }
 
     //contar por activo
@@ -99,7 +103,7 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
                 q.setParameter("activo", activo);
                 return q.getSingleResult().intValue();
             } catch (Exception ex) {
-                throw new IllegalArgumentException("El parametro no es valido",ex);
+                Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
         return 0;
@@ -112,7 +116,7 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
                 q.setParameter("id", idProducto);
                 return q.getSingleResult().intValue();
             } catch (Exception ex) {
-                throw new IllegalArgumentException("El parametro no es valido",ex);
+                Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
         return 0;

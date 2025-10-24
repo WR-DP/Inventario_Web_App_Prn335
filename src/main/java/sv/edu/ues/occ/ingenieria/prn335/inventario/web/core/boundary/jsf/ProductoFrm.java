@@ -57,7 +57,7 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
                 UUID buscado = UUID.fromString(id);
                 return this.modelo.getWrappedData().stream().filter(r -> r.getId().equals(buscado)).findFirst().orElse(null);
             }catch(IllegalArgumentException e){
-                Logger.getLogger(ProductoFrm.class.getName()).log(Level.SEVERE,null,e);
+                Logger.getLogger(ProductoFrm.class.getName()).log(Level.SEVERE,e.getMessage(),e);
             }
         }
         return null;

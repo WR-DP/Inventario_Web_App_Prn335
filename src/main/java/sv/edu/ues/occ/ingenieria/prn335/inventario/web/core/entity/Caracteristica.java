@@ -4,6 +4,12 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "caracteristica", schema = "public")
+@NamedQueries({
+        @NamedQuery(name = "Caracteristica.findByIdCaracteristica", query = "SELECT c FROM Caracteristica c WHERE c.id = :id"),
+        @NamedQuery(name = "Caracteristica.findByActivo", query = "SELECT c FROM Caracteristica c WHERE c.activo = :activo"),
+        @NamedQuery(name = "Caracteristica.countByActivo", query = "SELECT COUNT(c) FROM Caracteristica c WHERE c.activo = :activo"),
+        @NamedQuery(name = "Caracteristica.countByIdCaracteristica", query = "SELECT COUNT(c) FROM Caracteristica c WHERE c.id = :id")
+})
 public class Caracteristica {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,6 +18,10 @@ public class Caracteristica {
 
     @Column(name = "nombre", length = Integer.MAX_VALUE)
     private String nombre;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id_tipo_unidad_medida")
+    private TipoUnidadMedida idTipoUnidadMedida;
 
     @Column(name = "activo")
     private Boolean activo;
@@ -51,4 +61,10 @@ public class Caracteristica {
         this.descripcion = descripcion;
     }
 
+    public TipoUnidadMedida getIdTipoUnidadMedida() {
+        return idTipoUnidadMedida;
+    }
+    public void setIdTipoUnidadMedida(TipoUnidadMedida idTipoUnidadMedida) {
+        this.idTipoUnidadMedida = idTipoUnidadMedida;
+    }
 }

@@ -62,11 +62,27 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         return List.of();
     }
 
+    public List<TipoProductoCaracteristica> findByIdCaracteristica(final Long id, int first, int max) {
+        if (id != null) {
+            try {
+                return em.createNamedQuery("TipoProductoCaracteristica.findById", TipoProductoCaracteristica.class)
+                        .setParameter("id", id)
+                        .setFirstResult(first)
+                        .setMaxResults(max)
+                        .getResultList();
+            } catch (Exception ex) {
+                Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        }
+        return List.of();
+    }
+
+
     //contar por id tipo producto caracteristica
     public int countByIdProducto(final Long id) {
         if (id != null) {
             try {
-                TypedQuery<Long> q = em.createNamedQuery("TipoProductoCaracteristica.countByIdProducto", Long.class);
+                TypedQuery<Long> q = em.createNamedQuery("TipoProductoCaracteristica.countById", Long.class);
                 q.setParameter("id", id);
                 return q.getSingleResult().intValue();
             } catch (Exception ex) {
