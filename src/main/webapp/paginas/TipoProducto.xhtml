@@ -1,10 +1,11 @@
 <ui:composition
-    xmlns:ui="jakarta.faces.facelets"
-    xmlns:p="http://primefaces.org/ui"
-    xmlns:h="jakarta.faces.html"
-    xmlns="http://www.w3.org/1999/xhtml"
-    template="/WEB-INF/plantilla/default.xhtml"
-    xmlns:ues="jakarta.faces.composite/ues"
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="jakarta.faces.html"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="jakarta.faces.core"
+        template="/WEB-INF/plantilla/default.xhtml"
+        xmlns:ues="jakarta.faces.composite/ues"
 >
     <ui:define name="header">
         <h1>#{defaultfrm['page.tipoProducto']}</h1>
@@ -14,37 +15,34 @@
         <h:panelGrid>
 
             <h:form id="frmTop">
-                <p:dataTable id="tabla-top"
-                             lazy="true"
+                <p:treeTable id="tabla-top"
                              rendered="#{tipoProductoFrm.estado == 'NADA'}"
                              styleClass="tabla-crud"
-                             rows="#{tipoProductoFrm.pageSize}"
-                             paginator="true"
-                             paginatorPosition="bottom"
-                             value="#{tipoProductoFrm.modelo}" var="reg"
+                             value="#{tipoProductoFrm.root}"
+                             var="reg"
                              selectionMode="single"
-                             selection="#{tipoProductoFrm.registro}">
-                    <p:ajax event="rowSelect" listener="#{tipoProductoFrm.selectionHandler}"
+                             selection="#{tipoProductoFrm.selectedNode}">
+
+                    <p:ajax event="select"
+                            listener="#{tipoProductoFrm.onNodeSelect}"
                             update=":pnlDetalle :pnlTabla"/>
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{reg.nombre}"/>
+                    </p:column>
 
                     <p:column headerText="ID">
                         <h:outputText value="#{reg.idTipoProducto}"/>
                     </p:column>
-                    <p:column headerText="Tipo">
-                        <h:outputText rendered="#{empty reg.idTipoProductoPadre}" value="NADA"/>
-                        <h:outputText rendered="#{not empty reg.idTipoProductoPadre}"
-                                      value="#{tipoProductoFrm.getAncestrosAsString(reg.idTipoProductoPadre)}"/>
-                    </p:column>
-                    <p:column headerText="Nombre">
-                        <h:outputText value="#{reg.nombre}"/>
-                    </p:column>
+
                     <p:column headerText="Estado">
                         <h:outputText value="#{reg.activo ? 'Activo' : 'Inactivo'}"/>
                     </p:column>
-                    <p:column headerText="Observacion">
+
+                    <p:column headerText="Observación">
                         <h:outputText value="#{reg.comentarios}"/>
                     </p:column>
-                </p:dataTable>
+                </p:treeTable>
 
                 <ues:botones-top formulario="#{tipoProductoFrm}" actualizar=":pnlDetalle :pnlTabla"/>
 
@@ -62,9 +60,17 @@
                              disabled="true"/>
                 <p:outputLabel for="txtNombre" value="Nombre:"/>
                 <p:inputText id="txtNombre" value="#{tipoProductoFrm.registro.nombre}" size="75"/>
+                <p:outputLabel for="cmbTipoPadre" value="Tipo Padre:"/>
+                <p:selectOneMenu id="cmbTipoPadre" value="#{tipoProductoFrm.registro.idTipoProductoPadre}">
+                    <f:selectItem itemLabel="-- Ninguno (Tipo Raíz) --" itemValue="#{null}"/>
+                    <f:selectItems value="#{tipoProductoFrm.tiposPadreDisponibles}"
+                                   var="tipo"
+                                   itemLabel="#{tipo.nombre}"
+                                   itemValue="#{tipo.idTipoProducto}"/>
+                </p:selectOneMenu>
                 <p:outputLabel for="chkActivo" value="Activo:"/>
                 <h:selectBooleanCheckbox id="chkActivo" value="#{tipoProductoFrm.registro.activo}"/>
-                <p:outputLabel for="txtObservacion" value="Observacion:"/>
+                <p:outputLabel for="txtObservacion" value="Observación:"/>
                 <p:inputTextarea id="txtObservacion" value="#{tipoProductoFrm.registro.comentarios}" rows="4"
                                  cols="50"/>
             </h:panelGrid>

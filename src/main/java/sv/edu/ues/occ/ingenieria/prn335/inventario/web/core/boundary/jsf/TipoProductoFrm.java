@@ -5,6 +5,9 @@ import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.primefaces.event.NodeSelectEvent;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoProductoDAO;
@@ -14,8 +17,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
-@Named
+@Named("tipoProductoFrm")
 @ViewScoped
 public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Serializable {
     @Inject
@@ -23,6 +27,10 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
 
     @Inject
     TipoProductoDAO tipoProductoDAO;
+
+
+    private TreeNode root;
+    private TreeNode selectedNode;
 
     @Override
     protected FacesContext getFacesContext() {
@@ -64,6 +72,81 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
     public void inicializar() {
         super.inicializar();
         listaTipoProducto = tipoProductoDAO.findRange(0, Integer.MAX_VALUE);
+        cargarArbol();
+    }
+
+    /**
+     * Carga el árbol jerárquico de tipos de producto
+     */
+    public void cargarArbol() {
+        root = new DefaultTreeNode("Root", null);
+
+        // Obtener todos los tipos padre (sin idTipoProductoPadre)
+        List<TipoProducto> padres = tipoProductoDAO.findTiposPadre();
+
+        for (TipoProducto padre : padres) {
+            TreeNode nodoPadre = new DefaultTreeNode(padre, root);
+            cargarHijos(nodoPadre, padre.getIdTipoProducto());
+        }
+    }
+
+    /**
+     * Carga recursivamente los hijos de un nodo
+     */
+    private void cargarHijos(TreeNode nodoPadre, Long idPadre) {
+        List<TipoProducto> hijos = tipoProductoDAO.findHijosByPadre(idPadre);
+
+        for (TipoProducto hijo : hijos) {
+            TreeNode nodoHijo = new DefaultTreeNode(hijo, nodoPadre);
+            // Recursivo para cargar nietos y descendientes
+            cargarHijos(nodoHijo, hijo.getIdTipoProducto());
+        }
+    }
+
+    /**
+     * Maneja la selección de un nodo en el TreeTable
+     */
+    public void onNodeSelect(NodeSelectEvent event) {
+        this.selectedNode = event.getTreeNode();
+        if (selectedNode != null && selectedNode.getData() != null) {
+            TipoProducto selected = (TipoProducto) selectedNode.getData();
+            this.registro = selected;
+            this.estado = "MODIFICAR";
+        }
+    }
+
+    /**
+     * Obtiene la lista de tipos disponibles para ser padres
+     * (excluye el registro actual para evitar ciclos)
+     */
+    public List<TipoProducto> getTiposPadreDisponibles() {
+        if (listaTipoProducto == null) {
+            return List.of();
+        }
+
+        return listaTipoProducto.stream()
+                .filter(t -> registro == null ||
+                        !t.getIdTipoProducto().equals(registro.getIdTipoProducto()))
+                .collect(Collectors.toList());
+    }
+
+
+    /**
+     * Sobrescribe el método de guardado para recargar el árbol
+     */
+    @Override
+    public void btnGuardarHandler() {
+        super.btnGuardarHandler();
+        cargarArbol(); // Recargar el árbol después de guardar
+    }
+
+    /**
+     * Sobrescribe el método de eliminación para recargar el árbol
+     */
+    @Override
+    public void btnEliminarHandler() {
+        super.btnEliminarHandler();
+        cargarArbol(); // Recargar el árbol después de eliminar
     }
 
 
@@ -119,5 +202,20 @@ protected String nombreBean="page.tipoProducto";
         this.listaTipoProducto = listaTipoProducto;
     }
 
+    public TreeNode getRoot() {
+        return root;
+    }
+
+    public void setRoot(TreeNode root) {
+        this.root = root;
+    }
+
+    public TreeNode getSelectedNode() {
+        return selectedNode;
+    }
+
+    public void setSelectedNode(TreeNode selectedNode) {
+        this.selectedNode = selectedNode;
+    }
 }
 
