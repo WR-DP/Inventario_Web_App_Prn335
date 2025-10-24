@@ -81,8 +81,8 @@
                 <artifactId>liberty-maven-plugin</artifactId>
                 <version>3.11.4</version>
                 <configuration>
-                    <configDirectory>/home/sauron/openliberty/wlp/usr/servers/inventarioServer</configDirectory>
-                    <serverName>inventarioServer</serverName>
+                    <installDirectory>/home/gloria/Documentos/openLiberty/wlp</installDirectory>
+                    <serverName>prn335_2025</serverName>
                     <appsDirectory>dropins</appsDirectory>
                     <looseApplication>true</looseApplication>
                     <stripVersion>true</stripVersion>
