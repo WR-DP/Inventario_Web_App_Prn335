@@ -10,6 +10,11 @@ import java.time.OffsetDateTime;
 @Table(name = "tipo_producto_caracteristica", schema = "public")
 @NamedQueries({
         @NamedQuery(name = "TipoProductoCaracteristica.findByIdTipoProducto", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipoProducto"),
+        @NamedQuery(name = "TipoProductoCaracteristica.findByNombreCaracteristica", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idCaracteristica.nombre = :nombreCaracteristica"),
+        @NamedQuery(name = "TipoProductoCaracteristica.findByIdPadre", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.idTipoProductoPadre = :idTipoProductoPadre"),
+        @NamedQuery(name = "TipoProductoCaracteristica.countById", query = "SELECT COUNT(tpc) FROM TipoProductoCaracteristica tpc WHERE tpc.id = :id"),
+        @NamedQuery(name="TipoProductoCaracteristica.findByIdTipoProductoCaracteristica", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipoProducto AND tpc.idCaracteristica.id = :idCaracteristica"),
+        @NamedQuery(name = "TipoProductoCaracteristica.findById", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.id = :id"),
 })
 public class TipoProductoCaracteristica {
     @Id
@@ -71,6 +76,10 @@ public class TipoProductoCaracteristica {
 
     public void setFechaCreacion(OffsetDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public java.util.stream.Stream<TipoProductoCaracteristica> stream() {
+        return java.util.stream.Stream.of(this);
     }
 
 }

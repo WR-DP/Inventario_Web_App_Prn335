@@ -25,11 +25,6 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
     TipoProductoDAO tipoProductoDAO;
 
     @Override
-    public String getTituloPag() {
-        return "Tipo de Productos";
-    }
-
-    @Override
     protected FacesContext getFacesContext() {
         return facesContext;
     }
@@ -77,6 +72,7 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
     protected TipoProducto nuevoRegistro() {
         TipoProducto tipoProducto = new TipoProducto();
         tipoProducto.setActivo(true);
+        //corregir el setIdTipoProductoPadre
         tipoProducto.setIdTipoProductoPadre(null);
         tipoProducto.setComentarios("Comentario");
         return tipoProducto;
