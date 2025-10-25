@@ -68,7 +68,6 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
     public TipoProductoFrm(){};
 
     @PostConstruct
-    @Override
     public void inicializar() {
         super.inicializar();
         listaTipoProducto = tipoProductoDAO.findRange(0, Integer.MAX_VALUE);
@@ -111,7 +110,7 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
         if (selectedNode != null && selectedNode.getData() != null) {
             TipoProducto selected = (TipoProducto) selectedNode.getData();
             this.registro = selected;
-            this.estado = "MODIFICAR";
+            this.estado = ESTADO_CRUD.valueOf("MODIFICAR");
         }
     }
 
@@ -138,6 +137,7 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
     public void btnGuardarHandler() {
         super.btnGuardarHandler();
         cargarArbol(); // Recargar el árbol después de guardar
+        listaTipoProducto = tipoProductoDAO.findRange(0, Integer.MAX_VALUE);
     }
 
     /**
@@ -147,11 +147,10 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
     public void btnEliminarHandler() {
         super.btnEliminarHandler();
         cargarArbol(); // Recargar el árbol después de eliminar
+        listaTipoProducto = tipoProductoDAO.findRange(0, Integer.MAX_VALUE);
     }
 
 
-    //------------> yo digo que deberiamos pode agregar el Tipo (columna que se muestra id_tipo_producto_padre)
-    @Override
     protected TipoProducto nuevoRegistro() {
         TipoProducto tipoProducto = new TipoProducto();
         tipoProducto.setActivo(true);

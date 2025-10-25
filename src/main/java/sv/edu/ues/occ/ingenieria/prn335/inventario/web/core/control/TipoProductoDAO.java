@@ -66,7 +66,7 @@ public class TipoProductoDAO extends InventarioDefaultDataAccess<TipoProducto, O
     public List<TipoProducto> findHijosByPadre(Long idPadre) {
         try {
             return em.createQuery(
-                            "SELECT t FROM TipoProducto t WHERE t.idTipoProductoPadre.idTipoProducto = :idPadre ORDER BY t.nombre",
+                            "SELECT t FROM TipoProducto t WHERE t.idTipoProductoPadre.id = :idPadre ORDER BY t.nombre",
                             TipoProducto.class
                     )
                     .setParameter("idPadre", idPadre)

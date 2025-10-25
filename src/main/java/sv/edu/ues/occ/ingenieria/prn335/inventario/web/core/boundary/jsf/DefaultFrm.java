@@ -132,6 +132,17 @@ public int contarDatos(){
         this.estado = ESTADO_CRUD.NADA;
     }
 
+    // Versión sin parámetros para llamadas programáticas
+    public void btnGuardarHandler() {
+        btnGuardarHandler(null);
+    }
+
+    // Versión sin parámetros para llamadas programáticas
+    public void btnEliminarHandler() {
+        btnEliminarHandler(null);
+    }
+
+
     public void btnGuardarHandler(ActionEvent actionEvent) {
         try{
             if(registro != null){

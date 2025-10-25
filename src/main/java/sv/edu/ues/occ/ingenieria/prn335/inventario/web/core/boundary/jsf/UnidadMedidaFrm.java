@@ -52,10 +52,7 @@ public class UnidadMedidaFrm extends DefaultFrm<UnidadMedida> implements Seriali
         return 0;
     }
 
-    @Override
-    public String getTituloPag() {
-        return "";
-    }
+
 
     @Override
     protected FacesContext getFacesContext() {
