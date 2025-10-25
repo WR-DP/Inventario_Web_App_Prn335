@@ -1,8 +1,6 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity;
 
 import jakarta.persistence.*;
-//import org.hibernate.annotations.OnDelete;
-//import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 
@@ -13,7 +11,10 @@ import java.math.BigDecimal;
         @NamedQuery(name = "UnidadMedida.findAllUnidadMedida", query = "SELECT um FROM UnidadMedida um"),
         @NamedQuery(name = "UnidadMedida.findByActivo", query = "SELECT um FROM UnidadMedida um WHERE um.activo = :activo"),
         @NamedQuery(name = "UnidadMedida.countAllUnidadMedida", query = "SELECT COUNT(um) FROM UnidadMedida um"),
-        @NamedQuery(name = "UnidadMedida.countByActivo", query = "SELECT COUNT(um) FROM UnidadMedida um WHERE um.activo = :activo")
+        @NamedQuery(name = "UnidadMedida.countByActivo", query = "SELECT COUNT(um) FROM UnidadMedida um WHERE um.activo = :activo"),
+        @NamedQuery(name = "UnidadMedida.findByIdTipoUnidadMedida", query = "SELECT um FROM UnidadMedida um WHERE um.idTipoUnidadMedida.id = :idTipoUnidadMedida"),
+        @NamedQuery(name = "UnidadMedida.countByIdTipoUnidadMedida", query = "SELECT COUNT(um) FROM UnidadMedida um WHERE um.idTipoUnidadMedida.id = :idTipoUnidadMedida")
+
 })
 public class UnidadMedida {
     @Id
