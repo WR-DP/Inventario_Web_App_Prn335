@@ -25,9 +25,15 @@ public class TipoUnidadMedidaFrm extends DefaultFrm<TipoUnidadMedida> implements
     @Inject
     private TipoUnidadMedidaDAO tipoUnidadMedidaDAO;
 
+    @Inject
+    private UnidadMedidaFrm unidadMedidaFrm;
+
+
     private List<TipoUnidadMedida> tipos;
 
-    public TipoUnidadMedidaFrm() {}
+    public TipoUnidadMedidaFrm() {
+    }
+
 
     @Override
     public String getTituloPag() {
@@ -103,9 +109,26 @@ public class TipoUnidadMedidaFrm extends DefaultFrm<TipoUnidadMedida> implements
 
     private String nombreBean = "page.tipounidadmedida";
 
-    public String getNombreBean() { return nombreBean; }
-    public void setNombreBean(String nombreBean) { this.nombreBean = nombreBean; }
+    public String getNombreBean() {
+        return nombreBean;
+    }
 
-    public List<TipoUnidadMedida> getListaTipos() { return tipos; }
-    public void setListaTipos(List<TipoUnidadMedida> listaTipos) { this.tipos = listaTipos; }
+    public UnidadMedidaFrm getUnidadMedidaFrm() {
+        if (this.registro != null && this.registro.getId() != null) {
+            unidadMedidaFrm.setIdTipoUnidadMedida(this.registro.getId());
+        }
+        return unidadMedidaFrm;
+    }
+
+    public void setNombreBean(String nombreBean) {
+        this.nombreBean = nombreBean;
+    }
+
+    public List<TipoUnidadMedida> getListaTipos() {
+        return tipos;
+    }
+
+    public void setListaTipos(List<TipoUnidadMedida> listaTipos) {
+        this.tipos = listaTipos;
+    }
 }
