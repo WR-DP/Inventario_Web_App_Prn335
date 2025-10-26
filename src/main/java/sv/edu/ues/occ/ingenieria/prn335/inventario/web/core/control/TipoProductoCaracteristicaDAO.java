@@ -79,17 +79,17 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
 
 
     //contar por id tipo producto caracteristica
-    public int countByIdProducto(final Long id) {
+    public Long countByIdCaracteristica(final Long id) {
         if (id != null) {
             try {
                 TypedQuery<Long> q = em.createNamedQuery("TipoProductoCaracteristica.countById", Long.class);
                 q.setParameter("id", id);
-                return q.getSingleResult().intValue();
+                return q.getSingleResult();
             } catch (Exception ex) {
                 Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
-        return 0;
+        return 0L;
     }
 
     //Si no funciona la busqueda por id padre, revisar la query

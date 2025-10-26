@@ -2,6 +2,7 @@ package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.jsf;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -22,15 +23,32 @@ import java.util.stream.Collectors;
 @Named("tipoProductoFrm")
 @ViewScoped
 public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Serializable {
+
     @Inject
     FacesContext facesContext;
 
     @Inject
     TipoProductoDAO tipoProductoDAO;
 
+    @Inject
+    protected TipoProductoCaracteristicaFrm tipoProductoCaracteristicaFrm;
 
     private TreeNode root;
     private TreeNode selectedNode;
+    List<TipoProducto> listaTipoProducto;
+    protected String nombreBean="page.tipoProducto";
+
+    public TipoProductoFrm(){};
+
+    @PostConstruct
+    public void inicializar() {
+        super.inicializar();
+        if(this.registro ==null){
+            this.registro = nuevoRegistro();
+        }
+        listaTipoProducto = tipoProductoDAO.findRange(0, Integer.MAX_VALUE);
+        cargarArbol();
+    }
 
     @Override
     protected FacesContext getFacesContext() {
@@ -40,6 +58,20 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
     @Override
     protected InventarioDAOInterface<TipoProducto, Object> getDao() {
         return tipoProductoDAO;
+    }
+
+    @Override
+    public InventarioDefaultDataAccess getDataAccess() {
+        return tipoProductoDAO;
+    }
+
+    protected TipoProducto nuevoRegistro() {
+        TipoProducto tipoProducto = new TipoProducto();
+        tipoProducto.setActivo(true);
+        //corregir el setIdTipoProductoPadre<--------------------------------------------------------------------
+        tipoProducto.setIdTipoProductoPadre(null);
+        tipoProducto.setComentarios("Comentario");
+        return tipoProducto;
     }
 
     @Override
@@ -55,23 +87,16 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
         if (id != null) {
             try {
                 Long buscado = Long.parseLong(id);
-                return this.modelo.getWrappedData().stream().filter(r -> r.getId().equals(buscado)).findFirst().orElse(null);
-            } catch (NumberFormatException e) {
+                return this.modelo.getWrappedData()
+                        .stream()
+                        .filter(r -> r.getId().equals(buscado))
+                        .findFirst().orElse(null);
+            }
+            catch (NumberFormatException e) {
                 Logger.getLogger(TipoProducto.class.getName()).log(Level.SEVERE, null, e);
             }
         }
         return null;
-    }
-
-    List<TipoProducto> listaTipoProducto;
-
-    public TipoProductoFrm(){};
-
-    @PostConstruct
-    public void inicializar() {
-        super.inicializar();
-        listaTipoProducto = tipoProductoDAO.findRange(0, Integer.MAX_VALUE);
-        cargarArbol();
     }
 
     /**
@@ -114,6 +139,27 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
         }
     }
 
+
+    @Override
+    public void btnGuardarHandler(ActionEvent actionEvent) {
+        super.btnGuardarHandler(actionEvent);
+        if (this.estado == ESTADO_CRUD.NADA) { // Solo si se guardó exitosamente
+            cargarArbol();
+            listaTipoProducto = tipoProductoDAO.findRange(0, Integer.MAX_VALUE);
+        }
+    }
+
+    @Override
+    public void btnEliminarHandler(ActionEvent actionEvent) {
+        super.btnEliminarHandler(actionEvent);
+        if (this.estado == ESTADO_CRUD.NADA) { // Solo si se eliminó exitosamente
+            cargarArbol();
+            listaTipoProducto = tipoProductoDAO.findRange(0, Integer.MAX_VALUE);
+        }
+    }
+
+
+
     /**
      * Obtiene la lista de tipos disponibles para ser padres
      * (excluye el registro actual para evitar ciclos)
@@ -129,50 +175,6 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
                 .collect(Collectors.toList());
     }
 
-
-    /**
-     * Sobrescribe el método de guardado para recargar el árbol
-     */
-    @Override
-    public void btnGuardarHandler() {
-        super.btnGuardarHandler();
-        cargarArbol(); // Recargar el árbol después de guardar
-        listaTipoProducto = tipoProductoDAO.findRange(0, Integer.MAX_VALUE);
-    }
-
-    /**
-     * Sobrescribe el método de eliminación para recargar el árbol
-     */
-    @Override
-    public void btnEliminarHandler() {
-        super.btnEliminarHandler();
-        cargarArbol(); // Recargar el árbol después de eliminar
-        listaTipoProducto = tipoProductoDAO.findRange(0, Integer.MAX_VALUE);
-    }
-
-
-    protected TipoProducto nuevoRegistro() {
-        TipoProducto tipoProducto = new TipoProducto();
-        tipoProducto.setActivo(true);
-        //corregir el setIdTipoProductoPadre
-        tipoProducto.setIdTipoProductoPadre(null);
-        tipoProducto.setComentarios("Comentario");
-        return tipoProducto;
-    }
-
-    @Override
-    public InventarioDefaultDataAccess getDataAccess() {
-        return tipoProductoDAO;
-    }
-
-    @Override
-    protected TipoProducto buscarRegistroPorId(Object id) {
-        if(id instanceof Long buscado && this.registro != null && !this.registro.getId().equals(buscado)){
-            return this.registro.stream().filter(r->r.getId().equals(buscado)).findFirst().orElse(null);
-        }
-        return null;
-    }
-
     public String getAncestrosAsString(TipoProducto tipoProducto) {
         if (tipoProducto == null) {
             return "";
@@ -184,7 +186,24 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
         }
         return sb.toString();
     }
-protected String nombreBean="page.tipoProducto";
+
+    public TipoProductoCaracteristicaFrm getTipoProductoCaracteristicaFrm() {
+        if (this.tipoProductoCaracteristicaFrm != null && this.registro != null && this.registro.getId() != null ) {
+            //tenemos que setear el tipo de producto con el id de caracteristicas
+            tipoProductoCaracteristicaFrm.setIdCaracteristica(this.registro.getId());
+        }
+        return tipoProductoCaracteristicaFrm;
+    }
+
+    @Override
+    protected TipoProducto buscarRegistroPorId(Object id) {
+        if(id instanceof Long buscado && this.registro != null && !this.registro.getId().equals(buscado)){
+            return this.registro.stream().filter(r->r.getId().equals(buscado)).findFirst().orElse(null);
+        }
+        return null;
+    }
+
+
 
     public String getNombreBean() {
         return nombreBean;

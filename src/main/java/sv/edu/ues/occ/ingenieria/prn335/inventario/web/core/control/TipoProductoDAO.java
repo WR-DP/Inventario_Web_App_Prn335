@@ -43,7 +43,7 @@ public class TipoProductoDAO extends InventarioDefaultDataAccess<TipoProducto, O
         return super.count();
     }
 
-
+//Refactorizar todas estas funcionalidades para usat Typedquery
     /**
      * Encuentra todos los tipos de producto que son padres (raíz)
      * Es decir, aquellos que no tienen idTipoProductoPadre

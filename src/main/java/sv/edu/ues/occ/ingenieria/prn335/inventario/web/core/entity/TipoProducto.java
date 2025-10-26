@@ -39,6 +39,19 @@ public class TipoProducto implements Serializable {
     @Column(name = "comentarios", length = Integer.MAX_VALUE)
     private String comentarios;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TipoProducto)) return false;
+        TipoProducto that = (TipoProducto) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return (id != null) ? id.hashCode() : 0;
+    }
+
     public Long getId() {
         return id;
     }

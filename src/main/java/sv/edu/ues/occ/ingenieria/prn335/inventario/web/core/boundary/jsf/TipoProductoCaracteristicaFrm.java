@@ -1,13 +1,17 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.jsf;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.Dependent;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.CaracteristicaDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoProductoCaracteristicaDAO;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Caracteristica;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProductoCaracteristica;
 
 import java.io.Serializable;
@@ -16,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 @Named
 @ViewScoped
@@ -26,6 +31,15 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
 
     @Inject
     TipoProductoCaracteristicaDAO tipoProductoCaracteristicaDAO;
+
+    @Inject
+    CaracteristicaDAO caracteristicaDAO;
+
+    List<Caracteristica> posibleCaracteristicas;
+
+    List<TipoProductoCaracteristica> caracteristicasAsignadas;
+
+    protected Long idCaracteristica;
 
     protected String nombrebean = "page.tipoproductocaracteristica";
 
@@ -38,12 +52,28 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
 
     List<TipoProductoCaracteristica> listaTipoProductoCaracteristica;
 
-    public List<TipoProductoCaracteristica> getTipoProductoCaracteristicas() {
+    @Override
+    public List<TipoProductoCaracteristica> cargarDatos(int first, int max) {
+        try{
+            if(first>=0 && max>0 && this.idCaracteristica!=null){
+                return tipoProductoCaracteristicaDAO.findByIdCaracteristica(this.idCaracteristica, first, max);
+            }
+        }catch(Exception ex){
+            Logger.getLogger(TipoProductoCaracteristicaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
         return listaTipoProductoCaracteristica;
     }
 
-    public void setListaTipoProductoCaracteristica(List<TipoProductoCaracteristica> listaTipoProductoCaracteristica) {
-        this.listaTipoProductoCaracteristica = listaTipoProductoCaracteristica;
+    @Override
+    public int contarDatos() {
+        try{
+            if(this.idCaracteristica!=null){
+                return this.tipoProductoCaracteristicaDAO.countByIdCaracteristica(this.idCaracteristica).intValue();
+            }
+        }catch(Exception ex){
+            Logger.getLogger(TipoProductoCaracteristicaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return 0;
     }
 
 
@@ -112,8 +142,65 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
     }
 
 
+    //---------------<
+    public List<Caracteristica> buscarCaracteristicaPorNombres(final String nombres) {
+        try {
+            if (nombres != null && !nombres.isBlank()) {
+                return caracteristicaDAO.findByNombreLike(nombres, 0, 25);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(TipoProductoCaracteristicaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return List.of();
+    }
 
 
+    public void btnSeleccionarCaracteristicaHandler(ActionEvent actionEvent) {
+        if (this.registro != null && this.registro.getIdCaracteristica() != null) {
+            this.posibleCaracteristicas =
+                    caracteristicaDAO.findByIdCaracteristica(this.registro.getIdCaracteristica().getId(), 0, Integer.MAX_VALUE);
+        } else {
+            this.posibleCaracteristicas = List.of();
+        }
 
+        //        try{
+//            this.posibleCaracteristicas= caracteristicaDAO.findByIdCaracteristica(this.registro.getIdCaracteristica().getId(),0,Integer.MAX_VALUE);
+//            return;
+//        }catch(Exception ex){
+//            Logger.getLogger(TipoProductoCaracteristicaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+//        }
+//        this.posibleCaracteristicas = List.of();
+    }
 
+    public List<TipoProductoCaracteristica> getTipoProductoCaracteristicas() {
+        return listaTipoProductoCaracteristica;
+    }
+
+    public void setListaTipoProductoCaracteristica(List<TipoProductoCaracteristica> listaTipoProductoCaracteristica) {
+        this.listaTipoProductoCaracteristica = listaTipoProductoCaracteristica;
+    }
+
+    public List<Caracteristica> getPosibleCaracteristicas() {
+        return posibleCaracteristicas;
+    }
+
+    public void setPosibleCaracteristicas(List<Caracteristica> posibleCaracteristicas) {
+        this.posibleCaracteristicas = posibleCaracteristicas;
+    }
+
+    public List<TipoProductoCaracteristica> getCaracteristicasAsignadas() {
+        return caracteristicasAsignadas;
+    }
+
+    public void setCaracteristicasAsignadas(List<TipoProductoCaracteristica> caracteristicasAsignadas) {
+        this.caracteristicasAsignadas = caracteristicasAsignadas;
+    }
+
+    public Long getIdCaracteristica() {
+        return idCaracteristica;
+    }
+
+    public void setIdCaracteristica(Long idCaracteristica) {
+        this.idCaracteristica = idCaracteristica;
+    }
 }
