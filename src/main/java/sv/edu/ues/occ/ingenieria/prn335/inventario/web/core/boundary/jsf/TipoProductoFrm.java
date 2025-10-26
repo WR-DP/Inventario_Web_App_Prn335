@@ -134,6 +134,14 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
             TipoProducto selected = (TipoProducto) selectedNode.getData();
             this.registro = selected;
             this.estado = ESTADO_CRUD.valueOf("MODIFICAR");
+
+            // ---> sincronizar el formulario de características con el TipoProducto seleccionado
+            if (tipoProductoCaracteristicaFrm != null) {
+                tipoProductoCaracteristicaFrm.setIdCaracteristica(selected.getId()); // compatibilidad
+                tipoProductoCaracteristicaFrm.setIdTipoProducto(selected); // opcional para el child
+                // forzar recarga en el child
+                tipoProductoCaracteristicaFrm.inicializar();
+            }
         }
     }
 
@@ -186,12 +194,15 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
     }
 
     public TipoProductoCaracteristicaFrm getTipoProductoCaracteristicaFrm() {
-        if (this.tipoProductoCaracteristicaFrm != null && this.registro != null && this.registro.getId() != null ) {
-            //esto esta confundiendo
+        // Al invocar desde la vista, garantizamos que el child tenga el contexto correcto
+        if ( this.registro != null && this.registro.getId() != null ) {
             tipoProductoCaracteristicaFrm.setIdCaracteristica(this.registro.getId());
+            tipoProductoCaracteristicaFrm.setIdTipoProducto(this.registro);
+            // importante: no llamar a inicializar() aquí para evitar doble carga en algunos flujos; el onNodeSelect ya lo hace
         }
         return tipoProductoCaracteristicaFrm;
     }
+
 
     @Override
     protected TipoProducto buscarRegistroPorId(Object id) {
@@ -234,4 +245,3 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
         this.selectedNode = selectedNode;
     }
 }
-

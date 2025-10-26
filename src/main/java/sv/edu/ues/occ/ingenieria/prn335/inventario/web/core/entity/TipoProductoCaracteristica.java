@@ -13,8 +13,9 @@ import java.time.OffsetDateTime;
         @NamedQuery(name = "TipoProductoCaracteristica.findByNombreCaracteristica", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idCaracteristica.nombre = :nombreCaracteristica"),
         @NamedQuery(name = "TipoProductoCaracteristica.findByIdPadre", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.idTipoProductoPadre = :idTipoProductoPadre"),
         @NamedQuery(name = "TipoProductoCaracteristica.countById", query = "SELECT COUNT(tpc) FROM TipoProductoCaracteristica tpc WHERE tpc.id = :id"),
-        @NamedQuery(name="TipoProductoCaracteristica.findByIdTipoProductoCaracteristica", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipoProducto AND tpc.idCaracteristica.id = :idCaracteristica"),
+        @NamedQuery(name="TipoProductoCaracteristica.findByIdTipoProductoCaracteristica", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipoProducto"),
         @NamedQuery(name = "TipoProductoCaracteristica.findById", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.id = :id"),
+        @NamedQuery(name = "TipoProductoCaracteristica.countByIdTipoProducto", query = "SELECT COUNT(tpc) FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipoProducto")
 })
 public class TipoProductoCaracteristica {
     @Id
@@ -23,12 +24,10 @@ public class TipoProductoCaracteristica {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "id_caracteristica")
     private Caracteristica idCaracteristica;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "id_tipo_producto")
     private TipoProducto idTipoProducto;
 

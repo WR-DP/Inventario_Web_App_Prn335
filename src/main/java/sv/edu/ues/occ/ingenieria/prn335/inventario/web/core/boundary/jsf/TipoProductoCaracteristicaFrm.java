@@ -1,7 +1,6 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.jsf;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.Dependent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
@@ -12,12 +11,12 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDA
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoProductoCaracteristicaDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Caracteristica;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProducto;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProductoCaracteristica;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,6 +38,10 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
 
     List<TipoProductoCaracteristica> caracteristicasAsignadas;
 
+    /**
+     * Por compatibilidad `idCaracteristica` conserva su nombre antiguo,
+     * pero su uso real es guardar el id del TipoProducto padre (Long).
+     */
     protected Long idCaracteristica;
 
     protected String nombrebean = "page.tipoproductocaracteristica";
@@ -47,6 +50,9 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
     @Inject
     private TipoProductoFrm tipoProductoFrm;
 
+    // auxiliar por que se tiene una confucion de variables, luego refactorizarlo
+    private TipoProducto idTipoProducto;
+
     public String getNombrebean() {
         return nombrebean;
     }
@@ -54,7 +60,7 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
     public TipoProductoCaracteristicaFrm() {}
 
     public Long getIdTipoProductoCaracteristicaSeleccionado() {
-    if(this.registro != null && this.registro.getIdTipoProducto() != null){
+        if(this.registro != null && this.registro.getIdTipoProducto() != null){
             return this.registro.getIdTipoProducto().getId();
         }
         return null;
@@ -62,20 +68,23 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
 
     public void setIdTipoProductoCaracteristicaSeleccionado(final Long idTipoProductoSeleccionado) {
         if(this.registro != null && this.listaTipoProductoCaracteristica != null && !this.listaTipoProductoCaracteristica.isEmpty()){
-            this.registro.setIdTipoProducto(this.listaTipoProductoCaracteristica.stream()
+            TipoProductoCaracteristica tpc = this.listaTipoProductoCaracteristica.stream()
                     .filter(tp-> tp.getId().equals(idTipoProductoSeleccionado))
-                    .findFirst().orElse(null).getIdTipoProducto());
+                    .findFirst().orElse(null);
+            if (tpc != null) {
+                this.registro.setIdTipoProducto(tpc.getIdTipoProducto());
+            }
         }
     }
-
 
     List<TipoProductoCaracteristica> listaTipoProductoCaracteristica;
 
     @Override
     public List<TipoProductoCaracteristica> cargarDatos(int first, int max) {
         try{
+            // ahora filtramos por el Long idCaracteristica (que representa idTipoProducto)
             if(first>=0 && max>0 && this.idCaracteristica!=null){
-                return tipoProductoCaracteristicaDAO.findByIdCaracteristica(this.idCaracteristica, first, max);
+                return tipoProductoCaracteristicaDAO.findByIdTipoProducto(this.idCaracteristica, first, max);
             }
         }catch(Exception ex){
             Logger.getLogger(TipoProductoCaracteristicaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
@@ -87,14 +96,13 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
     public int contarDatos() {
         try{
             if(this.idCaracteristica!=null){
-                return this.tipoProductoCaracteristicaDAO.countByIdCaracteristica(this.idCaracteristica).intValue();
+                return this.tipoProductoCaracteristicaDAO.countByIdTipoProducto(this.idCaracteristica).intValue();
             }
         }catch(Exception ex){
             Logger.getLogger(TipoProductoCaracteristicaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
         return 0;
     }
-
 
     @Override
     protected FacesContext getFacesContext() {
@@ -131,9 +139,11 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
     @Override
     public void inicializar() {
         super.inicializar();
-        if (idCaracteristica != null) {
+        if (this.idCaracteristica != null) {
             listaTipoProductoCaracteristica =
-                    tipoProductoCaracteristicaDAO.findByIdCaracteristica(idCaracteristica, 0, Integer.MAX_VALUE);
+                    tipoProductoCaracteristicaDAO.findByIdTipoProducto(idCaracteristica, 0, Integer.MAX_VALUE);
+        } else {
+            listaTipoProductoCaracteristica = List.of();
         }
     }
 
@@ -176,19 +186,41 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
 
     @Override
     public void btnGuardarHandler(ActionEvent actionEvent) {
-        // ✅ Vincular el TipoProducto seleccionado
-        if (this.registro != null && tipoProductoFrm != null && tipoProductoFrm.getRegistro() != null) {
-            this.registro.setIdTipoProducto(tipoProductoFrm.getRegistro());
-        }
+        try {
+            // Asignar el TipoProducto seleccionado al registro (si existe)
+            if (this.registro != null
+                    && tipoProductoFrm != null
+                    && tipoProductoFrm.getRegistro() != null) {
 
-        super.btnGuardarHandler(actionEvent);
+                this.registro.setIdTipoProducto(tipoProductoFrm.getRegistro());
 
-        // ✅ Recargar datos luego de guardar
-        if (this.estado == ESTADO_CRUD.NADA) {
-            this.inicializar();
+                // sincronizar idCaracteristica (mantener compatibilidad)
+                this.idCaracteristica = tipoProductoFrm.getRegistro().getId();
+            }
+
+            super.btnGuardarHandler(actionEvent);
+
+            // Si se guardó correctamente, recargar tabla y lazy model
+            if (this.estado == ESTADO_CRUD.NADA) {
+                if (idCaracteristica != null) {
+                    listaTipoProductoCaracteristica =
+                            tipoProductoCaracteristicaDAO.findByIdTipoProducto(idCaracteristica, 0, Integer.MAX_VALUE);
+                }
+
+                if (this.modelo != null) {
+                    try {
+                        this.modelo.setRowCount(contarDatos());
+                    } catch (Exception ex) {
+                        // ignore
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            Logger.getLogger(TipoProductoCaracteristicaFrm.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+            e.printStackTrace();
         }
     }
-
 
     public void btnSeleccionarCaracteristicaHandler(ActionEvent actionEvent) {
         if (this.registro != null && this.registro.getIdCaracteristica() != null) {
@@ -196,14 +228,6 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
         } else {
             this.posibleCaracteristicas = List.of();
         }
-
-        //        try{
-//            this.posibleCaracteristicas= caracteristicaDAO.findByIdCaracteristica(this.registro.getIdCaracteristica().getId(),0,Integer.MAX_VALUE);
-//            return;
-//        }catch(Exception ex){
-//            Logger.getLogger(TipoProductoCaracteristicaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-//        }
-//        this.posibleCaracteristicas = List.of();
     }
 
     public List<TipoProductoCaracteristica> getTipoProductoCaracteristicas() {
@@ -237,4 +261,12 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
     public void setIdCaracteristica(Long idCaracteristica) {
         this.idCaracteristica = idCaracteristica;
     }
+
+    public void setIdTipoProducto(TipoProducto idTipoProducto) {
+        this.idTipoProducto = idTipoProducto;
+    }
+    public TipoProducto getTipoProducto() {
+        return idTipoProducto;
+    }
+
 }
