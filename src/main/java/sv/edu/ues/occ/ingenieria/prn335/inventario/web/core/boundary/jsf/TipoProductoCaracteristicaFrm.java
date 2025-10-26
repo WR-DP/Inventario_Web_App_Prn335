@@ -43,12 +43,31 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
 
     protected String nombrebean = "page.tipoproductocaracteristica";
 
+    @Named("tipoProductoFrm")
+    @Inject
+    private TipoProductoFrm tipoProductoFrm;
+
     public String getNombrebean() {
         return nombrebean;
     }
 
-    public TipoProductoCaracteristicaFrm() {
+    public TipoProductoCaracteristicaFrm() {}
+
+    public Long getIdTipoProductoCaracteristicaSeleccionado() {
+    if(this.registro != null && this.registro.getIdTipoProducto() != null){
+            return this.registro.getIdTipoProducto().getId();
+        }
+        return null;
     }
+
+    public void setIdTipoProductoCaracteristicaSeleccionado(final Long idTipoProductoSeleccionado) {
+        if(this.registro != null && this.listaTipoProductoCaracteristica != null && !this.listaTipoProductoCaracteristica.isEmpty()){
+            this.registro.setIdTipoProducto(this.listaTipoProductoCaracteristica.stream()
+                    .filter(tp-> tp.getId().equals(idTipoProductoSeleccionado))
+                    .findFirst().orElse(null).getIdTipoProducto());
+        }
+    }
+
 
     List<TipoProductoCaracteristica> listaTipoProductoCaracteristica;
 
@@ -112,7 +131,10 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
     @Override
     public void inicializar() {
         super.inicializar();
-        listaTipoProductoCaracteristica = tipoProductoCaracteristicaDAO.findRange(0, Integer.MAX_VALUE);
+        if (idCaracteristica != null) {
+            listaTipoProductoCaracteristica =
+                    tipoProductoCaracteristicaDAO.findByIdCaracteristica(idCaracteristica, 0, Integer.MAX_VALUE);
+        }
     }
 
     @Override
@@ -141,8 +163,6 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
         return null;
     }
 
-
-    //---------------<
     public List<Caracteristica> buscarCaracteristicaPorNombres(final String nombres) {
         try {
             if (nombres != null && !nombres.isBlank()) {
@@ -154,11 +174,25 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
         return List.of();
     }
 
+    @Override
+    public void btnGuardarHandler(ActionEvent actionEvent) {
+        // ✅ Vincular el TipoProducto seleccionado
+        if (this.registro != null && tipoProductoFrm != null && tipoProductoFrm.getRegistro() != null) {
+            this.registro.setIdTipoProducto(tipoProductoFrm.getRegistro());
+        }
+
+        super.btnGuardarHandler(actionEvent);
+
+        // ✅ Recargar datos luego de guardar
+        if (this.estado == ESTADO_CRUD.NADA) {
+            this.inicializar();
+        }
+    }
+
 
     public void btnSeleccionarCaracteristicaHandler(ActionEvent actionEvent) {
         if (this.registro != null && this.registro.getIdCaracteristica() != null) {
-            this.posibleCaracteristicas =
-                    caracteristicaDAO.findByIdCaracteristica(this.registro.getIdCaracteristica().getId(), 0, Integer.MAX_VALUE);
+            this.posibleCaracteristicas = caracteristicaDAO.findByIdCaracteristica(this.registro.getIdCaracteristica().getId(), 0, Integer.MAX_VALUE);
         } else {
             this.posibleCaracteristicas = List.of();
         }

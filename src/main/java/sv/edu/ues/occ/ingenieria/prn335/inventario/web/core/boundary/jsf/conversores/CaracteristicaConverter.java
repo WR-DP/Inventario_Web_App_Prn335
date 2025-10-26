@@ -29,7 +29,7 @@ public class CaracteristicaConverter implements  Converter<Caracteristica>, Seri
             if(inicioId != -1 && finId != -1 && finId > inicioId){
                 String idStr = s.substring(inicioId+1, finId);
                 try{
-                    Integer id = Math.toIntExact(Long.valueOf(s));
+                    Integer id = Math.toIntExact(Long.valueOf(idStr));
                     //estamos usando el metodo findById de la clase abstacta base
                     return caracteristicaDAO.findById(id);
                 }catch(Exception ex){

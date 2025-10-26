@@ -21,6 +21,7 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
     @PersistenceContext(unitName = "InventarioPU")
     private EntityManager em;
 
+
     public TipoProductoCaracteristicaDAO() {
         super(TipoProductoCaracteristica.class);
     }

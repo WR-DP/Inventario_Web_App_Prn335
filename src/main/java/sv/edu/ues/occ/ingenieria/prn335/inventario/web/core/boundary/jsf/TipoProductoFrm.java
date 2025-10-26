@@ -68,8 +68,6 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
     protected TipoProducto nuevoRegistro() {
         TipoProducto tipoProducto = new TipoProducto();
         tipoProducto.setActivo(true);
-        //corregir el setIdTipoProductoPadre<--------------------------------------------------------------------
-        tipoProducto.setIdTipoProductoPadre(null);
         tipoProducto.setComentarios("Comentario");
         return tipoProducto;
     }
@@ -189,7 +187,7 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
 
     public TipoProductoCaracteristicaFrm getTipoProductoCaracteristicaFrm() {
         if (this.tipoProductoCaracteristicaFrm != null && this.registro != null && this.registro.getId() != null ) {
-            //tenemos que setear el tipo de producto con el id de caracteristicas
+            //esto esta confundiendo
             tipoProductoCaracteristicaFrm.setIdCaracteristica(this.registro.getId());
         }
         return tipoProductoCaracteristicaFrm;
