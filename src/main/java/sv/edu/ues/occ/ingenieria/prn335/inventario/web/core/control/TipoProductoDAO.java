@@ -43,9 +43,39 @@ public class TipoProductoDAO extends InventarioDefaultDataAccess<TipoProducto, O
         return super.count();
     }
 
+//Refactorizar todas estas funcionalidades para usat Typedquery
+    /**
+     * Encuentra todos los tipos de producto que son padres (raíz)
+     * Es decir, aquellos que no tienen idTipoProductoPadre
+     */
+    public List<TipoProducto> findTiposPadre() {
+        try {
+            return em.createQuery(
+                    "SELECT t FROM TipoProducto t WHERE t.idTipoProductoPadre IS NULL ORDER BY t.nombre",
+                    TipoProducto.class
+            ).getResultList();
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
+            return List.of();
+        }
+    }
 
-
-
+    /**
+     * Encuentra todos los hijos directos de un tipo de producto padre
+     */
+    public List<TipoProducto> findHijosByPadre(Long idPadre) {
+        try {
+            return em.createQuery(
+                            "SELECT t FROM TipoProducto t WHERE t.idTipoProductoPadre.id = :idPadre ORDER BY t.nombre",
+                            TipoProducto.class
+                    )
+                    .setParameter("idPadre", idPadre)
+                    .getResultList();
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
+            return List.of();
+        }
+    }
     private static final Logger log = Logger.getLogger(TipoProductoDAO.class.getName());
 
     public List<TipoProducto> findAllTipoProducto(int first, int max) {

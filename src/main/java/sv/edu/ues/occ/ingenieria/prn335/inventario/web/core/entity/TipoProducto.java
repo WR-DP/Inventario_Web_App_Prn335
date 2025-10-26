@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
 import java.awt.image.BufferedImageOp;
+import java.io.Serializable;
 //import org.hibernate.annotations.OnDelete;
 //import org.hibernate.annotations.OnDeleteAction;
 
@@ -17,7 +18,7 @@ import java.awt.image.BufferedImageOp;
         @NamedQuery(name = "TipoProducto.countByIdTipoProducto", query = "SELECT COUNT(t.id) FROM TipoProducto t where t.idTipoProductoPadre.id = :idTipoProducto"), // a lo mejor no funciona bien
         @NamedQuery(name="TipoProducto.findByNombreLike", query = "SELECT t FROM TipoProducto t WHERE upper(t.nombre) like :nombre")
 })
-public class TipoProducto {
+public class TipoProducto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tipo_producto", nullable = false)
@@ -37,6 +38,19 @@ public class TipoProducto {
 
     @Column(name = "comentarios", length = Integer.MAX_VALUE)
     private String comentarios;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TipoProducto)) return false;
+        TipoProducto that = (TipoProducto) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return (id != null) ? id.hashCode() : 0;
+    }
 
     public Long getId() {
         return id;

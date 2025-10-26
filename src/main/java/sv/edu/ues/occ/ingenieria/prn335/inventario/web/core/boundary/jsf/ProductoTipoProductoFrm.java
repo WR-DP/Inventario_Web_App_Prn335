@@ -149,7 +149,7 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
     public void btnSeleccionarTipoProductoHandler(ActionEvent event){
         try{
             //si no obtiene resultado deseado revisar la query de findByTipoIdProducto
-            this.posibleCaracteristicas = tipoProductoCaracteristicaDAO.findByTipoIdProducto(this.registro.getIdTipoProducto().getId(), 0, Integer.MAX_VALUE);
+            this.posibleCaracteristicas = tipoProductoCaracteristicaDAO.findByIdTipoProducto( this.registro.getIdTipoProducto().getIdTipoProducto(), 0, Integer.MAX_VALUE);
             return;
         }catch(Exception ex){
             Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);

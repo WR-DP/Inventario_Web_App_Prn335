@@ -73,7 +73,7 @@ public class MenuFrm implements Serializable {
                 .value("Caracterticas")
                 .icon("pi pi-tags")
                 .ajax(true)
-                .command("#{menuFrm.navegar('Proveedor.jsf')}")
+                .command("#{menuFrm.navegar('Caracteristica.jsf')}")
                 .build();
         DefaultMenuItem itemECompras = DefaultMenuItem.builder()
                 .value("Compras")
