@@ -7,7 +7,6 @@
         xmlns="http://www.w3.org/1999/xhtml"
         template="../WEB-INF/plantilla/default.xhtml"
 >
-
     <ui:define name="header">
         <h1>#{defaultfrm['page.producto']}</h1>
     </ui:define>
@@ -22,8 +21,7 @@
                              selection="#{productoFrm.registro}"
                              rows="#{productoFrm.pageSize}"
                              rendered="#{productoFrm.estado == 'NADA'}"
-                             styleClass="tabla-crud"
-                >
+                             styleClass="tabla-crud">
                     <p:column headerText="ID">
                         <h:outputText value="#{r.id}"/>
                     </p:column>
@@ -39,11 +37,9 @@
                     <p:column headerText="Observacion">
                         <h:outputText value="#{r.comentarios}"/>
                     </p:column>
-
                     <p:ajax event="rowSelect" listener="#{productoFrm.seleccionarRegistro}"
                             update=":pnlDetalle :pnlTabla"/>
                 </p:dataTable>
-
                 <ues:botones-top formulario="#{productoFrm}" actualizar=":pnlDetalle :pnlTabla"/>
             </h:form>
         </h:panelGrid>
@@ -63,8 +59,12 @@
                                      required="true"/>
                         <p:outputLabel for="chkActivo" value="Activo:"/>
                         <p:selectBooleanCheckbox id="chkActivo" value="#{productoFrm.registro.activo}"/>
-                        <p:outputLabel for="txtObservacion" value="Observacion:"/>
+                        <p:outputLabel for="txtObservacion" value="Comentarios:"/>
                         <p:inputTextarea id="txtObservacion" value="#{productoFrm.registro.comentarios}" cols="75"
+                                         rows="4"/>
+                        <p:outputLabel for="txtReferenciaExterna" value="Referencia Externa:"/>
+                        <p:inputTextarea id="txtReferenciaExterna" value="#{productoFrm.registro.referenciaExterna}"
+                                         cols="75"
                                          rows="4"/>
                     </h:panelGrid>
                     <ues:botones-crud formulario="#{productoFrm}" actualizar=":pnlDetalle :pnlTabla :tabProducto"/>
@@ -84,12 +84,10 @@
                                          selectionMode="single"
                                          rows="#{productoFrm.productoTipoProductoFrm.pageSize}"
                                          rendered="#{productoFrm.productoTipoProductoFrm.estado == 'NADA'}">
-
                                 <p:ajax event="rowSelect"
                                         process="@this"
                                         listener="#{productoFrm.productoTipoProductoFrm.seleccionarRegistro}"
                                         update=":tabProducto:pnlTipoProducto :tabProducto:pnlDetalleProducto"/>
-
                                 <p:column headerText="ID">
                                     <h:outputText value="#{tp.id}"/>
                                 </p:column>
@@ -107,21 +105,16 @@
                                 <p:column headerText="Observacion">
                                     <h:outputText value="#{tp.observaciones}"/>
                                 </p:column>
-
                             </p:dataTable>
-                            <h:panelGrid>
-                                <ues:botones-top formulario="#{productoFrm.productoTipoProductoFrm}"
-                                                 actualizar=":tabProducto:pnlTipoProducto :tabProducto:pnlDetalleProducto"/>
-                            </h:panelGrid>
+                            <ues:botones-top formulario="#{productoFrm.productoTipoProductoFrm}"
+                                             actualizar=":tabProducto:pnlTipoProducto :tabProducto:pnlDetalleProducto"/>
                         </h:form>
                     </h:panelGroup>
-
 
                     <h:panelGroup id="pnlDetalleProducto">
                         <p:growl id="growlDetalleProducto" showDetail="true"/>
                         <p:growl id="growl-stickyDetalleProducto" for="sticky-key" showDetail="true" sticky="true"/>
-
-                        <h:panelGrid rendered="#{productoFrm.productoTipoProductoFrm.estado != 'NADA'}">
+                        <h:panelGrid columns="2" rendered="#{productoFrm.productoTipoProductoFrm.estado != 'NADA'}">
                             <h:form id="frmDetalleProducto">
                                 <h:panelGrid columns="2">
                                     <p:outputLabel for="txtID" value="ID:"/>
@@ -130,29 +123,63 @@
                                                  readonly="true"
                                                  disabled="true"/>
 
-                                    <h:outputLabel for="txtNombre" value="Tipo:"/>
+                                    <h:outputLabel for="txtNombreTipo" value="Tipo:"/>
                                     <h:panelGroup id="pnlTipoProducto">
                                         <h:panelGrid columns="2">
-                                            <p:inputText id="txtNombre"
+                                            <p:inputText id="txtNombreTipo"
                                                          value="#{productoFrm.productoTipoProductoFrm.registro.idTipoProducto.nombre}"
                                                          size="10" readonly="true" disabled="true"/>
                                             <p:commandButton type="button" onclick="PF('dlgTipoProducto').show();"
                                                              value="Seleccionar Tipo" icon="pi pi-external-link"/>
+                                        </h:panelGrid>
+
+                                        <h:panelGrid columns="3"
+                                                     rendered="#{not empty productoFrm.productoTipoProductoFrm.posibleCaracteristicas}">
                                             <p:outputLabel value="Caracteristica"/>
-                                            <h:panelGrid comlumns="3">
+
+                                            <h:panelGrid columns="3">
                                                 <h:panelGrid>
                                                     <h:outputLabel value="Disponibles"/>
-                                                    <h:selectOneListbox>
+                                                    <h:selectOneListbox id="lstDisponibles"
+                                                                        value="#{productoFrm.productoTipoProductoFrm.seleccionPosibleCaracteristica}"
+                                                                        converter="tipoProductoCaracteristicaConverter">
                                                         <f:selectItems
                                                                 value="#{productoFrm.productoTipoProductoFrm.posibleCaracteristicas}"
                                                                 var="pc"
                                                                 itemLabel="#{pc.idCaracteristica.nombre}"
-                                                                itemValue="#{pc}"
-                                                        />
+                                                                itemValue="#{pc}"/>
                                                     </h:selectOneListbox>
+                                                </h:panelGrid>
+                                                <h:panelGrid>
+                                                    <p:commandButton value="Agregar"
+                                                                     actionListener="#{productoFrm.productoTipoProductoFrm.btnAgregarPosibleCaracteristicaHandler}"
+                                                                     update=":tabProducto:pnlTipoProducto :tabProducto:pnlDetalleProducto"
+                                                                     process="lstDisponibles">
+                                                        <f:attribute name="selectedCaracteristica"
+                                                                     value="#{productoFrm.productoTipoProductoFrm.seleccionPosibleCaracteristica}"/>
+                                                    </p:commandButton>
 
+                                                    <p:commandButton value="Eliminar"
+                                                                     actionListener="#{productoFrm.productoTipoProductoFrm.btnEliminarCaracteristicaAsignadaHandler}"
+                                                                     update=":tabProducto:pnlTipoProducto :tabProducto:pnlDetalleProducto"
+                                                                     process="lstAsignadas">
+                                                        <f:attribute name="selectedCaracteristica"
+                                                                     value="#{productoFrm.productoTipoProductoFrm.seleccionCaracteristicaAsignada}"/>
+                                                        <f:attribute name="obligatoria"
+                                                                     value="#{productoFrm.productoTipoProductoFrm.seleccionCaracteristicaAsignada != null ? productoFrm.productoTipoProductoFrm.seleccionCaracteristicaAsignada.obligatoria : false}"/>
+                                                    </p:commandButton>
+                                                </h:panelGrid>
+                                                <h:panelGrid>
                                                     <h:outputLabel value="Asignadas"/>
-
+                                                    <h:selectOneListbox id="lstAsignadas"
+                                                                        value="#{productoFrm.productoTipoProductoFrm.seleccionCaracteristicaAsignada}"
+                                                                        converter="tipoProductoCaracteristicaConverter">
+                                                        <f:selectItems
+                                                                value="#{productoFrm.productoTipoProductoFrm.caracteristicasAsignadas}"
+                                                                var="ca"
+                                                                itemLabel="#{ca.idCaracteristica.nombre}"
+                                                                itemValue="#{ca}"/>
+                                                    </h:selectOneListbox>
                                                 </h:panelGrid>
                                             </h:panelGrid>
                                         </h:panelGrid>
@@ -161,7 +188,6 @@
                                     <h:outputLabel for="chkActivo" value="Activo:"/>
                                     <p:selectBooleanCheckbox id="chkActivo"
                                                              value="#{productoFrm.productoTipoProductoFrm.registro.activo}"/>
-
                                     <p:outputLabel for="dpFechaCreacion" value="Fecha de creación"/>
                                     <p:datePicker id="dpFechaCreacion"
                                                   value="#{productoFrm.productoTipoProductoFrm.registro.fechaCreacion}"
@@ -173,16 +199,12 @@
                                                   converter="offsetDateTimeConverter"
                                                   required="true"
                                                   requiredMessage="La fecha es obligatoria"
-                                                  touchUI="false"
-                                    />
-
+                                                  touchUI="false"/>
                                     <h:outputLabel for="txtComentarios" value="Comentarios:"/>
                                     <p:inputTextarea id="txtComentarios"
                                                      value="#{productoFrm.productoTipoProductoFrm.registro.observaciones}"
                                                      rows="4" cols="50"/>
-
                                 </h:panelGrid>
-
                                 <ues:botones-crud formulario="#{productoFrm.productoTipoProductoFrm}"
                                                   actualizar=":tabProducto:pnlTipoProducto :tabProducto:pnlDetalleProducto"/>
                             </h:form>
@@ -218,6 +240,4 @@
             </h:form>
         </p:dialog>
     </ui:define>
-
-
 </ui:composition>

@@ -7,6 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Producto;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.ProductoTipoProducto;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.ProductoTipoProductoCaracteristica;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -63,6 +64,5 @@ public class ProductoTipoProductoDAO extends InventarioDefaultDataAccess<Product
         }
         return 0L;
     }
-
 
 }

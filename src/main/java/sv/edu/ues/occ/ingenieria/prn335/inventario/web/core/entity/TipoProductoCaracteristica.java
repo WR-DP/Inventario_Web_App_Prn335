@@ -37,6 +37,23 @@ public class TipoProductoCaracteristica {
     @Column(name = "fecha_creacion")
     private OffsetDateTime fechaCreacion;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (!(o instanceof TipoProductoCaracteristica)) return false;
+        TipoProductoCaracteristica other = (TipoProductoCaracteristica) o;
+        if (this.id == null || other.id == null) {
+            return false;
+        }
+        return this.id.equals(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id == null ? 0 : id.hashCode();
+    }
+
     public Long getId() {
         return id;
     }

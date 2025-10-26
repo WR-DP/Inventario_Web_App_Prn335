@@ -39,8 +39,10 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
 
     List<TipoProductoCaracteristica> posibleCaracteristicas;
 
-    //cuando ya se tenga caracteristica<-------------------
     List<TipoProductoCaracteristica> caracteristicasAsignadas;
+
+    private TipoProductoCaracteristica seleccionPosibleCaracteristica;
+    private TipoProductoCaracteristica seleccionCaracteristicaAsignada;
 
     protected UUID idProducto;
 
@@ -157,14 +159,101 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
          this.posibleCaracteristicas = List.of();
     }
 
+    public void btnAgregarPosibleCaracteristicaHandler(ActionEvent event){
+        //la funcionalidad de este boton es agregar la caracteristica seleccionada a la lista de caracteristicas asignadas
+        try{
+            Object sel = event.getComponent().getAttributes().get("selectedCaracteristica");
+            if(!(sel instanceof TipoProductoCaracteristica)){
+                return;
+            }
+            TipoProductoCaracteristica seleccion = (TipoProductoCaracteristica) sel;
 
-    //implementar funcionalidad cuando ya este caracteristica
+            if (this.caracteristicasAsignadas == null) {
+                this.caracteristicasAsignadas = new java.util.ArrayList<>();
+            }
+
+            // Remover de posibles si existe
+            if (this.posibleCaracteristicas != null) {
+                this.posibleCaracteristicas.removeIf(pc -> pc.equals(seleccion));
+            }
+
+            // Agregar a asignadas si no está ya
+            if (!this.caracteristicasAsignadas.contains(seleccion)) {
+                this.caracteristicasAsignadas.add(seleccion);
+            }
+
+        }catch(Exception ex){
+            Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public void btnEliminarCaracteristicaAsignadaHandler(ActionEvent event){
+        //la funcionalidad de este boton es eliminar la caracteristica seleccionada de la lista de caracteristicas asignadas
+        //pero ojo, solo se puede eliminar si la caracteristica no es obligatoria
+        try{
+            Object sel = event.getComponent().getAttributes().get("selectedCaracteristica");
+            if(!(sel instanceof TipoProductoCaracteristica)){
+                return;
+            }
+            TipoProductoCaracteristica seleccion = (TipoProductoCaracteristica) sel;
+
+            // La vista puede marcar si la caracteristica es obligatoria pasando un atributo "obligatoria"
+            Object obligAttr = event.getComponent().getAttributes().get("obligatoria");
+            if (Boolean.TRUE.equals(obligAttr)) {
+                Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.INFO, "Intento de eliminar caracteristica obligatoria denegado");
+                return;
+            }
+
+            if (this.caracteristicasAsignadas != null) {
+                this.caracteristicasAsignadas.removeIf(c -> c.equals(seleccion));
+            }
+
+            if (this.posibleCaracteristicas == null) {
+                this.posibleCaracteristicas = new java.util.ArrayList<>();
+            }
+
+            // Volver a agregar a posibles si no existe ya
+            if (!this.posibleCaracteristicas.contains(seleccion)) {
+                this.posibleCaracteristicas.add(seleccion);
+            }
+
+        }catch(Exception ex){
+            Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    //En caracteristicas asignadas deben de estar las caracteristicas que ya tiene el producto tipo producto
+    //incluyendo las obligatorias siempre
     public List<TipoProductoCaracteristica> getCaracteristicasAsignadas() {
+        if (this.caracteristicasAsignadas == null) {
+            this.caracteristicasAsignadas = new java.util.ArrayList<>();
+        }
         return caracteristicasAsignadas;
     }
 
+    //En posible caracteristicas deben de estar las caracteristicas que puede tener el producto tipo producto
+    //sin incluir las que ya tiene asignadas y las que son obligatorias por que ya estan asignadas
     public List<TipoProductoCaracteristica> getPosibleCaracteristicas() {
+        if (this.posibleCaracteristicas == null) {
+            this.posibleCaracteristicas = new java.util.ArrayList<>();
+        }
         return posibleCaracteristicas;
+    }
+
+    public TipoProductoCaracteristica getSeleccionPosibleCaracteristica() {
+        return seleccionPosibleCaracteristica;
+    }
+
+    public void setSeleccionPosibleCaracteristica(TipoProductoCaracteristica seleccionPosibleCaracteristica) {
+        this.seleccionPosibleCaracteristica = seleccionPosibleCaracteristica;
+    }
+
+    public TipoProductoCaracteristica getSeleccionCaracteristicaAsignada() {
+        return seleccionCaracteristicaAsignada;
+    }
+
+    public void setSeleccionCaracteristicaAsignada(TipoProductoCaracteristica seleccionCaracteristicaAsignada) {
+        this.seleccionCaracteristicaAsignada = seleccionCaracteristicaAsignada;
     }
 
     @Override
