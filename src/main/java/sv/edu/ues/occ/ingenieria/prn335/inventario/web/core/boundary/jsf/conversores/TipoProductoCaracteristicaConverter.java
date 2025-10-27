@@ -5,39 +5,68 @@ import jakarta.faces.component.UIComponent;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.convert.FacesConverter;
 import jakarta.faces.convert.Converter;
-import jakarta.inject.Inject;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoProductoCaracteristicaDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProductoCaracteristica;
 
 import java.io.Serializable;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@FacesConverter(value = "tipoProductoCaracteristicaConverter")
-public class TipoProductoCaracteristicaConverter implements Converter<TipoProductoCaracteristica>{
-
+@FacesConverter(value = "tipoProductoCaracteristicaConverter", forClass = TipoProductoCaracteristica.class)
+public class TipoProductoCaracteristicaConverter implements Converter<TipoProductoCaracteristica>, Serializable {
     @Override
-    public TipoProductoCaracteristica getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
-        if (value == null || value.isBlank()) {
-            return null;
+    public TipoProductoCaracteristica getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
+        if(s!=null && !s.isBlank()){
+            int inicioId = s.lastIndexOf('(');
+            int finId = s.lastIndexOf(')');
+            if(inicioId != -1 && finId != -1 && finId > inicioId){
+                String idStr = s.substring(inicioId+1, finId);
+                try{
+                    Long id = Long.parseLong(idStr);
+                    TipoProductoCaracteristicaDAO dao = CDI.current().select(TipoProductoCaracteristicaDAO.class).get();
+                    return dao.findById(id);
+                //si no funciona con el id retornado de aquí
+                    //hay que volverlo dependent y aventarnos toda la implementacion
+                }catch(Exception ex){
+                    Logger.getLogger(TipoProductoCaracteristicaConverter.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+                }
+            }
         }
-        try {
-            Long id = Long.parseLong(value);
-            TipoProductoCaracteristicaDAO dao = CDI.current().select(TipoProductoCaracteristicaDAO.class).get();
-            return dao.findById(id);
-        } catch (NumberFormatException ex) {
-            return null;
-        } catch (Exception ex) {
-            return null;
-        }
+        return null;
     }
 
     @Override
     public String getAsString(FacesContext facesContext, UIComponent uiComponent, TipoProductoCaracteristica tipoProductoCaracteristica) {
-        if (tipoProductoCaracteristica == null) {
-            return "";
+        if(tipoProductoCaracteristica!=null && tipoProductoCaracteristica.getId()!=null && tipoProductoCaracteristica.getIdCaracteristica().getNombre()!=null){
+            return tipoProductoCaracteristica.getIdCaracteristica().getNombre()+" ("+tipoProductoCaracteristica.getId().toString()+")";
         }
-        Long id = tipoProductoCaracteristica.getId();
-        return id == null ? "" : id.toString();
+        return null;
     }
+
+//    @Override
+//    public TipoProductoCaracteristica getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
+//        if (value == null || value.isBlank()) {
+//            return null;
+//        }
+//        try {
+//            UUID id = UUID.fromString(value);
+//            TipoProductoCaracteristicaDAO dao = CDI.current().select(TipoProductoCaracteristicaDAO.class).get();
+//            return dao.findById(id);
+//        } catch (Exception ex) {
+//            Logger.getLogger(TipoProductoCaracteristicaConverter.class.getName())
+//                    .log(Level.SEVERE, "Error en getAsObject: {0}", ex.getMessage());
+//            return null;
+//        }
+//    }
+//
+//    @Override
+//    public String getAsString(FacesContext facesContext, UIComponent uiComponent, TipoProductoCaracteristica tipo) {
+//        if (tipo == null || tipo.getId() == null) {
+//            return "";
+//        }
+//        return tipo.getId().toString();
+//    }
+
+
 }

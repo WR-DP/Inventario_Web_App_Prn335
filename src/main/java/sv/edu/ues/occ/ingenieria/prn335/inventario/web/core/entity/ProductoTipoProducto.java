@@ -46,60 +46,39 @@ public class ProductoTipoProducto {
     public UUID getId() {
         return id;
     }
-
     public void setId(UUID id) {
         this.id = id;
     }
-
     public Producto getIdProducto() {
         return idProducto;
     }
-
     public void setIdProducto(Producto idProducto) {
         this.idProducto = idProducto;
     }
-
     public OffsetDateTime getFechaCreacion() {
         return fechaCreacion;
     }
-
     public void setFechaCreacion(OffsetDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
-
     public Boolean getActivo() {
         return activo;
     }
-
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
-
     public String getObservaciones() {
         return observaciones;
     }
-
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-
-//    public UUID getIdTipoProducto() {
-//    return id;
-//    }
-//    public void setIdTipoProducto(UUID id) {
-//        this.id = id;
-//    }
-//    public void setIdTipoProducto(@NotNull TipoProducto idTipoProducto) {
-//        this.idTipoProducto = idTipoProducto;
-//    }
     public java.util.stream.Stream<ProductoTipoProducto> stream() {
         return java.util.stream.Stream.of(this);
     }
-
     public @NotNull TipoProducto getIdTipoProducto() {
         return idTipoProducto;
     }
-
     public void setIdTipoProducto(@NotNull TipoProducto idTipoProducto) {
         this.idTipoProducto = idTipoProducto;
     }

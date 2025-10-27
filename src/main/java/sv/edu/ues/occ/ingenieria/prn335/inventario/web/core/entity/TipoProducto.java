@@ -51,56 +51,43 @@ public class TipoProducto implements Serializable {
     public int hashCode() {
         return (id != null) ? id.hashCode() : 0;
     }
-
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
     public TipoProducto getIdTipoProductoPadre() {
         return idTipoProductoPadre;
     }
-
     public void setIdTipoProductoPadre(TipoProducto idTipoProductoPadre) {
         this.idTipoProductoPadre = idTipoProductoPadre;
     }
-
     public String getNombre() {
         return nombre;
     }
-
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
     public Boolean getActivo() {
         return activo;
     }
-
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
-
     public String getComentarios() {
         return comentarios;
     }
-
     public void setComentarios(String comentarios) {
         this.comentarios = comentarios;
     }
-
     public boolean isEmpty() {
         return this.id == null || this.id == 0;
     }
-
     public Long getIdTipoProducto() {
         return id;
     }
     public java.util.stream.Stream<TipoProducto> stream() {
         return java.util.stream.Stream.of(this);
     }
-
 }

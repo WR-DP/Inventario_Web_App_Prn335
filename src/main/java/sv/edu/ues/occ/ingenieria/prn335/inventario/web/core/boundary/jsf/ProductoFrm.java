@@ -72,10 +72,6 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
 
     @Override
     protected Producto nuevoRegistro() {
-//        //condicional para validar el id del producto no sea nulo
-//        if(){
-//            //atributos del producto tipo producto
-//        }
         Producto producto =new Producto();
         producto.setId(UUID.randomUUID());
         producto.setNombreProducto("");
@@ -98,10 +94,8 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
     }
 
     protected String nombreBean="page.producto";
-
     public String getNombreBean() {return nombreBean;}
     public void setNombreBean(String nombreBean) {this.nombreBean = nombreBean;}
-
     public List<Producto> getListaProductos() {return productos;}
     public void setListaProductos(List<Producto> listaProductos) {this.productos = listaProductos;}
 
@@ -111,6 +105,5 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
         }
         return productoTipoProductoFrm;
     }
-
 
 }

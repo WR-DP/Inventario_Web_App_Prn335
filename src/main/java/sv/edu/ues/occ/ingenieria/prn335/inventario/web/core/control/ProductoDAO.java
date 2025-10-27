@@ -38,8 +38,6 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
         return super.count();
     }
 
-
-
     public List<Producto> findByIdProducto(UUID idProducto, int first, int max) {
        if(idProducto != null){
         try{
@@ -121,6 +119,4 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
         }
         return 0;
     }
-
-
 }

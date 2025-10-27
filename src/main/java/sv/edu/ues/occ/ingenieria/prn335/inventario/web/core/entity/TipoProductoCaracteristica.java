@@ -53,49 +53,37 @@ public class TipoProductoCaracteristica {
     public int hashCode() {
         return id == null ? 0 : id.hashCode();
     }
-
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
     public Caracteristica getIdCaracteristica() {
         return idCaracteristica;
     }
-
     public void setIdCaracteristica(Caracteristica idCaracteristica) {
         this.idCaracteristica = idCaracteristica;
     }
-
     public TipoProducto getIdTipoProducto() {
         return idTipoProducto;
     }
-
     public void setIdTipoProducto(TipoProducto idTipoProducto) {
         this.idTipoProducto = idTipoProducto;
     }
-
     public Boolean getObligatorio() {
         return obligatorio;
     }
-
     public void setObligatorio(Boolean obligatorio) {
         this.obligatorio = obligatorio;
     }
-
     public OffsetDateTime getFechaCreacion() {
         return fechaCreacion;
     }
-
     public void setFechaCreacion(OffsetDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
-
     public java.util.stream.Stream<TipoProductoCaracteristica> stream() {
         return java.util.stream.Stream.of(this);
     }
-
 }

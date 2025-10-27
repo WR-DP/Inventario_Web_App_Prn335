@@ -92,7 +92,6 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         }
         return List.of();
     }
-
     public Long countByIdCaracteristica(final Long id) {
         if (id != null) {
             try {
@@ -105,7 +104,6 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         }
         return 0L;
     }
-
     public List<TipoProductoCaracteristica> findByIdPadre(final Long idPadre, int first, int max) {
         if (idPadre != null) {
             try {
@@ -120,7 +118,6 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         }
         return List.of();
     }
-
     public List<TipoProductoCaracteristica> findByNombreCaracteristica(final String nombreCaracteristica, int first, int max) {
         if (nombreCaracteristica != null && !nombreCaracteristica.isBlank()) {
             try {
@@ -135,7 +132,6 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         }
         return List.of();
     }
-
     public List<ProductoTipoProductoCaracteristica> findByProductoTipoProducto(UUID idProductoTipoProducto, int first, int max) {
         if (idProductoTipoProducto == null) return Collections.emptyList();
         try {
@@ -150,7 +146,6 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
             return Collections.emptyList();
         }
     }
-
     public ProductoTipoProductoCaracteristica save(ProductoTipoProductoCaracteristica entidad) {
         try {
             if (entidad.getId() == null) {
@@ -164,7 +159,6 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
             return null;
         }
     }
-
     public boolean removeByProductoTipoProductoAndCaracteristica(UUID idProductoTipoProducto, Long idTipoProductoCaracteristica) {
         try {
             int deleted = em.createNamedQuery(
@@ -185,6 +179,20 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         } catch (Exception ex) {
             Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             return null;
+        }
+    }
+
+    //Luego podemos refactorizar para utilizar una Named Query
+    public List<TipoProductoCaracteristica> findObligatoriasByTipo(Long idTipoProducto) {
+        if (idTipoProducto == null) return List.of();
+        try {
+            TypedQuery<TipoProductoCaracteristica> q = em.createQuery(
+                    "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipo AND tpc.obligatorio = true",
+                    TipoProductoCaracteristica.class);
+            q.setParameter("idTipo", idTipoProducto);
+            return q.getResultList();
+        } catch (Exception e) {
+            return List.of();
         }
     }
 

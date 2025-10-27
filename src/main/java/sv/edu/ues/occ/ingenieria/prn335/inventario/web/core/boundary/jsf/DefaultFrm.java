@@ -75,7 +75,7 @@ public int contarDatos(){
 }
 
 
-    private void inicializarRegistros() {
+    void inicializarRegistros() {
         this.modelo = new LazyDataModel<T>() {
             @Override
             public int count(Map<String, FilterMeta> map) {

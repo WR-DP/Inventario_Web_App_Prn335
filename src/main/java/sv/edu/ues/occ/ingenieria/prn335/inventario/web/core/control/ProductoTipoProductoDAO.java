@@ -64,5 +64,4 @@ public class ProductoTipoProductoDAO extends InventarioDefaultDataAccess<Product
         }
         return 0L;
     }
-
 }
