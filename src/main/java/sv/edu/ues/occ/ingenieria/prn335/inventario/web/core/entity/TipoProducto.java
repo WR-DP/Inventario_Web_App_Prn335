@@ -5,13 +5,10 @@ import jakarta.validation.constraints.Size;
 
 import java.awt.image.BufferedImageOp;
 import java.io.Serializable;
-//import org.hibernate.annotations.OnDelete;
-//import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "tipo_producto", schema = "public")
 @NamedQueries({
-        //aqui si debemos implementar varias queries para buscar por diferentes campos
         @NamedQuery(name = "TipoProducto.findAllTipoProducto", query = "SELECT t FROM TipoProducto t"),
         @NamedQuery(name = "TipoProducto.findByIdTipoProducto", query = "SELECT t FROM TipoProducto t WHERE t.id = :id"),
         @NamedQuery(name = "TipoProducto.findByActivo", query = "SELECT t FROM TipoProducto t WHERE t.activo = :activo"),
@@ -25,7 +22,6 @@ public class TipoProducto implements Serializable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "id_tipo_producto_padre")
     private TipoProducto idTipoProductoPadre;
 

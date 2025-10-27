@@ -9,7 +9,6 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoProducto
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProductoCaracteristica;
 
 import java.io.Serializable;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,8 +25,6 @@ public class TipoProductoCaracteristicaConverter implements Converter<TipoProduc
                     Long id = Long.parseLong(idStr);
                     TipoProductoCaracteristicaDAO dao = CDI.current().select(TipoProductoCaracteristicaDAO.class).get();
                     return dao.findById(id);
-                //si no funciona con el id retornado de aquí
-                    //hay que volverlo dependent y aventarnos toda la implementacion
                 }catch(Exception ex){
                     Logger.getLogger(TipoProductoCaracteristicaConverter.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
                 }
@@ -35,7 +32,6 @@ public class TipoProductoCaracteristicaConverter implements Converter<TipoProduc
         }
         return null;
     }
-
     @Override
     public String getAsString(FacesContext facesContext, UIComponent uiComponent, TipoProductoCaracteristica tipoProductoCaracteristica) {
         if(tipoProductoCaracteristica!=null && tipoProductoCaracteristica.getId()!=null && tipoProductoCaracteristica.getIdCaracteristica().getNombre()!=null){
@@ -43,30 +39,4 @@ public class TipoProductoCaracteristicaConverter implements Converter<TipoProduc
         }
         return null;
     }
-
-//    @Override
-//    public TipoProductoCaracteristica getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
-//        if (value == null || value.isBlank()) {
-//            return null;
-//        }
-//        try {
-//            UUID id = UUID.fromString(value);
-//            TipoProductoCaracteristicaDAO dao = CDI.current().select(TipoProductoCaracteristicaDAO.class).get();
-//            return dao.findById(id);
-//        } catch (Exception ex) {
-//            Logger.getLogger(TipoProductoCaracteristicaConverter.class.getName())
-//                    .log(Level.SEVERE, "Error en getAsObject: {0}", ex.getMessage());
-//            return null;
-//        }
-//    }
-//
-//    @Override
-//    public String getAsString(FacesContext facesContext, UIComponent uiComponent, TipoProductoCaracteristica tipo) {
-//        if (tipo == null || tipo.getId() == null) {
-//            return "";
-//        }
-//        return tipo.getId().toString();
-//    }
-
-
 }

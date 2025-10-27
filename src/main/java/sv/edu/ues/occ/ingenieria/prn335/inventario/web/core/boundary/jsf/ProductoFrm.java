@@ -19,18 +19,16 @@ import java.util.logging.Logger;
 @Named
 @ViewScoped
 public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
-
     @Inject
     FacesContext facesContext;
-
     @Inject
     ProductoDAO productoDAO;
-
     @Inject
     protected ProductoTipoProductoFrm productoTipoProductoFrm;
-
     List<Producto> productos;
-    public ProductoFrm() {}
+
+    public ProductoFrm() {
+    }
 
     @Override
     protected FacesContext getFacesContext() {
@@ -41,7 +39,6 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
     protected InventarioDAOInterface<Producto, Object> getDao() {
         return productoDAO;
     }
-
     @Override
     protected String getIdAsText(Producto r) {
         if(r != null && r.getId() != null){
@@ -49,7 +46,6 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
         }
         return null;
     }
-
     @Override
     protected Producto getIdByText(String id) {
         if(id!= null){
@@ -79,12 +75,10 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
         producto.setComentarios("");
         return producto;
     }
-
     @Override
     public InventarioDefaultDataAccess getDataAccess() {
         return productoDAO;
     }
-
     @Override
     protected Producto buscarRegistroPorId(Object id) {
         if(id instanceof  UUID buscado && this.modelo != null){
@@ -105,5 +99,4 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
         }
         return productoTipoProductoFrm;
     }
-
 }

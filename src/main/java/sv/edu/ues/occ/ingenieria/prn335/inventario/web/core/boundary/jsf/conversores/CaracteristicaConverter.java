@@ -17,10 +17,8 @@ import java.util.logging.Logger;
 @FacesConverter(value="caracteristicaConverter", managed = true)
 @Dependent
 public class CaracteristicaConverter implements  Converter<Caracteristica>, Serializable {
-
     @Inject
     CaracteristicaDAO caracteristicaDAO;
-
     @Override
     public Caracteristica getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
         if(s != null && !s.isBlank()){
@@ -39,7 +37,6 @@ public class CaracteristicaConverter implements  Converter<Caracteristica>, Seri
         }
         return null;
     }
-
     @Override
     public String getAsString(FacesContext facesContext, UIComponent uiComponent, Caracteristica caracteristica) {
         if(caracteristica != null && caracteristica.getId()!=null && caracteristica.getNombre()!=null){

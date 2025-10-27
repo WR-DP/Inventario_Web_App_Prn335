@@ -31,7 +31,6 @@ public class ProductoTipoProductoCaracteristicaDAO extends InventarioDefaultData
         return ProductoTipoProductoCaracteristica.class;
     }
 
-    // Devuelve todas las asignaciones (entidad completa) por idProducto (producto padre)
     public List<ProductoTipoProductoCaracteristica> findByIdProducto(UUID idProducto) {
         if (idProducto == null) return new java.util.ArrayList<>();
         try {
@@ -43,8 +42,6 @@ public class ProductoTipoProductoCaracteristicaDAO extends InventarioDefaultData
             throw new IllegalArgumentException("Error al buscar las caracteristicas del producto", e);
         }
     }
-
-    // Devuelve todas las asignaciones intermedias por id del ProductoTipoProducto
     public List<ProductoTipoProductoCaracteristica> findByProductoTipoProductoId(UUID id, int first, int maxValue) {
         if (id == null) return new java.util.ArrayList<>();
         try {
@@ -58,9 +55,7 @@ public class ProductoTipoProductoCaracteristicaDAO extends InventarioDefaultData
             throw new IllegalArgumentException("Error al buscar las caracteristicas del producto por tipo producto", e);
         }
     }
-
-    // Helper: borrar por ids (usa la named query de borrado)
-    //si tenemos problemas aca, intentar actualizando la dependencia de jakarta.persistence 3.1.0
+    //si tenemos problemas aca, intentar actualizando la dependencia de jakarta.persistence 3.1.0 <-----------------------------------------------------
     public int deleteByProductoTipoProductoAndCaracteristica(UUID idPtpp, Long idTipoProductoCaracteristica) {
         try {
             javax.persistence.Query q =
@@ -72,11 +67,8 @@ public class ProductoTipoProductoCaracteristicaDAO extends InventarioDefaultData
             throw new IllegalArgumentException("Error al eliminar asignacion", e);
         }
     }
-
-    // exists helper
     public boolean exists(UUID id) {
         if (id == null) return false;
         return em.find(ProductoTipoProductoCaracteristica.class, id) != null;
     }
-
 }

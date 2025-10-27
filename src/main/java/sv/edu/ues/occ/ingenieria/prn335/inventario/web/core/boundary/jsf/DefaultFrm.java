@@ -10,6 +10,7 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -21,27 +22,16 @@ public abstract class DefaultFrm<T> implements Serializable {
     ESTADO_CRUD estado = ESTADO_CRUD.NADA;
 
     protected String nombreBean;
-
     protected abstract FacesContext getFacesContext();
-
     protected abstract InventarioDAOInterface<T, Object> getDao();
-
     protected List<T> registros;
-
     protected LazyDataModel<T> modelo;
-
     protected T registro;
-
     protected int pageSize = 5;
-
     protected abstract String getIdAsText(T r);
-
     protected abstract T getIdByText(String id);
-
     protected abstract T nuevoRegistro();
-
     public abstract InventarioDefaultDataAccess getDataAccess();
-
     protected abstract T buscarRegistroPorId(Object id);
 
     @PostConstruct
@@ -50,30 +40,26 @@ public abstract class DefaultFrm<T> implements Serializable {
         inicializarListas();
     }
 
-//    private void inicializarListas() {
-//    }
-    //en almacenFrm me pide tenerla en public
-public void inicializarListas() {
-}
-
-public List<T> cargarDatos(int first, int max){
-    try {
-        return getDao().findRange(first, max);
-    } catch (Exception ex) {
-        Logger.getLogger(DefaultFrm.class.getName()).log(Level.SEVERE, null, ex);
+    public void inicializarListas() {
     }
-    return Collections.emptyList();
-}
 
-public int contarDatos(){
-    try {
-        return getDao().count();
-    } catch (Exception ex) {
-        Logger.getLogger(DefaultFrm.class.getName()).log(Level.SEVERE, null, ex);
+    public List<T> cargarDatos(int first, int max) {
+        try {
+            return getDao().findRange(first, max);
+        } catch (Exception ex) {
+            Logger.getLogger(DefaultFrm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return Collections.emptyList();
     }
-    return 0;
-}
 
+    public int contarDatos() {
+        try {
+            return getDao().count();
+        } catch (Exception ex) {
+            Logger.getLogger(DefaultFrm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
 
     void inicializarRegistros() {
         this.modelo = new LazyDataModel<T>() {
@@ -99,8 +85,9 @@ public int contarDatos(){
 
             @Override
             public String getRowKey(T object) {
-                if(object != null){;
-                    try{
+                if (object != null) {
+                    ;
+                    try {
                         return getIdAsText(object);
                     } catch (Exception e) {
                         Logger.getLogger(DefaultFrm.class.getName()).log(Level.SEVERE, null, e);
@@ -111,8 +98,8 @@ public int contarDatos(){
 
             @Override
             public T getRowData(String rowKey) {
-                if(rowKey != null){
-                    try{
+                if (rowKey != null) {
+                    try {
                         return getIdByText(rowKey);
                     } catch (Exception e) {
                         Logger.getLogger(DefaultFrm.class.getName()).log(Level.SEVERE, null, e);
@@ -127,25 +114,23 @@ public int contarDatos(){
         this.registro = nuevoRegistro();
         this.estado = ESTADO_CRUD.CREAR;
     }
+
     public void btnCancelarHandler(ActionEvent actionEvent) {
         this.registro = null;
         this.estado = ESTADO_CRUD.NADA;
     }
 
-    // Versión sin parámetros para llamadas programáticas
     public void btnGuardarHandler() {
         btnGuardarHandler(null);
     }
 
-    // Versión sin parámetros para llamadas programáticas
     public void btnEliminarHandler() {
         btnEliminarHandler(null);
     }
 
-
     public void btnGuardarHandler(ActionEvent actionEvent) {
-        try{
-            if(registro != null){
+        try {
+            if (registro != null) {
                 getDao().create(registro);
                 this.enviarMensaje("Registro creado", FacesMessage.SEVERITY_INFO);
                 this.estado = ESTADO_CRUD.NADA;
@@ -153,8 +138,8 @@ public int contarDatos(){
                 inicializarRegistros();
                 return;
             }
-        }catch (Exception ex){
-            enviarMensaje("Error al crear el registro: "+ex.getMessage(), FacesMessage.SEVERITY_ERROR);
+        } catch (Exception ex) {
+            enviarMensaje("Error al crear el registro: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
             return;
         }
         enviarMensaje("El registro a almacenar no puede ser nulo", FacesMessage.SEVERITY_WARN);
@@ -162,29 +147,28 @@ public int contarDatos(){
     }
 
     public void btnSeleccionarHandler(T registro) {
-        if(registro == null) {
+        if (registro == null) {
             enviarMensaje("No se recibio el id del registro", FacesMessage.SEVERITY_ERROR);
             this.estado = ESTADO_CRUD.NADA;
-            return ;
+            return;
         }
-        this.registro =  buscarRegistroPorId(registro);
+        this.registro = buscarRegistroPorId(registro);
         this.estado = ESTADO_CRUD.MODIFICAR;
     }
 
-     public void btnModificarHandler (ActionEvent actionEvent) {
+    public void btnModificarHandler(ActionEvent actionEvent) {
         if (this.registro == null) {
             this.enviarMensaje("No hay registro seleccionado", FacesMessage.SEVERITY_ERROR);
             return;
         }
-        try{
-            //hacer para modify en vez de update
+        try {
             this.getDao().update(this.registro);
             enviarMensaje("Registro modificado", FacesMessage.SEVERITY_INFO);
             this.inicializarRegistros();
             this.estado = ESTADO_CRUD.NADA;
             this.registro = null;
-        }catch (Exception ex){
-            enviarMensaje("Error al modificar el registro: "+ex.getMessage(), FacesMessage.SEVERITY_ERROR);
+        } catch (Exception ex) {
+            enviarMensaje("Error al modificar el registro: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
             return;
         }
     }
@@ -205,26 +189,24 @@ public int contarDatos(){
         }
     }
 
-//-----------> con selectionHandler NO nos permite modificar el registro seleccionado en la tabla
-public void selectionHandler (SelectEvent<T> r) {
-         if (r != null){
-             this.estado = ESTADO_CRUD.MODIFICAR;
-         }
-}
-
-//-----------> con seleccionarRegistro nos permite modificar el registro seleccionado en la tabla
-public void seleccionarRegistro (SelectEvent<T> event) {
-    if (event != null && event.getObject() != null) {
-        this.registro = event.getObject();
-        this.estado = ESTADO_CRUD.MODIFICAR;
-    } else {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "No se seleccionó ningún registro."));
+    public void selectionHandler(SelectEvent<T> r) {
+        if (r != null) {
+            this.estado = ESTADO_CRUD.MODIFICAR;
+        }
     }
 
-}
+    public void seleccionarRegistro(SelectEvent<T> event) {
+        if (event != null && event.getObject() != null) {
+            this.registro = event.getObject();
+            this.estado = ESTADO_CRUD.MODIFICAR;
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "No se seleccionó ningún registro."));
+        }
 
-    public void enviarMensaje(String s, FacesMessage.Severity severity){
+    }
+
+    public void enviarMensaje(String s, FacesMessage.Severity severity) {
         FacesMessage msj = new FacesMessage();
         msj.setSeverity(severity);
         msj.setSummary(s);
@@ -234,41 +216,31 @@ public void seleccionarRegistro (SelectEvent<T> event) {
     public ESTADO_CRUD getEstado() {
         return estado;
     }
-
     public void setEstado(ESTADO_CRUD estado) {
         this.estado = estado;
     }
-
-    public String getNombreBean(){
+    public String getNombreBean() {
         return nombreBean;
     }
-
     public void setNombreBean(String nombreBean) {
         this.nombreBean = nombreBean;
     }
-
     public T getRegistro() {
         return registro;
     }
-
     public void setRegistro(T registro) {
         this.registro = registro;
     }
-
     public int getPageSize() {
         return pageSize;
     }
-
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }
-
     public LazyDataModel<T> getModelo() {
         return modelo;
     }
-
     public void setModelo(LazyDataModel<T> modelo) {
         this.modelo = modelo;
     }
-
 }

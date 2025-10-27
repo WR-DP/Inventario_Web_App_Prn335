@@ -21,21 +21,17 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
 
     @PersistenceContext(unitName = "InventarioPU")
     private EntityManager em;
-
     public TipoProductoCaracteristicaDAO() {
         super(TipoProductoCaracteristica.class);
     }
-
     @Override
     public EntityManager getEntityManager() {
         return em;
     }
-
     @Override
     protected Class<TipoProductoCaracteristica> getEntityClass() {
         return TipoProductoCaracteristica.class;
     }
-
     @Override
     public int count() throws IllegalStateException {
         return super.count();
@@ -58,7 +54,6 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         }
         return List.of();
     }
-
     /**
      * Contar por idTipoProducto
      */
@@ -74,7 +69,6 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         }
         return 0L;
     }
-
     /**
      * Mantengo métodos auxiliares existentes (buscar por id de la entidad TipoProductoCaracteristica)
      */
@@ -182,7 +176,7 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         }
     }
 
-    //Luego podemos refactorizar para utilizar una Named Query
+    //Luego podemos refactorizar para utilizar una Named Query<-----------------------------------------------------------------------
     public List<TipoProductoCaracteristica> findObligatoriasByTipo(Long idTipoProducto) {
         if (idTipoProducto == null) return List.of();
         try {
@@ -195,5 +189,4 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
             return List.of();
         }
     }
-
 }

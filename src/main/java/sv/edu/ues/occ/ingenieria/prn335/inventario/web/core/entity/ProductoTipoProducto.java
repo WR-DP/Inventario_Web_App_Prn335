@@ -24,11 +24,9 @@ public class ProductoTipoProducto {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "id_producto")
     private Producto idProducto;
 
-    //agregar la relacion con TipoProducto idTipoProducto
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_tipo_producto")
     @NotNull

@@ -16,14 +16,10 @@ import java.util.logging.Logger;
 @FacesConverter(value="tipoProductoConverter", managed = true)
 @Dependent
 public class TipoProductoConverter implements Converter<TipoProducto>, Serializable {
-
     @Inject
     TipoProductoDAO tipoProductoDAO;
-
-
     @Override
     public TipoProducto getAsObject(FacesContext facesContext, UIComponent uiComponent, String s) {
-//Nomre (ID)
         if(s != null && !s.isBlank()){
             int inicioId =s.lastIndexOf('(');
             int finId =s.lastIndexOf(')');
@@ -31,7 +27,6 @@ public class TipoProductoConverter implements Converter<TipoProducto>, Serializa
                 String idStr = s.substring(inicioId+1, finId);
                 try{
                     Long id = Long.valueOf(idStr);
-                    //estamos usando el metodo findById de la clase abstacta base
                     return tipoProductoDAO.findById(id);
                 }catch(Exception ex){
                     Logger.getLogger(TipoProductoConverter.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
@@ -40,7 +35,6 @@ public class TipoProductoConverter implements Converter<TipoProducto>, Serializa
         }
         return null;
     }
-
     @Override
     public String getAsString(FacesContext facesContext, UIComponent uiComponent, TipoProducto tipoProducto) {
         if(tipoProducto != null && tipoProducto.getId()!=null && tipoProducto.getNombre()!=null){

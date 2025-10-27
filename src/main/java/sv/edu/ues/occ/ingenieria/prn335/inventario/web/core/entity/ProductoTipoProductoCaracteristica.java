@@ -7,7 +7,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "producto_tipo_producto_caracteristica", schema = "public")
 @NamedQueries({
-        //tiene que traer los campos caracteristicas de un producto especifico por medio del id del producto, por ende primero necesitamos mapear bien las entidades
         @NamedQuery(name = "ProductoTipoProductoCaracteristica.findByIdProducto",
                 query = "SELECT p FROM ProductoTipoProductoCaracteristica p WHERE p.idProductoTipoProducto.idProducto.id = :idProducto"),
         @NamedQuery(name = "ProductoTipoProductoCaracteristica.findByProductoTipoProductoId",

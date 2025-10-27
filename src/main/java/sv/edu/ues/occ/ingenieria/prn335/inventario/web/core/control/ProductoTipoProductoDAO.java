@@ -21,16 +21,13 @@ import java.util.logging.Logger;
 public class ProductoTipoProductoDAO extends InventarioDefaultDataAccess<ProductoTipoProducto, Object> implements Serializable {
     @PersistenceContext(unitName = "InventarioPU")
     private EntityManager em;
-
     public ProductoTipoProductoDAO() {
         super(ProductoTipoProducto.class);
     }
-
     @Override
     public EntityManager getEntityManager() {
         return em;
     }
-
     @Override
     protected Class<ProductoTipoProducto> getEntityClass() {
         return ProductoTipoProducto.class;
@@ -50,8 +47,6 @@ public class ProductoTipoProductoDAO extends InventarioDefaultDataAccess<Product
         }
         return Collections.emptyList();
     }
-
-    //countByidProducto
     public Long countByidProducto(UUID idProducto) {
         if (idProducto != null) {
             try {
