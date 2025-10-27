@@ -19,16 +19,13 @@ import java.util.logging.Logger;
 public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> implements Serializable {
     @PersistenceContext(unitName="InventarioPU")
     private EntityManager em;
-
     public ProductoDAO() {
         super(Producto.class);
     }
-
     @Override
     public EntityManager getEntityManager() {
         return em;
     }
-
     @Override
     protected Class<Producto> getEntityClass() {
         return Producto.class;
@@ -37,8 +34,6 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
     public int count() throws IllegalStateException {
         return super.count();
     }
-
-
 
     public List<Producto> findByIdProducto(UUID idProducto, int first, int max) {
        if(idProducto != null){
@@ -54,8 +49,6 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
        }
         return List.of();
     }
-
-    //buscar todos
     public List<Producto> findAllProducto(int first, int max) {
         try{
             TypedQuery<Producto> q = em.createNamedQuery("Producto.findAllProducto", Producto.class);
@@ -67,8 +60,6 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
         }
         return List.of();
     }
-
-    //buscar por activo
     public List<Producto> findByActivo(Boolean activo, int first, int max) {
         if(activo != null){
          try{
@@ -83,8 +74,6 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
         }
         return List.of();
      }
-
-    //contar todos los productos
     public int countAllProductos() {
         try{
             TypedQuery<Long> q = em.createNamedQuery("Producto.countAllProducto", Long.class);
@@ -94,8 +83,6 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
         }
         return 0;
     }
-
-    //contar por activo
     public int countByActivo(Boolean activo) {
         if(activo != null){
             try{
@@ -108,7 +95,6 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
         }
         return 0;
     }
-
     public int countByIdProducto(UUID idProducto) {
         if(idProducto != null){
             try{
@@ -121,6 +107,4 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
         }
         return 0;
     }
-
-
 }

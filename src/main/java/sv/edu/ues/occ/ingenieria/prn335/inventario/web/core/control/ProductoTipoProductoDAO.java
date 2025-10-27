@@ -7,6 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Producto;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.ProductoTipoProducto;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.ProductoTipoProductoCaracteristica;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -20,16 +21,13 @@ import java.util.logging.Logger;
 public class ProductoTipoProductoDAO extends InventarioDefaultDataAccess<ProductoTipoProducto, Object> implements Serializable {
     @PersistenceContext(unitName = "InventarioPU")
     private EntityManager em;
-
     public ProductoTipoProductoDAO() {
         super(ProductoTipoProducto.class);
     }
-
     @Override
     public EntityManager getEntityManager() {
         return em;
     }
-
     @Override
     protected Class<ProductoTipoProducto> getEntityClass() {
         return ProductoTipoProducto.class;
@@ -49,8 +47,6 @@ public class ProductoTipoProductoDAO extends InventarioDefaultDataAccess<Product
         }
         return Collections.emptyList();
     }
-
-    //countByidProducto
     public Long countByidProducto(UUID idProducto) {
         if (idProducto != null) {
             try {
@@ -63,6 +59,4 @@ public class ProductoTipoProductoDAO extends InventarioDefaultDataAccess<Product
         }
         return 0L;
     }
-
-
 }

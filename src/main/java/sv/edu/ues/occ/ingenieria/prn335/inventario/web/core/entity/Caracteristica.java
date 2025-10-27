@@ -45,23 +45,18 @@ public class Caracteristica {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
     public Boolean getActivo() {
         return activo;
     }
-
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
-
     public String getDescripcion() {
         return descripcion;
     }
-
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-
     public TipoUnidadMedida getIdTipoUnidadMedida() {
         return idTipoUnidadMedida;
     }

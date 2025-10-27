@@ -26,42 +26,49 @@ public class ProductoTipoProductoCaracteristicaDAO extends InventarioDefaultData
     public EntityManager getEntityManager() {
         return em;
     }
-
     @Override
     protected Class<ProductoTipoProductoCaracteristica> getEntityClass() {
         return ProductoTipoProductoCaracteristica.class;
     }
 
-
-    public List<ProductoTipoProductoCaracteristica> findByIdProducto(Integer idProducto) {
-        if(idProducto != null){
-            try {
-                TypedQuery <ProductoTipoProductoCaracteristica> q = em.createNamedQuery("ProductoTipoProductoCaracteristica.findByIdProducto", ProductoTipoProductoCaracteristica.class);
-                q.setParameter("idProducto", idProducto);
-                return q.getResultList();
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Error al buscar las caracteristicas del producto");
-            }
+    public List<ProductoTipoProductoCaracteristica> findByIdProducto(UUID idProducto) {
+        if (idProducto == null) return new java.util.ArrayList<>();
+        try {
+            TypedQuery<ProductoTipoProductoCaracteristica> q =
+                    em.createNamedQuery("ProductoTipoProductoCaracteristica.findByIdProducto", ProductoTipoProductoCaracteristica.class);
+            q.setParameter("idProducto", idProducto);
+            return q.getResultList();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error al buscar las caracteristicas del producto", e);
         }
-        return List.of();
     }
-
-    public List<TipoProductoCaracteristica> findByProductoTipoProductoId(UUID id, int i, int maxValue) {
-        if(id != null){
-            try {
-                TypedQuery <TipoProductoCaracteristica> q = em.createNamedQuery("ProductoTipoProductoCaracteristica.findByProductoTipoProductoId", TipoProductoCaracteristica.class);
-                q.setParameter("idProductoTipoProducto", id);
-                q.setFirstResult(i);
-                q.setMaxResults(maxValue);
-                return q.getResultList();
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Error al buscar las caracteristicas del producto por tipo producto");
-            }
+    public List<ProductoTipoProductoCaracteristica> findByProductoTipoProductoId(UUID id, int first, int maxValue) {
+        if (id == null) return new java.util.ArrayList<>();
+        try {
+            TypedQuery<ProductoTipoProductoCaracteristica> q =
+                    em.createNamedQuery("ProductoTipoProductoCaracteristica.findByProductoTipoProductoId", ProductoTipoProductoCaracteristica.class);
+            q.setParameter("idProductoTipoProducto", id);
+            q.setFirstResult(first);
+            q.setMaxResults(maxValue);
+            return q.getResultList();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error al buscar las caracteristicas del producto por tipo producto", e);
         }
-        return List.of();
     }
-
-    //metodo para buscar por el id del padre
-
-
+    //si tenemos problemas aca, intentar actualizando la dependencia de jakarta.persistence 3.1.0 <-----------------------------------------------------
+    public int deleteByProductoTipoProductoAndCaracteristica(UUID idPtpp, Long idTipoProductoCaracteristica) {
+        try {
+            javax.persistence.Query q =
+                    (javax.persistence.Query) em.createNamedQuery("ProductoTipoProductoCaracteristica.removeByProductoTipoProductoAndCaracteristica");
+            q.setParameter("idPtpp", idPtpp);
+            q.setParameter("idCar", idTipoProductoCaracteristica);
+            return q.executeUpdate(); // devuelve número de filas borradas
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error al eliminar asignacion", e);
+        }
+    }
+    public boolean exists(UUID id) {
+        if (id == null) return false;
+        return em.find(ProductoTipoProductoCaracteristica.class, id) != null;
+    }
 }

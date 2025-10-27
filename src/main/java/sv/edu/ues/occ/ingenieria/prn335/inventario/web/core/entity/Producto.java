@@ -14,7 +14,6 @@ import java.util.UUID;
         @NamedQuery(name = "Producto.countAllProducto", query = "SELECT COUNT(p) FROM Producto p"),
         @NamedQuery(name = "Producto.countByActivo", query = "SELECT COUNT(p) FROM Producto p WHERE p.activo = :activo"),
         @NamedQuery(name = "Producto.countByIdProducto", query = "SELECT COUNT(p) FROM Producto p WHERE p.id = :id")
-
 })
 public class Producto {
     @Id
