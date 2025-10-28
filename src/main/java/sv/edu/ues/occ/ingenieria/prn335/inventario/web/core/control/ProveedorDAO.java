@@ -22,12 +22,12 @@ public class ProveedorDAO extends InventarioDefaultDataAccess<Proveedor, Object>
 
     @Override
     public EntityManager getEntityManager() {
-        return null;
+        return em;
     }
 
     @Override
     protected Class<Proveedor> getEntityClass() {
-        return null;
+        return Proveedor.class;
     }
 
     // buscar por idProveedor

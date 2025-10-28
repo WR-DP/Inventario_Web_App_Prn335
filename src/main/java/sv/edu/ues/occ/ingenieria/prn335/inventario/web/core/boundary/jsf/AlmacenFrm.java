@@ -44,12 +44,6 @@ public class AlmacenFrm extends DefaultFrm<Almacen> implements Serializable {
 
     }
 
-//ahorita lo vamos a dejar quemado pero areglarlo
-    @Override
-    public String getTituloPag() {
-        return "Almacenes";
-    }
-
     @Override
     protected FacesContext getFacesContext() {
         return facesContext;
@@ -124,10 +118,11 @@ public class AlmacenFrm extends DefaultFrm<Almacen> implements Serializable {
         return null;
     }
 
-    public void setIdTipoAlmacenSeleccionado(Integer idTipoAlmacen){
-        if(idTipoAlmacen!=null && this.registro!=null && this.tipoAlmacenList!=null && !this.tipoAlmacenList.isEmpty()){
-            this.registro.setIdTipoAlmacen(this.tipoAlmacenList.stream().filter(r->r.getId().equals(idTipoAlmacen)).findFirst().orElse(null));
-
+    public void setIdTipoAlmacenSeleccionado(final Integer idTipoAlmacen){
+        if(this.registro !=null && this.tipoAlmacenList!=null && !this.tipoAlmacenList.isEmpty()){
+            this.registro.setIdTipoAlmacen(this.tipoAlmacenList.stream()
+                    .filter(r->r.getId().equals(idTipoAlmacen))
+                    .findFirst().orElse(null));
         }
     }
 

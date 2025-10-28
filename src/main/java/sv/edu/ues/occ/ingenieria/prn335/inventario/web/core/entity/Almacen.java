@@ -56,4 +56,6 @@ public class Almacen {
     public void setIdTipoAlmacen(TipoAlmacen idTipoAlmacen) {
         this.idTipoAlmacen = idTipoAlmacen;
     }
+
+    public java.util.stream.Stream<Almacen> stream() {return java.util.stream.Stream.of(this);}
 }

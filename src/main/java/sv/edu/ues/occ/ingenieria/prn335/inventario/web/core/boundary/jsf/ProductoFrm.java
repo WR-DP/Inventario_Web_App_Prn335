@@ -19,23 +19,15 @@ import java.util.logging.Logger;
 @Named
 @ViewScoped
 public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
-
     @Inject
     FacesContext facesContext;
-
     @Inject
     ProductoDAO productoDAO;
-
-    //inyectaar el bakingbean del dependiente
     @Inject
     protected ProductoTipoProductoFrm productoTipoProductoFrm;
-
     List<Producto> productos;
-    public ProductoFrm() {}
 
-    @Override
-    public String getTituloPag() {
-        return "Productos";
+    public ProductoFrm() {
     }
 
     @Override
@@ -47,7 +39,6 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
     protected InventarioDAOInterface<Producto, Object> getDao() {
         return productoDAO;
     }
-
     @Override
     protected String getIdAsText(Producto r) {
         if(r != null && r.getId() != null){
@@ -55,7 +46,6 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
         }
         return null;
     }
-
     @Override
     protected Producto getIdByText(String id) {
         if(id!= null){
@@ -63,7 +53,7 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
                 UUID buscado = UUID.fromString(id);
                 return this.modelo.getWrappedData().stream().filter(r -> r.getId().equals(buscado)).findFirst().orElse(null);
             }catch(IllegalArgumentException e){
-                Logger.getLogger(ProductoFrm.class.getName()).log(Level.SEVERE,null,e);
+                Logger.getLogger(ProductoFrm.class.getName()).log(Level.SEVERE,e.getMessage(),e);
             }
         }
         return null;
@@ -78,10 +68,6 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
 
     @Override
     protected Producto nuevoRegistro() {
-//        //condicional para validar el id del producto no sea nulo
-//        if(){
-//            //atributos del producto tipo producto
-//        }
         Producto producto =new Producto();
         producto.setId(UUID.randomUUID());
         producto.setNombreProducto("");
@@ -89,12 +75,10 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
         producto.setComentarios("");
         return producto;
     }
-
     @Override
     public InventarioDefaultDataAccess getDataAccess() {
         return productoDAO;
     }
-
     @Override
     protected Producto buscarRegistroPorId(Object id) {
         if(id instanceof  UUID buscado && this.modelo != null){
@@ -104,10 +88,8 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
     }
 
     protected String nombreBean="page.producto";
-
     public String getNombreBean() {return nombreBean;}
     public void setNombreBean(String nombreBean) {this.nombreBean = nombreBean;}
-
     public List<Producto> getListaProductos() {return productos;}
     public void setListaProductos(List<Producto> listaProductos) {this.productos = listaProductos;}
 
@@ -117,6 +99,4 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
         }
         return productoTipoProductoFrm;
     }
-
-
 }

@@ -32,10 +32,6 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
     public ProveedorFrm() {
     }
 
-    @Override
-    public String getTituloPag() {
-        return "Proveedores";
-    }
 
     @Override
     protected FacesContext getFacesContext() {
