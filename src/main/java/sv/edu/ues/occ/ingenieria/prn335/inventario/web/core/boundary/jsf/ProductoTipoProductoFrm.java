@@ -11,6 +11,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.*;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +40,88 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
     private TipoProductoCaracteristica seleccionPosibleCaracteristica;
     private TipoProductoCaracteristica seleccionCaracteristicaAsignada;
     protected UUID idProducto;
+
+
+
+    private String equivalenciaEditable;
+
+    public String getEquivalenciaEditable() {
+        return equivalenciaEditable;
+    }
+
+    public void setEquivalenciaEditable(String equivalenciaEditable) {
+        this.equivalenciaEditable = equivalenciaEditable;
+    }
+
+    /**
+     * Listener llamado desde la vista cuando se selecciona una caracteristica asignada.
+     * Carga la asignacion persistente correspondiente y llena equivalenciaEditable.
+     */
+    public void seleccionarCaracteristicaAsignada(jakarta.faces.event.AjaxBehaviorEvent event) {
+        try {
+            if (seleccionCaracteristicaAsignada == null || this.registro == null || this.registro.getId() == null) {
+                this.equivalenciaEditable = null;
+                return;
+            }
+            // cargar asignaciones persistentes para el ProductoTipoProducto seleccionado
+            this.asignacionesPersistentes = productoTipoProductoCaracteristicaDAO.findByProductoTipoProductoId(this.registro.getId(), 0, Integer.MAX_VALUE);
+            ProductoTipoProductoCaracteristica encontrada = this.asignacionesPersistentes.stream()
+                    .filter(a -> a.getIdTipoProductoCaracteristica() != null
+                            && a.getIdTipoProductoCaracteristica().getId() != null
+                            && a.getIdTipoProductoCaracteristica().getId().equals(seleccionCaracteristicaAsignada.getId()))
+                    .findFirst()
+                    .orElse(null);
+            this.equivalenciaEditable = (encontrada != null) ? encontrada.getValor() : null;
+        } catch (Exception ex) {
+            Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al cargar equivalencia", ex.getMessage()));
+            this.equivalenciaEditable = null;
+        }
+    }
+
+    /**
+     * Guarda la equivalencia (valor) en la entidad ProductoTipoProductoCaracteristica.
+     */
+    public void guardarEquivalenciaHandler(ActionEvent event) {
+        if (this.seleccionCaracteristicaAsignada == null) {
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Seleccione una característica", null));
+            return;
+        }
+        if (this.registro == null || this.registro.getId() == null) {
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Seleccione primero el tipo de producto", null));
+            return;
+        }
+        try {
+            // buscar asignacion existente
+            ProductoTipoProductoCaracteristica asignacion = (this.asignacionesPersistentes != null ? this.asignacionesPersistentes.stream()
+                    .filter(a -> a.getIdTipoProductoCaracteristica() != null
+                            && a.getIdTipoProductoCaracteristica().getId() != null
+                            && a.getIdTipoProductoCaracteristica().getId().equals(seleccionCaracteristicaAsignada.getId()))
+                    .findFirst().orElse(null) : null);
+
+            if (asignacion == null) {
+                asignacion = new ProductoTipoProductoCaracteristica();
+                asignacion.setId(java.util.UUID.randomUUID());
+                asignacion.setIdProductoTipoProducto(this.registro);
+                asignacion.setIdTipoProductoCaracteristica(this.seleccionCaracteristicaAsignada);
+            }
+            asignacion.setValor(this.equivalenciaEditable == null ? null : this.equivalenciaEditable.trim());
+
+            // persistir: usar el DAO que en el proyecto expone save para ProductoTipoProductoCaracteristica
+            // en este proyecto existe save en TipoProductoCaracteristicaDAO (revisar si debe usarse otro DAO)
+            ProductoTipoProductoCaracteristica guardado = tipoProductoCaracteristicaDAO.save(asignacion);
+            if (guardado != null) {
+                // refrescar lista de asignaciones
+                this.asignacionesPersistentes = productoTipoProductoCaracteristicaDAO.findByProductoTipoProductoId(this.registro.getId(), 0, Integer.MAX_VALUE);
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Equivalencia guardada", null));
+            } else {
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se pudo guardar la equivalencia", null));
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al guardar equivalencia: " + ex.getMessage(), null));
+        }
+    }
 
     @Override
     public List<ProductoTipoProducto> cargarDatos(int first, int max) {
