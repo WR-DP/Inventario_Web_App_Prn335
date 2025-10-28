@@ -421,7 +421,7 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
 
     @Override
     public void seleccionarRegistro(org.primefaces.event.SelectEvent<ProductoTipoProducto> event) {
-        super.seleccionarRegistro((org.primefaces.event.SelectEvent) event);
+        super.seleccionarRegistro(event);
         asegurarFechaCreacion();
     }
 
