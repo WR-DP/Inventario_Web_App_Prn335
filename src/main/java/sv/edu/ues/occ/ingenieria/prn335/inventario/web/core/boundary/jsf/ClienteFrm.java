@@ -1,7 +1,9 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.jsf;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -100,6 +102,68 @@ public class ClienteFrm extends DefaultFrm<Cliente> implements Serializable {
         }
         return null;
     }
+    @Override
+    public void btnGuardarHandler(ActionEvent actionEvent) {
+        try {
+            if (registro != null) {// Validaciones antes de guardar
+                if (!validarCampos()) {
+                    return; // si hay error, no continúa
+                }
+
+                getDao().create(registro);
+                this.enviarMensaje("Registro creado correctamente", FacesMessage.SEVERITY_INFO);
+                this.estado = ESTADO_CRUD.NADA;
+                this.registro = null;
+                inicializarRegistros();
+                return;
+            }
+        } catch (Exception ex) {
+            enviarMensaje("Error al crear el registro: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+        enviarMensaje("El registro a almacenar no puede ser nulo", FacesMessage.SEVERITY_WARN);
+        this.estado = ESTADO_CRUD.NADA;
+    }
+
+    @Override
+    public void btnModificarHandler(ActionEvent actionEvent) {
+        if (this.registro == null) {
+            this.enviarMensaje("No hay registro seleccionado", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
+        try {// Validaciones antes de modificar
+            if (!validarCampos()) {
+                return; // si hay error, no continúa
+            }
+
+            this.getDao().update(this.registro);
+            enviarMensaje("Registro modificado correctamente", FacesMessage.SEVERITY_INFO);
+            this.inicializarRegistros();
+            this.estado = ESTADO_CRUD.NADA;
+            this.registro = null;
+        } catch (Exception ex) {
+            enviarMensaje("Error al modificar el registro: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
+        }
+    }
+
+    /**
+     * Validar longitud de DUI y NIT antes de crear o modificar.
+     */
+    private boolean validarCampos() {
+        if (registro.getDui() == null || registro.getDui().length() != 9) {
+            enviarMensaje("El DUI debe tener exactamente 9 dígitos.", FacesMessage.SEVERITY_WARN);
+            return false;
+        }
+
+        if (registro.getNit() == null || registro.getNit().length() != 14) {
+            enviarMensaje("El NIT debe tener exactamente 14 dígitos.", FacesMessage.SEVERITY_WARN);
+            return false;
+        }
+
+        return true;
+    }
+
 
     private String nombreBean = "page.cliente";
 
