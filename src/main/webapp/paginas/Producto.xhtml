@@ -134,7 +134,7 @@
                                         </h:panelGrid>
 
                                         <h:panelGrid columns="3"
-                                                     rendered="#{not empty productoFrm.productoTipoProductoFrm.posibleCaracteristicas}">
+                                                     rendered="#{not empty productoFrm.productoTipoProductoFrm.posibleCaracteristicas or not empty productoFrm.productoTipoProductoFrm.caracteristicasAsignadas}">
                                             <p:outputLabel value="Caracteristica"/>
 
                                             <h:panelGrid columns="3">
@@ -175,6 +175,7 @@
 
                                                 <h:panelGrid>
                                                     <h:outputLabel value="Asignadas"/>
+
                                                     <h:selectOneListbox id="lstAsignadas"
                                                                         value="#{productoFrm.productoTipoProductoFrm.seleccionCaracteristicaAsignada}"
                                                                         converter="tipoProductoCaracteristicaConverter">

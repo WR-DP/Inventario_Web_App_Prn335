@@ -31,8 +31,6 @@ public class AlmacenFrm extends DefaultFrm<Almacen> implements Serializable {
 
     List<TipoAlmacen> tipoAlmacenList;
 
-
-    //con el metodo inicilizar en el DefaultFrm como publico por que así lo requiere esta implementacion
     @Override
     public void inicializarListas(){
         try{
@@ -41,7 +39,6 @@ public class AlmacenFrm extends DefaultFrm<Almacen> implements Serializable {
             Logger.getLogger(AlmacenFrm.class.getName()).log(java.util.logging.Level.SEVERE, null, e);
             tipoAlmacenList=List.of();
         }
-
     }
 
     @Override
@@ -100,8 +97,6 @@ public class AlmacenFrm extends DefaultFrm<Almacen> implements Serializable {
         return null;
     }
 
-
-    //así va a quedar de momento pero luego revisarlo y refactorizarlo
     @Override
     public LazyDataModel<Almacen> getModelo() {
         return super.getModelo();
