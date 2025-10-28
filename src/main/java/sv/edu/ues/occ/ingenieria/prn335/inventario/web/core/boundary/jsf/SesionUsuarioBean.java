@@ -80,7 +80,7 @@ public class SesionUsuarioBean implements Serializable {
         for (Map.Entry<String, Locale> entry : idiomas.entrySet()) {
             if (entry.getKey().equals(idioma)) {
                 facesContext.getViewRoot().setLocale(entry.getValue());
-                menuFrm.construirMenu(); // 🔥 reconstruye el menú traducido
+                menuFrm.construirMenu(); // reconstruye el menú traducido
             }
         }
     }
