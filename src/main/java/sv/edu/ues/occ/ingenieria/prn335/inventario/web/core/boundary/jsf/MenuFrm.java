@@ -1,8 +1,8 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.jsf;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.primefaces.model.menu.DefaultMenuItem;
@@ -11,17 +11,13 @@ import org.primefaces.model.menu.DefaultSubMenu;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
-@Named("menuFrm")
-@SessionScoped
+@Named
+@ViewScoped
 public class MenuFrm implements Serializable {
-
     @Inject
     FacesContext facesContext;
-
-    private DefaultMenuModel model;
+    DefaultMenuModel model;
 
     @PostConstruct
     public void init() {
@@ -93,12 +89,6 @@ public class MenuFrm implements Serializable {
                 .build();
 
 
-            ResourceBundle bundle;
-            try {
-                bundle = ResourceBundle.getBundle("Traducciones", locale);
-            } catch (Exception e) {
-                bundle = null;
-            }
 
         //Tipos
         tipos.getElements().add(itemAlmacen);
@@ -117,32 +107,6 @@ public class MenuFrm implements Serializable {
         model.getElements().add(tipos);
         model.getElements().add(especificos);
 
-            DefaultSubMenu especificos = DefaultSubMenu.builder().label(labelEspecificos).expanded(true).build();
-            especificos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.almacen") : "Almacén", "pi pi-warehouse", "Almacen.jsf"));
-            especificos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.producto") : "Producto", "pi pi-box", "Producto.jsf"));
-            especificos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.cliente") : "Cliente", "pi pi-user", "Cliente.jsf"));
-            especificos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.proveedor") : "Proveedor", "pi pi-briefcase", "Proveedor.jsf"));
-            especificos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.caracteristicas") : "Características", "pi pi-tags", "Caracteristica.jsf"));
-            especificos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.compras") : "Compras", "pi pi-shopping-cart", "Compras.jsf"));
-            especificos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.ventas") : "Ventas", "pi pi-dollar", "Ventas.jsf"));
-
-            model.getElements().add(tipos);
-            model.getElements().add(especificos);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            model = new DefaultMenuModel();
-        }
-    }
-
-
-    private DefaultMenuItem crearItem(String label, String icon, String pagina) {
-        return DefaultMenuItem.builder()
-                .value(label)
-                .icon(icon)
-                .ajax(false)
-                .command("#{menuFrm.navegar('" + pagina + "')}")
-                .build();
     }
 
     public void navegar(String pagina) throws IOException {
@@ -150,9 +114,7 @@ public class MenuFrm implements Serializable {
     }
 
     public DefaultMenuModel getModel() {
-        if (model == null || model.getElements().isEmpty()) {
-            construirMenu();
-        }
         return model;
     }
+
 }
