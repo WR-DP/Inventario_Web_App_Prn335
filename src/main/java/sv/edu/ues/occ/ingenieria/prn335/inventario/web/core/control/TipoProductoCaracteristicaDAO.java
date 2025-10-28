@@ -175,14 +175,10 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
             return null;
         }
     }
-
-    //Luego podemos refactorizar para utilizar una Named Query<-----------------------------------------------------------------------
     public List<TipoProductoCaracteristica> findObligatoriasByTipo(Long idTipoProducto) {
         if (idTipoProducto == null) return List.of();
         try {
-            TypedQuery<TipoProductoCaracteristica> q = em.createQuery(
-                    "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipo AND tpc.obligatorio = true",
-                    TipoProductoCaracteristica.class);
+            TypedQuery<TipoProductoCaracteristica> q = em.createNamedQuery("TipoProductoCaracteristica.findObligatoriasByTipo", TipoProductoCaracteristica.class);
             q.setParameter("idTipo", idTipoProducto);
             return q.getResultList();
         } catch (Exception e) {

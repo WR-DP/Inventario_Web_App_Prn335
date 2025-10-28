@@ -15,7 +15,8 @@ import java.time.OffsetDateTime;
         @NamedQuery(name = "TipoProductoCaracteristica.countById", query = "SELECT COUNT(tpc) FROM TipoProductoCaracteristica tpc WHERE tpc.id = :id"),
         @NamedQuery(name="TipoProductoCaracteristica.findByIdTipoProductoCaracteristica", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipoProducto"),
         @NamedQuery(name = "TipoProductoCaracteristica.findById", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.id = :id"),
-        @NamedQuery(name = "TipoProductoCaracteristica.countByIdTipoProducto", query = "SELECT COUNT(tpc) FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipoProducto")
+        @NamedQuery(name = "TipoProductoCaracteristica.countByIdTipoProducto", query = "SELECT COUNT(tpc) FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipoProducto"),
+        @NamedQuery(name="TipoProductoCaracteristica.findObligatoriasByTipo", query="SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipo AND tpc.obligatorio = true ")
 })
 public class TipoProductoCaracteristica {
     @Id

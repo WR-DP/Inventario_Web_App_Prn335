@@ -171,6 +171,8 @@
                                                                      productoFrm.productoTipoProductoFrm.seleccionCaracteristicaAsignada.obligatorio : false}"/>
                                                     </p:commandButton>
                                                 </h:panelGrid>
+
+
                                                 <h:panelGrid>
                                                     <h:outputLabel value="Asignadas"/>
                                                     <h:selectOneListbox id="lstAsignadas"
@@ -179,10 +181,33 @@
                                                         <f:selectItems
                                                                 value="#{productoFrm.productoTipoProductoFrm.caracteristicasAsignadas}"
                                                                 var="ca"
-                                                                itemLabel="#{ca.idCaracteristica.nombre} (#{ca.idCaracteristica.id})"
+                                                                itemLabel="#{ca.idCaracteristica.nombre} #{not empty productoFrm.productoTipoProductoFrm.getEquivalenciaPara(ca) ? ' - ' : ''}#{productoFrm.productoTipoProductoFrm.getEquivalenciaPara(ca)} #{ca.idCaracteristica.idTipoUnidadMedida.unidadBase}"
                                                                 itemValue="#{ca}"/>
+
+                                                        <f:ajax listener="#{productoFrm.productoTipoProductoFrm.seleccionarCaracteristicaAsignada}"
+                                                                execute="lstAsignadas"
+                                                                render=":tabProducto:pnlTipoProducto :tabProducto:pnlDetalleProducto :tabProducto:frmDetalleProducto:panelEquivalencia"/>
+
                                                     </h:selectOneListbox>
+
+                                                    <h:panelGrid id="panelEquivalencia" columns="2" rendered="#{not empty productoFrm.productoTipoProductoFrm.seleccionCaracteristicaAsignada}">
+                                                        <h:outputLabel value="Equivalencia (según unidad):" for="txtEquivalencia"/>
+                                                        <p:inputText id="txtEquivalencia"
+                                                                     value="#{productoFrm.productoTipoProductoFrm.equivalenciaEditable}"
+                                                                     required="true"/>
+
+                                                        <h:outputLabel value="Unidad:"/>
+                                                        <h:outputText styleClass="success" value="#{productoFrm.productoTipoProductoFrm.seleccionCaracteristicaAsignada.idCaracteristica.idTipoUnidadMedida.unidadBase}"/>
+
+                                                        <p:commandButton value="Guardar equivalencia"
+                                                                         actionListener="#{productoFrm.productoTipoProductoFrm.guardarEquivalenciaHandler}"
+                                                                         update=":tabProducto:pnlTipoProducto :tabProducto:pnlDetalleProducto :tabProducto:frmDetalleProducto:panelEquivalencia :tabProducto:growlDetalleProducto"
+                                                                         process="@this txtEquivalencia lstAsignadas"/>
+                                                    </h:panelGrid>
+
                                                 </h:panelGrid>
+
+
                                             </h:panelGrid>
                                         </h:panelGrid>
                                     </h:panelGroup>

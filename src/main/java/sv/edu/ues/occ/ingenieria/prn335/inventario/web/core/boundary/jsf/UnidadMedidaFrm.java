@@ -52,8 +52,6 @@ public class UnidadMedidaFrm extends DefaultFrm<UnidadMedida> implements Seriali
         return 0;
     }
 
-
-
     @Override
     protected FacesContext getFacesContext() {
         return facesContext;
@@ -87,7 +85,6 @@ public class UnidadMedidaFrm extends DefaultFrm<UnidadMedida> implements Seriali
         }
         return null;
     }
-
 
     @Override
     protected UnidadMedida nuevoRegistro() {

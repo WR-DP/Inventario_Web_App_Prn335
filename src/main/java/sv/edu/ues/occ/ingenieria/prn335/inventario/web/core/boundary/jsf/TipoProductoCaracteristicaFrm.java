@@ -50,7 +50,6 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
     @Inject
     private TipoProductoFrm tipoProductoFrm;
 
-    // auxiliar por que se tiene una confucion de variables, luego refactorizarlo
     private TipoProducto idTipoProducto;
 
     public String getNombrebean() {
@@ -82,7 +81,6 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
     @Override
     public List<TipoProductoCaracteristica> cargarDatos(int first, int max) {
         try{
-            // ahora filtramos por el Long idCaracteristica (que representa idTipoProducto)
             if(first>=0 && max>0 && this.idCaracteristica!=null){
                 return tipoProductoCaracteristicaDAO.findByIdTipoProducto(this.idCaracteristica, first, max);
             }
@@ -187,20 +185,13 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
     @Override
     public void btnGuardarHandler(ActionEvent actionEvent) {
         try {
-            // Asignar el TipoProducto seleccionado al registro (si existe)
             if (this.registro != null
                     && tipoProductoFrm != null
                     && tipoProductoFrm.getRegistro() != null) {
-
                 this.registro.setIdTipoProducto(tipoProductoFrm.getRegistro());
-
-                // sincronizar idCaracteristica (mantener compatibilidad)
                 this.idCaracteristica = tipoProductoFrm.getRegistro().getId();
             }
-
             super.btnGuardarHandler(actionEvent);
-
-            // Si se guardó correctamente, recargar tabla y lazy model
             if (this.estado == ESTADO_CRUD.NADA) {
                 if (idCaracteristica != null) {
                     listaTipoProductoCaracteristica =
@@ -211,11 +202,9 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
                     try {
                         this.modelo.setRowCount(contarDatos());
                     } catch (Exception ex) {
-                        // ignore
                     }
                 }
             }
-
         } catch (Exception e) {
             Logger.getLogger(TipoProductoCaracteristicaFrm.class.getName()).log(Level.SEVERE, e.getMessage(), e);
             e.printStackTrace();
