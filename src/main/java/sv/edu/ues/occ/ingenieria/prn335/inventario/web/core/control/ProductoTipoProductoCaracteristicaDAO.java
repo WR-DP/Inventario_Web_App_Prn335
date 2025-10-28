@@ -55,14 +55,14 @@ public class ProductoTipoProductoCaracteristicaDAO extends InventarioDefaultData
             throw new IllegalArgumentException("Error al buscar las caracteristicas del producto por tipo producto", e);
         }
     }
-    //si tenemos problemas aca, intentar actualizando la dependencia de jakarta.persistence 3.1.0 <-----------------------------------------------------
+
     public int deleteByProductoTipoProductoAndCaracteristica(UUID idPtpp, Long idTipoProductoCaracteristica) {
         try {
             javax.persistence.Query q =
                     (javax.persistence.Query) em.createNamedQuery("ProductoTipoProductoCaracteristica.removeByProductoTipoProductoAndCaracteristica");
             q.setParameter("idPtpp", idPtpp);
             q.setParameter("idCar", idTipoProductoCaracteristica);
-            return q.executeUpdate(); // devuelve número de filas borradas
+            return q.executeUpdate();
         } catch (Exception e) {
             throw new IllegalArgumentException("Error al eliminar asignacion", e);
         }

@@ -23,7 +23,6 @@ public class UnidadMedida {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "id_tipo_unidad_medida")
     private TipoUnidadMedida idTipoUnidadMedida;
 

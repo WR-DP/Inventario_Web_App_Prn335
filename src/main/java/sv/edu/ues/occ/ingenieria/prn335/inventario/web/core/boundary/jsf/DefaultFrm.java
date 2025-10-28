@@ -203,7 +203,6 @@ public abstract class DefaultFrm<T> implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", "No se seleccionó ningún registro."));
         }
-
     }
 
     public void enviarMensaje(String s, FacesMessage.Severity severity) {

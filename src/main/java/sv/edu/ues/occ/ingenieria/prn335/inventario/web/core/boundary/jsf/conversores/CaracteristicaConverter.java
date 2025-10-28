@@ -28,7 +28,6 @@ public class CaracteristicaConverter implements  Converter<Caracteristica>, Seri
                 String idStr = s.substring(inicioId+1, finId);
                 try{
                     Integer id = Math.toIntExact(Long.valueOf(idStr));
-                    //estamos usando el metodo findById de la clase abstacta base
                     return caracteristicaDAO.findById(id);
                 }catch(Exception ex){
                     Logger.getLogger(CaracteristicaConverter.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);

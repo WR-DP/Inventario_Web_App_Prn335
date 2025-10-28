@@ -181,7 +181,7 @@
                                                         <f:selectItems
                                                                 value="#{productoFrm.productoTipoProductoFrm.caracteristicasAsignadas}"
                                                                 var="ca"
-                                                                itemLabel="#{ca.idCaracteristica.nombre} (#{ca.idCaracteristica.id})"
+                                                                itemLabel="#{ca.idCaracteristica.nombre} #{not empty productoFrm.productoTipoProductoFrm.getEquivalenciaPara(ca) ? ' - ' : ''}#{productoFrm.productoTipoProductoFrm.getEquivalenciaPara(ca)} #{ca.idCaracteristica.idTipoUnidadMedida.unidadBase}"
                                                                 itemValue="#{ca}"/>
 
                                                         <f:ajax listener="#{productoFrm.productoTipoProductoFrm.seleccionarCaracteristicaAsignada}"

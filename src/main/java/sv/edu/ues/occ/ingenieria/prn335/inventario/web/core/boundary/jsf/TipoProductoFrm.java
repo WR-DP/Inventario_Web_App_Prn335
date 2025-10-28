@@ -194,15 +194,12 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
     }
 
     public TipoProductoCaracteristicaFrm getTipoProductoCaracteristicaFrm() {
-        // Al invocar desde la vista, garantizamos que el child tenga el contexto correcto
         if ( this.registro != null && this.registro.getId() != null ) {
             tipoProductoCaracteristicaFrm.setIdCaracteristica(this.registro.getId());
             tipoProductoCaracteristicaFrm.setIdTipoProducto(this.registro);
-            // importante: no llamar a inicializar() aquí para evitar doble carga en algunos flujos; el onNodeSelect ya lo hace
         }
         return tipoProductoCaracteristicaFrm;
     }
-
 
     @Override
     protected TipoProducto buscarRegistroPorId(Object id) {
@@ -211,8 +208,6 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
         }
         return null;
     }
-
-
 
     public String getNombreBean() {
         return nombreBean;

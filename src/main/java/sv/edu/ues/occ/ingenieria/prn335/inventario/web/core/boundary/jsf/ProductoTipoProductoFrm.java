@@ -4,14 +4,13 @@ import jakarta.enterprise.context.Dependent;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.ActionEvent;
-import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.primefaces.event.SelectEvent;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.*;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.*;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +39,6 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
     private TipoProductoCaracteristica seleccionPosibleCaracteristica;
     private TipoProductoCaracteristica seleccionCaracteristicaAsignada;
     protected UUID idProducto;
-
 
 
     private String equivalenciaEditable;
@@ -91,6 +89,15 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
             facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Seleccione primero el tipo de producto", null));
             return;
         }
+        // Validación: si la característica es obligatoria, la equivalencia no puede ser nula/vacía
+        if (Boolean.TRUE.equals(this.seleccionCaracteristicaAsignada.getObligatorio())
+                && (this.equivalenciaEditable == null || this.equivalenciaEditable.trim().isEmpty())) {
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                    "Equivalencia requerida",
+                    "Debe asignar un valor para la equivalencia de la característica obligatoria."));
+            return;
+        }
+
         try {
             // buscar asignacion existente
             ProductoTipoProductoCaracteristica asignacion = (this.asignacionesPersistentes != null ? this.asignacionesPersistentes.stream()
@@ -121,6 +128,20 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
             Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al guardar equivalencia: " + ex.getMessage(), null));
         }
+    }
+
+    public String getEquivalenciaPara(sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProductoCaracteristica tpc) {
+        if (tpc == null) return "";
+        if (this.asignacionesPersistentes == null || this.asignacionesPersistentes.isEmpty()) return "";
+        for (sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.ProductoTipoProductoCaracteristica ap : this.asignacionesPersistentes) {
+            if (ap.getIdTipoProductoCaracteristica() != null
+                    && ap.getIdTipoProductoCaracteristica().getId() != null
+                    && ap.getIdTipoProductoCaracteristica().getId().equals(tpc.getId())) {
+                String v = ap.getValor();
+                return (v == null) ? "" : v;
+            }
+        }
+        return "";
     }
 
     @Override
@@ -183,7 +204,6 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
         ProductoTipoProducto producto = new ProductoTipoProducto();
         producto.setActivo(true);
         producto.setId(UUID.randomUUID());
-        producto.setFechaCreacion(OffsetDateTime.now());
         if (idProducto != null) {
             producto.setIdProducto(new Producto());
             producto.getIdProducto().setId(idProducto);
@@ -200,21 +220,20 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
     public ProductoTipoProductoFrm() {
     }
 
-    ;
-
     public Long getIdTipoProductoSeleccionado() {
         if (this.registro != null && this.registro.getIdTipoProducto() != null) {
-            return this.registro.getIdTipoProducto().getIdTipoProducto();
+            return this.registro.getIdTipoProducto().getId();
         }
         return null;
     }
 
     public void setIdTipoProductoSeleccionado(final Long idTipoProducto) {
-        if (this.registro != null && this.listaTipoProducto != null && !this.listaTipoProducto.isEmpty()) {
-            this.registro.setIdTipoProducto(this.listaTipoProducto.stream()
-                    .filter(tp -> tp.getIdTipoProducto().equals(idTipoProducto))
+        if (this.registro != null && this.listaTipoProducto != null && idTipoProducto != null) {
+            TipoProducto seleccionado = this.listaTipoProducto.stream()
+                    .filter(tp -> tp.getId() != null && tp.getId().equals(idTipoProducto))
                     .findFirst()
-                    .orElse(null).getIdTipoProducto());
+                    .orElse(null).getIdTipoProducto();
+            this.registro.setIdTipoProducto(seleccionado);
         }
     }
 
@@ -235,6 +254,7 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
             this.posibleCaracteristicas = tipoProductoCaracteristicaDAO.findByIdTipoProducto(idTipo, 0, Integer.MAX_VALUE);
             if (this.registro != null && this.registro.getId() != null) {
                 this.asignacionesPersistentes = productoTipoProductoCaracteristicaDAO.findByProductoTipoProductoId(this.registro.getId(), 0, Integer.MAX_VALUE);
+                asegurarFechaCreacion();
             } else {
                 this.asignacionesPersistentes = new java.util.ArrayList<>();
             }
@@ -321,6 +341,10 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
 
             if (Boolean.TRUE.equals(seleccion.getObligatorio())) {
                 Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.INFO, "Intento de eliminar caracteristica obligatoria denegado");
+                facesContext.addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN,
+                                "No se puede eliminar",
+                                "La característica es obligatoria y no puede eliminarse."));
                 return;
             }
 
@@ -380,6 +404,9 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
             for (ProductoTipoProductoCaracteristica eliminar : aEliminar) {
                 productoTipoProductoCaracteristicaDAO.delete(eliminar);
             }
+
+            asegurarFechaCreacion();
+
             this.getDao().update(this.registro);
 
             enviarMensaje("Registro modificado", FacesMessage.SEVERITY_INFO);
@@ -388,6 +415,28 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
             this.registro = null;
         } catch (Exception ex) {
             enviarMensaje("Error al modificar el registro: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
+        }
+    }
+
+
+    @Override
+    public void seleccionarRegistro(org.primefaces.event.SelectEvent<ProductoTipoProducto> event) {
+        super.seleccionarRegistro((org.primefaces.event.SelectEvent) event);
+        asegurarFechaCreacion();
+    }
+
+    private void asegurarFechaCreacion() {
+        try {
+            if (this.registro != null && this.registro.getId() != null) {
+                ProductoTipoProducto existente = productoTipoProductoDAO.findById(this.registro.getId());
+                if (existente != null
+                        && this.registro.getFechaCreacion() == null
+                        && existente.getFechaCreacion() != null) {
+                    this.registro.setFechaCreacion(existente.getFechaCreacion());
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 
