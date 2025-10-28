@@ -41,6 +41,7 @@
             nav.sidebar { width: 100%; border-right: none; border-bottom: 1px solid #cdcbcb; }
         }
     </style>
+
 </h:head>
 
 <h:body>
@@ -49,27 +50,29 @@
 
         <main class="app">
 
-            <nav class="sidebar" style="margin:0">
-                <ui:include src="menu.xhtml"/>
-            </nav>
+    <main class="app">
 
-            <div class="content">
-                <header>
-                    <ui:insert name="header">
-                        <h1 class="titulo">Sistema de Inventario</h1>
-                    </ui:insert>
-                </header>
+        <nav class="sidebar" style="margin:0">
+            <ui:include src="menu.xhtml"></ui:include>
+        </nav>
 
-                <article>
-                    <h:panelGroup id="pnlTabla">
-                        <p:growl showSummary="true" showDetail="true" keepAlive="1000"/>
-                        <ui:insert name="contenido-tabla"/>
-                    </h:panelGroup>
+        <div class="content">
+            <header>
+                <ui:insert name="header">
+                    <h1 class="titulo">Sistema de Inventario</h1>
+                </ui:insert>
+            </header>
 
-                    <h:panelGroup id="pnlDetalle">
-                        <ui:insert name="contenido-detalle"/>
-                    </h:panelGroup>
-                </article>
+            <article>
+                <h:panelGroup id="pnlTabla">
+                    <p:growl showSummary="true" showDetail="true" keepAlive="1000"/>
+                    <ui:insert name="contenido-tabla"></ui:insert>
+                </h:panelGroup>
+
+                <h:panelGroup id="pnlDetalle">
+                    <ui:insert name="contenido-detalle"></ui:insert>
+                </h:panelGroup>
+            </article>
 
                 <ui:insert name="extra"/>
                 <footer>
@@ -78,6 +81,11 @@
             </div>
         </main>
 
-    </f:view>
+            <ui:insert name="extra"></ui:insert>
+            <footer>
+                Todos los derechos reservados - Universidad de El Salvador @2025
+            </footer>
+        </div>
+    </main>
 </h:body>
 </html>

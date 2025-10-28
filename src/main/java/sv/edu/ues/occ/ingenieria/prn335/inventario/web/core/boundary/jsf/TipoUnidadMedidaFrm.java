@@ -36,11 +36,6 @@ public class TipoUnidadMedidaFrm extends DefaultFrm<TipoUnidadMedida> implements
 
 
     @Override
-    public String getTituloPag() {
-        return "Tipos de unidad de medida";
-    }
-
-    @Override
     protected FacesContext getFacesContext() {
         return facesContext;
     }

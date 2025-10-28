@@ -25,7 +25,7 @@
                              value="#{almacenFrm.modelo}" var="reg"
                              selectionMode="single"
                              selection="#{almacenFrm.registro}">
-                    <p:ajax event="rowSelect" listener="#{almacenFrm.selectionHandler}"
+                    <p:ajax event="rowSelect" listener="#{almacenFrm.seleccionarRegistro}"
                             update=":pnlDetalle :pnlTabla"/>
 
                     <p:column headerText="ID">
@@ -58,7 +58,7 @@
                 <p:outputLabel for="lstTipo" value="Tipo:"/>
                 <p:selectOneMenu id="lstTipo" value="#{almacenFrm.idTipoAlmacenSeleccionado}">
                     <f:selectItems value="#{almacenFrm.tipoAlmacenList}" var="tipo"
-                                   intemValue="#{tipo.id}" itemLabel="#{tipo.nombre}" itemDisable="#{tipo.activo}"/>
+                                   itemValue="#{tipo.id}" itemLabel="#{tipo.nombre}" itemDisable="#{tipo.activo}"/>
                 </p:selectOneMenu>
 
                 <p:outputLabel for="chkActivo" value="Activo:"/>

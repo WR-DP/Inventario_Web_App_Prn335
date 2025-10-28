@@ -53,11 +53,6 @@ public class UnidadMedidaFrm extends DefaultFrm<UnidadMedida> implements Seriali
     }
 
     @Override
-    public String getTituloPag() {
-        return "";
-    }
-
-    @Override
     protected FacesContext getFacesContext() {
         return facesContext;
     }
@@ -90,7 +85,6 @@ public class UnidadMedidaFrm extends DefaultFrm<UnidadMedida> implements Seriali
         }
         return null;
     }
-
 
     @Override
     protected UnidadMedida nuevoRegistro() {

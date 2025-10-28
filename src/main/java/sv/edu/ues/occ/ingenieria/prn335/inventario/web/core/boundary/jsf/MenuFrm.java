@@ -25,18 +25,73 @@ public class MenuFrm implements Serializable {
 
     @PostConstruct
     public void init() {
-        construirMenu();
-    }
 
-    public void construirMenu() {
-        try {
-            if (facesContext == null) {
-                facesContext = FacesContext.getCurrentInstance();
-            }
+        //voy a agregar los de mas items del menu, hacer parte de los especificos
+        model = new DefaultMenuModel();
+        DefaultSubMenu tipos = DefaultSubMenu.builder().label("Tipos").expanded(true).build();
+        DefaultMenuItem itemAlmacen = DefaultMenuItem.builder()
+                .value("Tipo Almacén")
+                .icon("pi pi-building")
+                .ajax(true)
+                .command("#{menuFrm.navegar('TipoAlmacen.jsf')}")
+                .build();
+        DefaultMenuItem itemProducto = DefaultMenuItem.builder()
+                .value("Tipo Producto")
+                .icon("pi pi-th-large")
+                .ajax(true)
+                .command("#{menuFrm.navegar('TipoProducto.jsf')}")
+                .build();
+        DefaultMenuItem itemTUnidadMedida = DefaultMenuItem.builder()
+                .value("Tipo de Unidad de Medida")
+                .icon("pi pi-calculator")
+                .ajax(true)
+                .command("#{menuFrm.navegar('TipoUnidadMedida.jsf')}")
+                .build();
 
-            Locale locale = (facesContext != null && facesContext.getViewRoot() != null)
-                    ? facesContext.getViewRoot().getLocale()
-                    : Locale.getDefault();
+        DefaultSubMenu especificos = DefaultSubMenu.builder().label("Especificos").expanded(true).build();
+        DefaultMenuItem itemEAlmacen = DefaultMenuItem.builder()
+                .value("Almacen")
+                .icon("pi pi-warehouse")
+                .ajax(true)
+                .command("#{menuFrm.navegar('Almacen.jsf')}")
+                .build();
+        DefaultMenuItem itemEProducto = DefaultMenuItem.builder()
+                .value("Producto")
+                .icon("pi pi-box")
+                .ajax(true)
+                .command("#{menuFrm.navegar('Producto.jsf')}")
+                .build();
+        DefaultMenuItem itemECliente = DefaultMenuItem.builder()
+                .value("Cliente")
+                .icon("pi pi-user")
+                .ajax(true)
+                .command("#{menuFrm.navegar('Cliente.jsf')}")
+                .build();
+        DefaultMenuItem itemEProveedor = DefaultMenuItem.builder()
+                .value("Proveedor")
+                .icon("pi pi-briefcase")
+                .ajax(true)
+                .command("#{menuFrm.navegar('Proveedor.jsf')}")
+                .build();
+        DefaultMenuItem itemECaracteristica = DefaultMenuItem.builder()
+                .value("Caracterticas")
+                .icon("pi pi-tags")
+                .ajax(true)
+                .command("#{menuFrm.navegar('Caracteristica.jsf')}")
+                .build();
+        DefaultMenuItem itemECompras = DefaultMenuItem.builder()
+                .value("Compras")
+                .icon("pi pi-shopping-cart")
+                .ajax(true)
+                .command("#{menuFrm.navegar('Compras.jsf')}")
+                .build();
+        DefaultMenuItem itemEVentas = DefaultMenuItem.builder()
+                .value("Ventas")
+                .icon("pi pi-dollar")
+                .ajax(true)
+                .command("#{menuFrm.navegar('Ventas.jsf')}")
+                .build();
+
 
             ResourceBundle bundle;
             try {
@@ -45,15 +100,22 @@ public class MenuFrm implements Serializable {
                 bundle = null;
             }
 
-            model = new DefaultMenuModel();
+        //Tipos
+        tipos.getElements().add(itemAlmacen);
+        tipos.getElements().add(itemProducto);
+        tipos.getElements().add(itemTUnidadMedida);
 
-            String labelTipos = bundle != null ? bundle.getString("menu.tipos") : "Tipos";
-            String labelEspecificos = bundle != null ? bundle.getString("menu.especificos") : "Específicos";
+        //Especificos
+        especificos.getElements().add(itemEAlmacen);
+        especificos.getElements().add(itemEProducto);
+        especificos.getElements().add(itemECliente);
+        especificos.getElements().add(itemEProveedor);
+        especificos.getElements().add(itemECaracteristica);
+        especificos.getElements().add(itemECompras);
+        especificos.getElements().add(itemEVentas);
 
-            DefaultSubMenu tipos = DefaultSubMenu.builder().label(labelTipos).expanded(true).build();
-            tipos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.tipoAlmacen") : "Tipo Almacén", "pi pi-building", "TipoAlmacen.jsf"));
-            tipos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.tipoProducto") : "Tipo Producto", "pi pi-th-large", "TipoProducto.jsf"));
-            tipos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.tipoUnidadMedida") : "Tipo de Unidad de Medida", "pi pi-calculator", "TipoUnidadMedida.jsf"));
+        model.getElements().add(tipos);
+        model.getElements().add(especificos);
 
             DefaultSubMenu especificos = DefaultSubMenu.builder().label(labelEspecificos).expanded(true).build();
             especificos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.almacen") : "Almacén", "pi pi-warehouse", "Almacen.jsf"));
@@ -84,9 +146,6 @@ public class MenuFrm implements Serializable {
     }
 
     public void navegar(String pagina) throws IOException {
-        if (facesContext == null) {
-            facesContext = FacesContext.getCurrentInstance();
-        }
         facesContext.getExternalContext().redirect(pagina);
     }
 
