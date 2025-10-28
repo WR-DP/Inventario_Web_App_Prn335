@@ -7,6 +7,7 @@
         xmlns:h="jakarta.faces.html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ues="jakarta.faces.composite/ues">
+
 <h:head>
     <meta charset="UTF-8"/>
     <title>Sistemas de Inventarios</title>
@@ -44,7 +45,10 @@
 </h:head>
 
 <h:body>
+    <!-- Esta línea es la clave: aplica el idioma actual a toda la vista -->
+    <f:view locale="#{sesionUsuarioBean.idiomas[sesionUsuarioBean.idiomaSeleccionado]}">
 
+        <main class="app">
 
     <main class="app">
 
@@ -70,6 +74,12 @@
                 </h:panelGroup>
             </article>
 
+                <ui:insert name="extra"/>
+                <footer>
+                    Todos los derechos reservados - Universidad de El Salvador @2025
+                </footer>
+            </div>
+        </main>
 
             <ui:insert name="extra"></ui:insert>
             <footer>
