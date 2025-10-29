@@ -108,21 +108,21 @@ public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, O
     }
 
     //buscar por rango de precio
-   List<VentaDetalle> findByPrecio(Double minPrecio, Double maxPrecio, int first, int max) {
-       if (minPrecio != null && maxPrecio != null) {
-           try {
-               TypedQuery<VentaDetalle> q = em.createNamedQuery("VentaDetalle.findByPrecioRange", VentaDetalle.class);
-               q.setParameter("minPrecio", minPrecio);
-               q.setParameter("maxPrecio", maxPrecio);
-               q.setFirstResult(first);
-               q.setMaxResults(max);
-               return q.getResultList();
-           } catch (Exception ex) {
-               throw new IllegalStateException("Parámetro no válido", ex);
-           }
-       }
-       return List.of();
-   }
+    List<VentaDetalle> findByPrecio(Double minPrecio, Double maxPrecio, int first, int max) {
+        if (minPrecio != null && maxPrecio != null) {
+            try {
+                TypedQuery<VentaDetalle> q = em.createNamedQuery("VentaDetalle.findByPrecioRange", VentaDetalle.class);
+                q.setParameter("minPrecio", minPrecio);
+                q.setParameter("maxPrecio", maxPrecio);
+                q.setFirstResult(first);
+                q.setMaxResults(max);
+                return q.getResultList();
+            } catch (Exception ex) {
+                throw new IllegalStateException("Parámetro no válido", ex);
+            }
+        }
+        return List.of();
+    }
 
     //buscar por estado
     List<VentaDetalle> findByEstado(Boolean estado, int first, int max) {
@@ -193,18 +193,18 @@ public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, O
     }
 
     // contar por rango de precio
-public int countByPrecio(Double minPrecio, Double maxPrecio) {
-    if (minPrecio != null && maxPrecio != null) {
-        try {
-            TypedQuery<Long> q = em.createNamedQuery("VentaDetalle.countByPrecioRange", Long.class);
-            q.setParameter("minPrecio", minPrecio);
-            q.setParameter("maxPrecio", maxPrecio);
-            return ((Long) q.getSingleResult()).intValue();
-        } catch (Exception ex) {
-            throw new IllegalStateException("Parametro no valido", ex);
+    public int countByPrecio(Double minPrecio, Double maxPrecio) {
+        if (minPrecio != null && maxPrecio != null) {
+            try {
+                TypedQuery<Long> q = em.createNamedQuery("VentaDetalle.countByPrecioRange", Long.class);
+                q.setParameter("minPrecio", minPrecio);
+                q.setParameter("maxPrecio", maxPrecio);
+                return ((Long) q.getSingleResult()).intValue();
+            } catch (Exception ex) {
+                throw new IllegalStateException("Parametro no valido", ex);
+            }
         }
-    }
-    return 0;
+        return 0;
     }
 
     // contar por estado

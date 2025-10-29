@@ -7,6 +7,7 @@ import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.primefaces.event.SelectEvent;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ClienteDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
@@ -32,7 +33,10 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
     VentaDAO ventaDAO;
 
     @Inject
-    ClienteDAO clienteDAO;
+    private ClienteDAO clienteDAO;
+
+    @Inject
+    protected VentaDetalleFrm ventaDetalleFrm;
 
     private List<Venta> listaVentas;
     private List<Cliente> listaClientes;
@@ -40,18 +44,6 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
     private String nombreBean = "page.venta";
 
     public VentaFrm() {}
-
-    @PostConstruct
-    @Override
-    public void inicializar() {
-        super.inicializar();
-        try {
-            listaVentas = ventaDAO.findRange(0, Integer.MAX_VALUE);
-            listaClientes = clienteDAO.findRange(0, Integer.MAX_VALUE);
-        } catch (Exception ex) {
-            Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
     @Override
     protected FacesContext getFacesContext() {
@@ -86,12 +78,22 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         }
         return null;
     }
+    @PostConstruct
+    @Override
+    public void inicializar() {
+        super.inicializar();
+        try {
+            listaVentas = ventaDAO.findRange(0, Integer.MAX_VALUE);
+            listaClientes = clienteDAO.findRange(0, Integer.MAX_VALUE);
+        } catch (Exception ex) {
+            Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     @Override
     protected Venta nuevoRegistro() {
         Venta v = new Venta();
         v.setId(UUID.randomUUID());
-        v.setFecha(OffsetDateTime.now());
         v.setEstado("ACTIVA");
         v.setObservaciones("");
         return v;
@@ -113,7 +115,7 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         return null;
     }
 
-    // ✅ Validaciones antes de guardar o modificar
+
     @Override
     public void btnGuardarHandler(ActionEvent actionEvent) {
         if (!validarCampos()) return;
@@ -124,6 +126,53 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
     public void btnModificarHandler(ActionEvent actionEvent) {
         if (!validarCampos()) return;
         super.btnModificarHandler(actionEvent);
+    }
+
+    public void btnSeleccionarClienteHandler(ActionEvent event){
+        try{
+            if (this.registro == null) {
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No hay venta activa", null));
+                return;
+            }
+            Cliente sel = this.registro.getIdCliente();
+            if (sel == null) {
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Seleccione un cliente", null));
+                return;
+            }
+            if (sel.getId() != null) {
+                Cliente completo = clienteDAO.findById(sel.getId());
+                if (completo != null) {
+                    this.registro.setIdCliente(completo);
+                    facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Cliente asignado", null));
+                    return;
+                }
+            }
+            // si no se pudo cargar desde DAO, mantener el seleccionado
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Cliente asignado (sin carga adicional)", null));
+        }catch (Exception ex){
+            Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    public void seleccionarCliente(final SelectEvent<Cliente> event) {
+        try {
+            Cliente seleccionado = event != null ? event.getObject() : null;
+            if (seleccionado == null) {
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Cliente no seleccionado", null));
+                return;
+            }
+            // asegurarse de tener la entidad completa (por si viene solo con id)
+            if (seleccionado.getId() != null) {
+                Cliente completo = clienteDAO.findById(seleccionado.getId());
+                this.registro.setIdCliente(completo != null ? completo : seleccionado);
+            } else {
+                this.registro.setIdCliente(seleccionado);
+            }
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Cliente seleccionado", null));
+        } catch (Exception ex) {
+            Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al seleccionar cliente: " + ex.getMessage(), null));
+        }
     }
 
     private boolean validarCampos() {
@@ -142,7 +191,21 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         return true;
     }
 
-    // Getters y Setters
+    public List<Cliente> buscarClientesPorNombre(final String nombres) {
+        try {
+            if (nombres != null && !nombres.isBlank()) {
+                return clienteDAO.buscarClientePorNombre(nombres, 0, 50);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return List.of();
+    }
+
+
+
+
+
     public List<Venta> getListaVentas() {
         return listaVentas;
     }
@@ -166,6 +229,13 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
     public void setNombreBean(String nombreBean) {
         this.nombreBean = nombreBean;
     }
+
+    public VentaDetalleFrm getVentaDetalleFrm() {
+        if (this.registro != null && this.registro.getId() != null) {
+            ventaDetalleFrm.setIdVenta(this.registro.getId());
+        }
+        return ventaDetalleFrm;
+    }
+
+
 }
-
-
