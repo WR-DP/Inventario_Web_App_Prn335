@@ -8,7 +8,10 @@ import jakarta.persistence.TypedQuery;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.UnidadMedida;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless
 @LocalBean
@@ -22,16 +25,16 @@ public class UnidadMedidaDAO extends InventarioDefaultDataAccess<UnidadMedida, O
 
     @Override
     public EntityManager getEntityManager() {
-        return null;
+        return em;
     }
 
     @Override
     protected Class<UnidadMedida> getEntityClass() {
-        return null;
+        return UnidadMedida.class;
     }
 
     // buscar por idUnidadMedida
-    List<UnidadMedida> findByIdUnidadMedida(Integer idUnidadMedida, int first, int max) {
+    public List<UnidadMedida> findByIdUnidadMedida(Integer idUnidadMedida, int first, int max) {
         if (idUnidadMedida != null) {
             try {
                 TypedQuery<UnidadMedida> q = em.createNamedQuery("UnidadMedida.findByIdUnidadMedida", UnidadMedida.class);
@@ -47,7 +50,7 @@ public class UnidadMedidaDAO extends InventarioDefaultDataAccess<UnidadMedida, O
     }
 
     // buscar todos
-    List<UnidadMedida> findAllUnidadMedida(int first, int max) {
+    public List<UnidadMedida> findAllUnidadMedida(int first, int max) {
         try {
             TypedQuery<UnidadMedida> q = em.createNamedQuery("UnidadMedida.findAllUnidadMedida", UnidadMedida.class);
             q.setFirstResult(first);
@@ -59,7 +62,7 @@ public class UnidadMedidaDAO extends InventarioDefaultDataAccess<UnidadMedida, O
     }
 
     // buscar por activo
-    List<UnidadMedida> findByActivo(Boolean activo, int first, int max) {
+    public List<UnidadMedida> findByActivo(Boolean activo, int first, int max) {
         if (activo != null) {
             try {
                 TypedQuery<UnidadMedida> q = em.createNamedQuery("UnidadMedida.findByActivo", UnidadMedida.class);
@@ -98,4 +101,31 @@ public class UnidadMedidaDAO extends InventarioDefaultDataAccess<UnidadMedida, O
         return 0;
     }
 
+    public List<UnidadMedida> findByIdTipoUnidadMedida(Integer idTipoUnidadMedida, int first, int max) {
+        if (idTipoUnidadMedida != null) {
+            try {
+                TypedQuery<UnidadMedida> q = em.createNamedQuery("UnidadMedida.findByIdTipoUnidadMedida", UnidadMedida.class);
+                q.setParameter("idTipoUnidadMedida", idTipoUnidadMedida);
+                q.setFirstResult(first);
+                q.setMaxResults(max);
+                return q.getResultList();
+            } catch (Exception ex) {
+                Logger.getLogger(ProductoTipoProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    public Long countByIdTipoUnidadMedida(Integer idTipoUnidadMedida) {
+        if (idTipoUnidadMedida != null) {
+            try {
+                TypedQuery<Long> q = em.createNamedQuery("UnidadMedida.countByIdTipoUnidadMedida", Long.class);
+                q.setParameter("idTipoUnidadMedida", idTipoUnidadMedida);
+                return q.getSingleResult();
+            } catch (Exception ex) {
+                Logger.getLogger(ProductoTipoProductoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return 0L;
+    }
 }

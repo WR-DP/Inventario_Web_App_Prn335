@@ -43,9 +43,25 @@ public class TipoProductoDAO extends InventarioDefaultDataAccess<TipoProducto, O
         return super.count();
     }
 
+    public List<TipoProducto> findTiposPadre() {
+        try {
+            return em.createNamedQuery("TipoProducto.findTiposPadre", TipoProducto.class).getResultList();
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
+            return List.of();
+        }
+    }
 
-
-
+    public List<TipoProducto> findHijosByPadre(Long idPadre) {
+        try {
+            return em.createNamedQuery("TipoProducto.findHijosByPadre", TipoProducto.class)
+                    .setParameter("idPadre", idPadre)
+                    .getResultList();
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
+            return List.of();
+        }
+    }
     private static final Logger log = Logger.getLogger(TipoProductoDAO.class.getName());
 
     public List<TipoProducto> findAllTipoProducto(int first, int max) {
