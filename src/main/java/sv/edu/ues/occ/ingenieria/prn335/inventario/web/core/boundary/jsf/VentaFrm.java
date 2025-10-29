@@ -167,3 +167,5 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         this.nombreBean = nombreBean;
     }
 }
+
+
