@@ -6,13 +6,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Compra;
-
 import java.io.Serializable;
 import java.util.List;
 
 @Stateless
 @LocalBean
 public class CompraDAO extends InventarioDefaultDataAccess<Compra, Object> implements Serializable {
+
     @PersistenceContext(unitName = "InventarioPU")
     private EntityManager em;
 
@@ -22,97 +22,35 @@ public class CompraDAO extends InventarioDefaultDataAccess<Compra, Object> imple
 
     @Override
     public EntityManager getEntityManager() {
-        return null;
+        return em;
     }
 
     @Override
     protected Class<Compra> getEntityClass() {
-        return null;
+        return Compra.class;
     }
 
-    // buscar por idCompra
-    List<Compra> findByIdCompra(Integer idCompra, int first, int max) {
-        if (idCompra != null) {
-            try {
-                TypedQuery<Compra> q = em.createNamedQuery("Compra.findByIdCompra", Compra.class);
-                q.setParameter("idCompra", idCompra);
-                q.setFirstResult(first);
-                q.setMaxResults(max);
-                return q.getResultList();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
-            }
-        }
-        return List.of();
+    //Validacion ya existe compra para ese proveedor
+    public boolean existeCompraDeProveedor(Integer idProveedor) {
+        TypedQuery<Compra> q = em.createNamedQuery("Compra.findByProveedor", Compra.class);
+        q.setParameter("idProveedor", idProveedor);
+        q.setMaxResults(1);
+        return !q.getResultList().isEmpty();
     }
 
-    // buscar todos
-    List<Compra> findAllCompra(int first, int max) {
-        try {
-            TypedQuery<Compra> q = em.createNamedQuery("Compra.findAllCompra", Compra.class);
-            q.setFirstResult(first);
-            q.setMaxResults(max);
-            return q.getResultList();
-        } catch (Exception ex) {
-            throw new IllegalStateException("Parametro no valido", ex);
-        }
+    // Opcionales ya existentes
+    public List<Compra> findAllCompra(int first, int max) {
+        TypedQuery<Compra> q = em.createNamedQuery("Compra.findAllCompra", Compra.class);
+        q.setFirstResult(first);
+        q.setMaxResults(max);
+        return q.getResultList();
     }
 
-    // buscar por estado
-    List<Compra> findByEstado(Boolean estado, int first, int max) {
-        if (estado != null) {
-            try {
-                TypedQuery<Compra> q = em.createNamedQuery("Compra.findByEstado", Compra.class);
-                q.setParameter("estado", estado);
-                q.setFirstResult(first);
-                q.setMaxResults(max);
-                return q.getResultList();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
-            }
-        }
-        return List.of();
+    public List<Compra> findByEstado(String estado, int first, int max) {
+        TypedQuery<Compra> q = em.createNamedQuery("Compra.findByEstado", Compra.class);
+        q.setParameter("estado", estado);
+        q.setFirstResult(first);
+        q.setMaxResults(max);
+        return q.getResultList();
     }
-
-    // buscar por fecha
-    List<Compra> findByFecha(java.util.Date fecha, int first, int max) {
-        if (fecha != null) {
-            try {
-                TypedQuery<Compra> q = em.createNamedQuery("Compra.findByFecha", Compra.class);
-                q.setParameter("fecha", fecha);
-                q.setFirstResult(first);
-                q.setMaxResults(max);
-                return q.getResultList();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
-            }
-        }
-        return List.of();
-    }
-
-    //contar por idCompra
-    public int countByIdCompra(Integer idCompra) {
-        if (idCompra != null) {
-            try {
-                TypedQuery<Long> q = em.createNamedQuery("Compra.countByIdCompra", Long.class);
-                q.setParameter("idCompra", idCompra);
-                return ((Long) q.getSingleResult()).intValue();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
-            }
-        }
-        return 0;
-    }
-
-    //contar todos
-    public int countAllCompra() {
-        try {
-            TypedQuery<Long> q = em.createNamedQuery("Compra.countAllCompra", Long.class);
-            return ((Long) q.getSingleResult()).intValue();
-        } catch (Exception ex) {
-            throw new IllegalStateException("Parametro no valido", ex);
-        }
-    }
-
-
 }
