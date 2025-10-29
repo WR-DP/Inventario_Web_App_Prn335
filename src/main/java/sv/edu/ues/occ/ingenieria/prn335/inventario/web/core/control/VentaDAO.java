@@ -23,12 +23,17 @@ public class VentaDAO extends InventarioDefaultDataAccess<Venta, Object> impleme
 
     @Override
     public EntityManager getEntityManager() {
-        return em; // ✅ ANTES devolvía null, aquí está el error corregido
+        return em;
     }
 
     @Override
     protected Class<Venta> getEntityClass() {
         return Venta.class;
+    }
+
+    @Override
+    public int count() throws IllegalStateException {
+        return super.count();
     }
 
     // Buscar por idVenta
@@ -50,7 +55,7 @@ public class VentaDAO extends InventarioDefaultDataAccess<Venta, Object> impleme
     // Buscar todas las ventas
     public List<Venta> findAllVenta(int first, int max) {
         try {
-            TypedQuery<Venta> q = em.createNamedQuery("Venta.findAllVenta", Venta.class);
+            TypedQuery<Venta> q = em.createNamedQuery("Venta.findAll", Venta.class);
             q.setFirstResult(first);
             q.setMaxResults(max);
             return q.getResultList();
@@ -76,59 +81,58 @@ public class VentaDAO extends InventarioDefaultDataAccess<Venta, Object> impleme
     }
 
     // Buscar por estado
-    public List<Venta> findByEstado(String estado, int first, int max) {
-        if (estado != null) {
-            try {
-                TypedQuery<Venta> q = em.createNamedQuery("Venta.findByEstado", Venta.class);
-                q.setParameter("estado", estado);
-                q.setFirstResult(first);
-                q.setMaxResults(max);
-                return q.getResultList();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Error al buscar por estado", ex);
-            }
-        }
-        return List.of();
-    }
+//    public List<Venta> findByEstado(String estado, int first, int max) {
+//        if (estado != null) {
+//            try {
+//                TypedQuery<Venta> q = em.createNamedQuery("Venta.findByEstado", Venta.class);
+//                q.setParameter("estado", estado);
+//                q.setFirstResult(first);
+//                q.setMaxResults(max);
+//                return q.getResultList();
+//            } catch (Exception ex) {
+//                throw new IllegalStateException("Error al buscar por estado", ex);
+//            }
+//        }
+//        return List.of();
+//    }
 
     // Buscar por fecha
-    public List<Venta> findByFecha(java.util.Date fecha, int first, int max) {
-        if (fecha != null) {
-            try {
-                TypedQuery<Venta> q = em.createNamedQuery("Venta.findByFecha", Venta.class);
-                q.setParameter("fecha", fecha);
-                q.setFirstResult(first);
-                q.setMaxResults(max);
-                return q.getResultList();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Error al buscar por fecha", ex);
-            }
-        }
-        return List.of();
-    }
+//    public List<Venta> findByFecha(java.util.Date fecha, int first, int max) {
+//        if (fecha != null) {
+//            try {
+//                TypedQuery<Venta> q = em.createNamedQuery("Venta.findByFecha", Venta.class);
+//                q.setParameter("fecha", fecha);
+//                q.setFirstResult(first);
+//                q.setMaxResults(max);
+//                return q.getResultList();
+//            } catch (Exception ex) {
+//                throw new IllegalStateException("Error al buscar por fecha", ex);
+//            }
+//        }
+//        return List.of();
+//    }
 
 
-    public int countAllVenta() {
-        try {
-            TypedQuery<Long> q = em.createNamedQuery("Venta.countAllVenta", Long.class);
-            return q.getSingleResult().intValue();
-        } catch (Exception ex) {
-            throw new IllegalStateException("Error al contar todas las ventas", ex);
-        }
-    }
+//    public int countAllVenta() {
+//        try {
+//            TypedQuery<Long> q = em.createNamedQuery("Venta.countAllVenta", Long.class);
+//            return q.getSingleResult().intValue();
+//        } catch (Exception ex) {
+//            throw new IllegalStateException("Error al contar todas las ventas", ex);
+//        }
+//    }
 
 
-    public int countByEstado(String estado) {
-        if (estado != null) {
-            try {
-                TypedQuery<Long> q = em.createNamedQuery("Venta.countByEstado", Long.class);
-                q.setParameter("estado", estado);
-                return q.getSingleResult().intValue();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Error al contar por estado", ex);
-            }
-        }
-        return 0;
-    }
+//    public int countByEstado(String estado) {
+//        if (estado != null) {
+//            try {
+//                TypedQuery<Long> q = em.createNamedQuery("Venta.countByEstado", Long.class);
+//                q.setParameter("estado", estado);
+//                return q.getSingleResult().intValue();
+//            } catch (Exception ex) {
+//                throw new IllegalStateException("Error al contar por estado", ex);
+//            }
+//        }
+//        return 0;
+//    }
 }
-

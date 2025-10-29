@@ -10,23 +10,18 @@
     <ui:define name="header">
         <h1>#{defaultfrm['page.venta']}</h1>
     </ui:define>
-
-
     <ui:define name="contenido-tabla">
-        <h:panelGrid id="pnlTabla">
+        <h:panelGrid>
             <h:form id="frmTop">
-                <p:dataTable id="tabla-top"
-                             lazy="true"
+                <p:dataTable lazy="true"
                              rendered="#{ventaFrm.estado == 'NADA'}"
-                             styleClass="tabla-crud"
                              rows="#{ventaFrm.pageSize}"
                              paginator="true"
                              paginatorPosition="bottom"
-                             value="#{ventaFrm.modelo}"
-                             var="reg"
+                             value="#{ventaFrm.modelo}" var="reg"
                              selectionMode="single"
-                             selection="#{ventaFrm.registro}">
-
+                             selection="#{ventaFrm.registro}"
+                             styleClass="tabla-crud">
                     <p:ajax event="rowSelect"
                             listener="#{ventaFrm.selectionHandler}"
                             update=":pnlDetalle :pnlTabla"/>
@@ -40,13 +35,10 @@
                     </p:column>
 
                     <p:column headerText="Fecha">
-                        <h:outputText value="#{venta.fecha}">
-                            <f:convertDateTime type="both" pattern="dd/MM/yyyy HH:mm" />
+                        <h:outputText value="#{reg.fecha}">
+                            <f:convertDateTime type="offsetDateTime" pattern="dd/MM/yyyy HH:mm:ss" />
                         </h:outputText>
-
                     </p:column>
-
-
 
                     <p:column headerText="Estado">
                         <h:outputText value="#{reg.estado}"/>
@@ -63,64 +55,102 @@
     </ui:define>
 
     <ui:define name="contenido-detalle">
+
         <p:tabView id="tabVenta" cache="false" dynamic="true" rendered="#{ventaFrm.estado != 'NADA'}">
-
             <p:tab closable="false" title="Generalidades">
-                <h:form id="frmDetalle">
-                    <h:panelGrid columns="2">
+                <h:panelGroup id="pnlCliente">
+                    <h:form id="frmCrear">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel for="txtId" value="ID:"/>
+                            <p:inputText id="txtId"
+                                         value="#{ventaFrm.registro.id}"
+                                         readonly="true"
+                                         disabled="true"/>
 
-                        <p:outputLabel for="txtId" value="ID:"/>
-                        <p:inputText id="txtId"
-                                     value="#{ventaFrm.registro.id}"
-                                     readonly="true"
-                                     disabled="true"/>
+                            <p:outputLabel for="txtClienteSelect" value="Cliente:"/>
+                            <h:panelGroup id="pnlCliente">
+                                <h:panelGrid columns="2">
+                                    <p:inputText id="txtClienteSelect"
+                                                 value="#{ventaFrm.registro.idCliente.nombre}"
+                                                 readonly="true" disabled="true" size="10"/>
+                                    <p:commandButton type="button" onclick="PF('dlgClienteSelect').show();"
+                                                     value="Seleccionar Cliente" icon="pi pi-external-link"/>
+                                </h:panelGrid>
 
-                        <p:outputLabel for="cmbCliente" value="Cliente:"/>
-                        <p:selectOneMenu id="cmbCliente"
-                                         value="#{ventaFrm.registro.idCliente}"
-                                         converter="clienteConverter"
-                                         required="true"
-                                         requiredMessage="Debe seleccionar un cliente.">
-                            <f:selectItem itemLabel="-- Seleccione --" itemValue="#{null}" noSelectionOption="true"/>
-                            <f:selectItems value="#{ventaFrm.listaClientes}" var="c"
-                                           itemLabel="#{c.nombre}" itemValue="#{c}"/>
-                        </p:selectOneMenu>
+                            </h:panelGroup>
 
-                        <p:outputLabel for="dpFecha" value="Fecha de venta:"/>
-                        <p:datePicker id="dpFecha"
-                                      value="#{ventaFrm.registro.fecha}"
-                                      showTime="true"
-                                      hourFormat="24"
-                                      timeInput="true"
-                                      timeZone="America/El_Salvador"
-                                      pattern="yyyy-MM-dd'T'HH:mm"
-                                      converter="offsetDateTimeConverter"
-                                      required="true"
-                                      requiredMessage="La fecha es obligatoria"
-                                      touchUI="false"/>
+                            <p:outputLabel for="dpFecha" value="Fecha de venta:"/>
+                            <p:datePicker id="dpFecha"
+                                          value="#{ventaFrm.registro.fecha}"
+                                          showTime="true"
+                                          hourFormat="24"
+                                          timeInput="true"
+                                          timeZone="America/El_Salvador"
+                                          pattern="yyyy-MM-dd'T'HH:mm"
+                                          converter="offsetDateTimeConverter"
+                                          required="true"
+                                          requiredMessage="La fecha es obligatoria"
+                                          touchUI="false"/>
 
-                        <p:outputLabel for="cmbEstado" value="Estado:"/>
-                        <p:selectOneMenu id="cmbEstado"
-                                         value="#{ventaFrm.registro.estado}"
-                                         required="true"
-                                         requiredMessage="Debe seleccionar un estado.">
-                            <f:selectItem itemLabel="Seleccione" itemValue="#{null}" noSelectionOption="true"/>
-                            <f:selectItem itemLabel="ACTIVA" itemValue="ACTIVA"/>
-                            <f:selectItem itemLabel="ANULADA" itemValue="ANULADA"/>
-                            <f:selectItem itemLabel="FINALIZADA" itemValue="FINALIZADA"/>
-                        </p:selectOneMenu>
+                            <p:outputLabel for="cmbEstado" value="Estado:"/>
+                            <p:selectOneMenu id="cmbEstado"
+                                             value="#{ventaFrm.registro.estado}"
+                                             required="true"
+                                             requiredMessage="Debe seleccionar un estado.">
+                                <f:selectItem itemLabel="Seleccione" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="ACTIVA" itemValue="ACTIVA"/>
+                                <f:selectItem itemLabel="ANULADA" itemValue="ANULADA"/>
+                                <f:selectItem itemLabel="FINALIZADA" itemValue="FINALIZADA"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="txtObservaciones" value="Observaciones:"/>
+                            <p:inputTextarea id="txtObservaciones"
+                                             value="#{ventaFrm.registro.observaciones}"
+                                             rows="4" cols="50"/>
 
-                        <p:outputLabel for="txtObservaciones" value="Observaciones:"/>
-                        <p:inputTextarea id="txtObservaciones"
-                                         value="#{ventaFrm.registro.observaciones}"
-                                         rows="4" cols="50"/>
 
-                    </h:panelGrid>
 
-                    <ues:botones-crud formulario="#{ventaFrm}" actualizar=":pnlDetalle :pnlTabla"/>
-                </h:form>
+
+
+
+
+                        </h:panelGrid>
+
+                        <ues:botones-crud formulario="#{ventaFrm}" actualizar=":pnlDetalle :pnlTabla"/>
+                    </h:form>
+                </h:panelGroup>
             </p:tab>
+
+
+
+
+
         </p:tabView>
+    </ui:define>
+
+    <ui:define name="extra">
+        <p:dialog id="dlgClienteSelect" widgetVar="dlgClienteSelect" modal="true" closable="true">
+            <h:form id="frmDlgClienteSelect">
+                <h:panelGrid>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Seleccione el Cliente:" for="txtClienteSelect"/>
+                        <p:autoComplete id="txtClienteSelect"
+                                        completeMethod="#{ventaFrm.buscarClientesPorNombre}"
+                                        value="#{ventaFrm.registro.idCliente}"
+                                        var="cli"
+                                        converter="clienteConverter"
+                                        itemLabel="#{cli.nombre} (#{cli.id})"
+                                        itemValue="#{cli}"
+                                        forceSelection="true"
+                                        dropdown="true"
+                                        size="40"/>
+                    </h:panelGrid>
+                    <h:commandButton value="Seleccionar" procces="@from"
+                                     actionListener="#{ventaFrm.btnSeleccionarClienteHandler}"
+                                     update=":tabVenta:frmCrear:pnlCliente"
+                                     oncomplete="PF('dlgClienteSelect').hide();"/>
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
     </ui:define>
 
 </ui:composition>
