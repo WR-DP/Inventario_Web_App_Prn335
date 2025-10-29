@@ -89,6 +89,7 @@ public class ClienteFrm extends DefaultFrm<Cliente> implements Serializable {
         return cliente;
     }
 
+
     @Override
     public InventarioDefaultDataAccess getDataAccess() {
         return clienteDAO;
