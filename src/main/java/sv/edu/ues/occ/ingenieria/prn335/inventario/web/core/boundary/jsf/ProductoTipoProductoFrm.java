@@ -12,6 +12,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.*;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -204,11 +205,18 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
         ProductoTipoProducto producto = new ProductoTipoProducto();
         producto.setActivo(true);
         producto.setId(UUID.randomUUID());
+        producto.setFechaCreacion(OffsetDateTime.now(ZoneId.of("America/El_Salvador")));
         if (idProducto != null) {
             producto.setIdProducto(new Producto());
             producto.getIdProducto().setId(idProducto);
         }
         return producto;
+    }
+
+    @Override
+    public void btnNuevoHandler(ActionEvent ae) {
+        this.registro = nuevoRegistro();
+        this.estado = ESTADO_CRUD.CREAR;
     }
 
     List<ProductoTipoProducto> listaTipoProducto;
