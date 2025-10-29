@@ -5,12 +5,13 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProducto;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.ProductoTipoProductoCaracteristica;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProductoCaracteristica;
 
 import java.io.Serializable;
-import java.math.BigInteger;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,34 +21,26 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
 
     @PersistenceContext(unitName = "InventarioPU")
     private EntityManager em;
-
     public TipoProductoCaracteristicaDAO() {
         super(TipoProductoCaracteristica.class);
     }
-
     @Override
     public EntityManager getEntityManager() {
         return em;
     }
-
     @Override
     protected Class<TipoProductoCaracteristica> getEntityClass() {
         return TipoProductoCaracteristica.class;
     }
-
     @Override
     public int count() throws IllegalStateException {
         return super.count();
     }
 
-
-//    @Override
-//    public int count(TipoProductoCaracteristicaDAO registro) throws IllegalStateException {
-//        return em.createQuery("select count(t) from TipoProductoCaracteristica t", Integer.class).getSingleResult();
-//    }
-
-    //si no obtiene resultado deseado revisar la query
-    public List<TipoProductoCaracteristica> findByTipoIdProducto(final Long idTipoProducto, int first, int max) {
+    /**
+     * Buscar por idTipoProducto (usar Long para el id)
+     */
+    public List<TipoProductoCaracteristica> findByIdTipoProducto(final Long idTipoProducto, int first, int max) {
         if (idTipoProducto != null) {
             try {
                 return em.createNamedQuery("TipoProductoCaracteristica.findByIdTipoProducto", TipoProductoCaracteristica.class)
@@ -61,7 +54,24 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         }
         return List.of();
     }
-
+    /**
+     * Contar por idTipoProducto
+     */
+    public Long countByIdTipoProducto(final Long idTipoProducto) {
+        if (idTipoProducto != null) {
+            try {
+                TypedQuery<Long> q = em.createNamedQuery("TipoProductoCaracteristica.countByIdTipoProducto", Long.class);
+                q.setParameter("idTipoProducto", idTipoProducto);
+                return q.getSingleResult();
+            } catch (Exception ex) {
+                Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        }
+        return 0L;
+    }
+    /**
+     * Mantengo métodos auxiliares existentes (buscar por id de la entidad TipoProductoCaracteristica)
+     */
     public List<TipoProductoCaracteristica> findByIdCaracteristica(final Long id, int first, int max) {
         if (id != null) {
             try {
@@ -76,25 +86,19 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         }
         return List.of();
     }
-
-
-    //contar por id tipo producto caracteristica
-    public int countByIdProducto(final Long id) {
+    public Long countByIdCaracteristica(final Long id) {
         if (id != null) {
             try {
                 TypedQuery<Long> q = em.createNamedQuery("TipoProductoCaracteristica.countById", Long.class);
                 q.setParameter("id", id);
-                return q.getSingleResult().intValue();
+                return q.getSingleResult();
             } catch (Exception ex) {
                 Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
-        return 0;
+        return 0L;
     }
-
-    //Si no funciona la busqueda por id padre, revisar la query
-    //busqueda por id padre.... podria el tipo de variable TipoProducto o Long
-    public List<TipoProductoCaracteristica> findByIdPadre(final TipoProducto idPadre, int first, int max) {
+    public List<TipoProductoCaracteristica> findByIdPadre(final Long idPadre, int first, int max) {
         if (idPadre != null) {
             try {
                 return em.createNamedQuery("TipoProductoCaracteristica.findByIdPadre", TipoProductoCaracteristica.class)
@@ -108,8 +112,6 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         }
         return List.of();
     }
-
-    //busqueda por nombre
     public List<TipoProductoCaracteristica> findByNombreCaracteristica(final String nombreCaracteristica, int first, int max) {
         if (nombreCaracteristica != null && !nombreCaracteristica.isBlank()) {
             try {
@@ -124,5 +126,63 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         }
         return List.of();
     }
-
+    public List<ProductoTipoProductoCaracteristica> findByProductoTipoProducto(UUID idProductoTipoProducto, int first, int max) {
+        if (idProductoTipoProducto == null) return Collections.emptyList();
+        try {
+            TypedQuery<ProductoTipoProductoCaracteristica> q =
+                    em.createNamedQuery("ProductoTipoProductoCaracteristica.findByIdProductoTipoProducto", ProductoTipoProductoCaracteristica.class);
+            q.setParameter("id", idProductoTipoProducto);
+            q.setFirstResult(first);
+            q.setMaxResults(max);
+            return q.getResultList();
+        } catch (Exception ex) {
+            Logger.getLogger(ProductoTipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return Collections.emptyList();
+        }
+    }
+    public ProductoTipoProductoCaracteristica save(ProductoTipoProductoCaracteristica entidad) {
+        try {
+            if (entidad.getId() == null) {
+                em.persist(entidad);
+                return entidad;
+            } else {
+                return em.merge(entidad);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ProductoTipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    public boolean removeByProductoTipoProductoAndCaracteristica(UUID idProductoTipoProducto, Long idTipoProductoCaracteristica) {
+        try {
+            int deleted = em.createNamedQuery(
+                            "ProductoTipoProductoCaracteristica.removeByProductoTipoProductoAndCaracteristica")
+                    .setParameter("idPtpp", idProductoTipoProducto)
+                    .setParameter("idCar", idTipoProductoCaracteristica)
+                    .executeUpdate();
+            return deleted > 0;
+        } catch (Exception ex) {
+            Logger.getLogger(ProductoTipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    public TipoProductoCaracteristica findById(final Long id) {
+        if (id == null) return null;
+        try {
+            return em.find(TipoProductoCaracteristica.class, id);
+        } catch (Exception ex) {
+            Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            return null;
+        }
+    }
+    public List<TipoProductoCaracteristica> findObligatoriasByTipo(Long idTipoProducto) {
+        if (idTipoProducto == null) return List.of();
+        try {
+            TypedQuery<TipoProductoCaracteristica> q = em.createNamedQuery("TipoProductoCaracteristica.findObligatoriasByTipo", TipoProductoCaracteristica.class);
+            q.setParameter("idTipo", idTipoProducto);
+            return q.getResultList();
+        } catch (Exception e) {
+            return List.of();
+        }
+    }
 }

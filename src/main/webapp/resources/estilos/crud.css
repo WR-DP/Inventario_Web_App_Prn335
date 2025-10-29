@@ -147,11 +147,10 @@ td {
 
 /* ==== Mensajes ==== */
 .success {
-    background: rgba(139, 69, 19, 0.85);
-    color: #cdcbcb;
+    background: rgb(205, 203, 203);
+    color: #000000;
     padding: 10px;
     border-radius: 8px;
-    border: 2px solid #8B4513;
     margin-bottom: 15px;
 }
 

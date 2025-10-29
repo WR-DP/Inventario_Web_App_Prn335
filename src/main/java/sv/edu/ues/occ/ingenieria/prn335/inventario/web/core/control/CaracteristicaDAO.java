@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Caracteristica;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProducto;
 
 import java.io.Serializable;
 import java.util.List;
@@ -64,6 +65,21 @@ public class CaracteristicaDAO extends InventarioDefaultDataAccess<Caracteristic
             }
         }
         return 0;
+    }
+
+    public List<Caracteristica> findByNombreLike(final String nombre , int first, int max){
+        try{
+            if(nombre!=null && !nombre.isBlank() && first>=0 && max>0){
+                TypedQuery<Caracteristica> q = em.createNamedQuery("Caracteristica.findByNombreLike", Caracteristica.class);
+                q.setParameter("nombre", "%" + nombre.trim().toUpperCase() + "%");
+                q.setFirstResult(first);
+                q.setMaxResults(max);
+                return q.getResultList();
+            }
+        }catch(Exception ex){
+            Logger.getLogger(TipoProductoDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return List.of();
     }
 
 

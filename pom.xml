@@ -70,6 +70,13 @@
             <scope>provided</scope>
         </dependency>
 
+<!--cambiar a jakarta.persistence 3.1.0 si tenemos problemas de compatibilidad-->
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+            <version>2.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>
