@@ -1,43 +1,39 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-//import org.hibernate.annotations.OnDelete;
-//import org.hibernate.annotations.OnDeleteAction;
-
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "venta", schema = "public")
 @NamedQueries({
+        @NamedQuery(name = "Venta.findAll", query = "SELECT v FROM Venta v"),
         @NamedQuery(name = "Venta.findByIdVenta", query = "SELECT v FROM Venta v WHERE v.id = :idVenta"),
-        @NamedQuery(name = "Venta.findAllVenta", query = "SELECT v FROM Venta v"),
         @NamedQuery(name = "Venta.findByIdCliente", query = "SELECT v FROM Venta v WHERE v.idCliente.id = :idCliente"),
-        @NamedQuery(name = "Venta.findByFecha", query = "SELECT v FROM Venta v WHERE v.fecha = :fecha"),
-        @NamedQuery(name = "Venta.findByEstado", query = "SELECT v FROM Venta v WHERE v.estado = :estado"),
-        @NamedQuery(name = "Venta.countAllVenta", query = "SELECT COUNT(v) FROM Venta v"),
-        @NamedQuery(name = "Venta.countByFecha", query = "SELECT COUNT(v) FROM Venta v WHERE v.fecha = :fecha"),
-        @NamedQuery(name = "Venta.countByEstado", query = "SELECT COUNT(v) FROM Venta v WHERE v.estado = :estado")
+        @NamedQuery(name = "Venta.countAll", query = "SELECT COUNT(v) FROM Venta v")
 })
-public class Venta {
+public class Venta implements Serializable {
+
     @Id
     @Column(name = "id_venta", nullable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "id_cliente")
     private Cliente idCliente;
 
-    @Column(name = "fecha")
+    @NotNull
+    @Column(name = "fecha", nullable = false)
     private OffsetDateTime fecha;
 
-    @Size(max = 10)
-    @Column(name = "estado", length = 10)
+    @Size(max = 20)
+    @Column(name = "estado", length = 20)
     private String estado;
 
-    @Column(name = "observaciones", length = Integer.MAX_VALUE)
+    @Column(name = "observaciones", length = 500)
     private String observaciones;
 
     public UUID getId() {
@@ -79,5 +75,4 @@ public class Venta {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-
 }
