@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Producto;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.VentaDetalle;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -36,17 +37,17 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
     }
 
     public List<Producto> findByIdProducto(UUID idProducto, int first, int max) {
-       if(idProducto != null){
-        try{
-            TypedQuery<Producto> q = em.createNamedQuery("Producto.findByIdProducto", Producto.class);
-            q.setParameter("id", idProducto);
-            q.setFirstResult(first);
-            q.setMaxResults(max);
-            return q.getResultList();
-        } catch (Exception ex) {
-            Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        if(idProducto != null){
+            try{
+                TypedQuery<Producto> q = em.createNamedQuery("Producto.findByIdProducto", Producto.class);
+                q.setParameter("id", idProducto);
+                q.setFirstResult(first);
+                q.setMaxResults(max);
+                return q.getResultList();
+            } catch (Exception ex) {
+                Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            }
         }
-       }
         return List.of();
     }
     public List<Producto> findAllProducto(int first, int max) {
@@ -62,18 +63,18 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
     }
     public List<Producto> findByActivo(Boolean activo, int first, int max) {
         if(activo != null){
-         try{
-             TypedQuery<Producto> q = em.createNamedQuery("Producto.findByActivo", Producto.class);
-             q.setParameter("activo", activo);
-             q.setFirstResult(first);
-             q.setMaxResults(max);
-             return q.getResultList();
-         } catch (Exception ex) {
-             Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-         }
+            try{
+                TypedQuery<Producto> q = em.createNamedQuery("Producto.findByActivo", Producto.class);
+                q.setParameter("activo", activo);
+                q.setFirstResult(first);
+                q.setMaxResults(max);
+                return q.getResultList();
+            } catch (Exception ex) {
+                Logger.getLogger(ProductoDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            }
         }
         return List.of();
-     }
+    }
     public int countAllProductos() {
         try{
             TypedQuery<Long> q = em.createNamedQuery("Producto.countAllProducto", Long.class);
@@ -107,4 +108,21 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
         }
         return 0;
     }
+
+    public List<Producto> buscarProductosPorNombre(final String nombreProducto, int first, int max) {
+        try {
+            if (nombreProducto != null && !nombreProducto.isBlank() && first >= 0 && max > 0) {
+                TypedQuery<Producto> query = em.createNamedQuery("Producto.buscarProductosPorNombre",Producto.class);
+                query.setParameter("nombreProducto", "%" + nombreProducto + "%");
+                query.setFirstResult(first);
+                query.setMaxResults(max);
+                return query.getResultList();
+            }
+        } catch (Exception ex) {
+            throw new IllegalStateException("Error al buscar productos por nombre", ex);
+        }
+        return List.of();
+    }
+
+
 }

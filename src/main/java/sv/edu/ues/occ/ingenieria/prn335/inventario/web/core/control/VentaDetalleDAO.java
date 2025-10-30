@@ -9,11 +9,12 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.VentaDetalle;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Stateless
 @LocalBean
 public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, Object> implements Serializable {
-    @PersistenceContext(unitName="InventarioPU")
+    @PersistenceContext(unitName = "InventarioPU")
     private EntityManager em;
 
     public VentaDetalleDAO() {
@@ -22,12 +23,12 @@ public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, O
 
     @Override
     public EntityManager getEntityManager() {
-        return null;
+        return em;
     }
 
     @Override
     protected Class<VentaDetalle> getEntityClass() {
-        return null;
+        return VentaDetalle.class;
     }
 
 
@@ -59,8 +60,8 @@ public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, O
         }
     }
 
-    //buscar por idVenta
-    List<VentaDetalle> findByIdVenta(Integer idVenta, int first, int max) {
+    //buscar por idVenta<---------------------------------------------------------------------------------------------------------
+    public List<VentaDetalle> findByIdVenta(UUID idVenta, int first, int max) {
         if (idVenta != null) {
             try {
                 TypedQuery<VentaDetalle> q = em.createNamedQuery("VentaDetalle.findByIdVenta", VentaDetalle.class);
@@ -150,8 +151,8 @@ public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, O
         }
     }
 
-    //contar por idVenta
-    public int countByIdVenta(Integer idVenta) {
+    //contar por idVenta<---------------------------------------------------------------------------------------------------------
+    public int countByIdVenta(UUID idVenta) {
         if (idVenta != null) {
             try {
                 TypedQuery<Long> q = em.createNamedQuery("VentaDetalle.countByIdVenta", Long.class);
@@ -220,5 +221,22 @@ public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, O
         }
         return 0;
     }
+
+
+    public List<VentaDetalle> buscarProductosPorNombre(final String nombreProducto, int first, int max) {
+        try {
+            if (nombreProducto != null && !nombreProducto.isBlank() && first >= 0 && max > 0) {
+                TypedQuery<VentaDetalle> query = em.createNamedQuery("VentaDetalle.buscarProductosPorNombre", VentaDetalle.class);
+                query.setParameter("nombreProducto", "%" + nombreProducto + "%");
+                query.setFirstResult(first);
+                query.setMaxResults(max);
+                return query.getResultList();
+            }
+        } catch (Exception ex) {
+            throw new IllegalStateException("Error al buscar productos por nombre", ex);
+        }
+        return List.of();
+    }
+
 
 }
