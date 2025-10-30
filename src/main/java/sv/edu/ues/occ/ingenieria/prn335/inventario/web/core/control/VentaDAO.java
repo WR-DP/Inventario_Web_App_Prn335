@@ -9,6 +9,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Venta;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Stateless
 @LocalBean
@@ -37,7 +38,7 @@ public class VentaDAO extends InventarioDefaultDataAccess<Venta, Object> impleme
     }
 
     // Buscar por idVenta
-    public List<Venta> findByIdVenta(Integer idVenta, int first, int max) {
+    public List<Venta> findByIdVenta(UUID idVenta, int first, int max) {
         if (idVenta != null) {
             try {
                 TypedQuery<Venta> q = em.createNamedQuery("Venta.findByIdVenta", Venta.class);
@@ -65,7 +66,7 @@ public class VentaDAO extends InventarioDefaultDataAccess<Venta, Object> impleme
     }
 
     // Buscar por cliente
-    public List<Venta> findByIdCliente(Integer idCliente, int first, int max) {
+    public List<Venta> findByIdCliente(UUID idCliente, int first, int max) {
         if (idCliente != null) {
             try {
                 TypedQuery<Venta> q = em.createNamedQuery("Venta.findByIdCliente", Venta.class);

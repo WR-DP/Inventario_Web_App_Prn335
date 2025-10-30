@@ -89,16 +89,15 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
             Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     @Override
     protected Venta nuevoRegistro() {
         Venta v = new Venta();
         v.setId(UUID.randomUUID());
         v.setEstado("ACTIVA");
         v.setObservaciones("");
-        v.setFecha(OffsetDateTime.now());
         return v;
     }
-
 
     @Override
     public InventarioDefaultDataAccess getDataAccess() {
@@ -129,12 +128,28 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         super.btnModificarHandler(actionEvent);
     }
 
+    @Override
+    public void seleccionarRegistro(SelectEvent<Venta> event) {
+        super.seleccionarRegistro(event);
+        try {
+            if (this.registro != null && this.registro.getId() != null) {
+                ventaDetalleFrm.setIdVenta(this.registro.getId());
+            } else {
+                ventaDetalleFrm.setIdVenta(null);
+            }
+            ventaDetalleFrm.inicializarRegistros();
+        } catch (Exception ex) {
+            Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
     public void btnSeleccionarClienteHandler(ActionEvent event){
         try{
             if (this.registro == null) {
                 facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No hay venta activa", null));
                 return;
             }
+
             Cliente sel = this.registro.getIdCliente();
             if (sel == null) {
                 facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Seleccione un cliente", null));
@@ -148,7 +163,6 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
                     return;
                 }
             }
-            // si no se pudo cargar desde DAO, mantener el seleccionado
             facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Cliente asignado (sin carga adicional)", null));
         }catch (Exception ex){
             Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
@@ -162,7 +176,6 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
                 facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Cliente no seleccionado", null));
                 return;
             }
-            // asegurarse de tener la entidad completa (por si viene solo con id)
             if (seleccionado.getId() != null) {
                 Cliente completo = clienteDAO.findById(seleccionado.getId());
                 this.registro.setIdCliente(completo != null ? completo : seleccionado);
@@ -202,6 +215,7 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         }
         return List.of();
     }
+
 
     public List<Venta> getListaVentas() {
         return listaVentas;
