@@ -108,6 +108,7 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     protected Compra nuevoRegistro() {
         Compra c = new Compra();
         c.setEstado("ACTIVA");
+        c.setIdProveedor(new Proveedor());
         c.setObservaciones("");
         return c;
     }
