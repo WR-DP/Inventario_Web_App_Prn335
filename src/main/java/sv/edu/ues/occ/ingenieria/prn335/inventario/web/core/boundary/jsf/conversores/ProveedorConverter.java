@@ -23,16 +23,17 @@ public class ProveedorConverter implements Converter<Proveedor> {
         }
         try {
             Object key = null;
+            String v = value.trim();
             try {
-                key = java.util.UUID.fromString(value);
-            } catch (IllegalArgumentException ex1) {
+                key = Integer.valueOf(v);
+            } catch (NumberFormatException exInt) {
                 try {
-                    key = Long.valueOf(value);
-                } catch (NumberFormatException ex2) {
+                    key = Long.valueOf(v);
+                } catch (NumberFormatException exLong) {
                     try {
-                        key = Integer.valueOf(value);
-                    } catch (NumberFormatException ex3) {
-                        key = value;
+                        key = java.util.UUID.fromString(v);
+                    } catch (IllegalArgumentException exUuid) {
+                        key = v;
                     }
                 }
             }
