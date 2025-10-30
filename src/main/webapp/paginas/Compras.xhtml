@@ -82,7 +82,7 @@
                                 <f:selectItem itemLabel="Seleccione" itemValue="#{null}" noSelectionOption="true"/>
                                 <f:selectItems value="#{proveedorFrm.listaProveedores}"
                                                var="p"
-                                               itemLabel="#{p.nombre}"
+                                               itemLabel="#{p.nombre} (#{p.id})"
                                                itemValue="#{p}"/>
                             </p:selectOneMenu>
 
