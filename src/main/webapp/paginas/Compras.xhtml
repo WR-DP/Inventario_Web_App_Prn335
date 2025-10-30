@@ -19,13 +19,15 @@
                              rows="#{compraFrm.pageSize}"
                              paginator="true"
                              paginatorPosition="bottom"
-                             value="#{compraFrm.modelo}" var="reg"
+                             value="#{compraFrm.listaCompras}" var="reg"
                              selectionMode="single"
                              selection="#{compraFrm.registro}"
-                             styleClass="tabla-crud">
+                             styleClass="tabla-crud"
+                             rowKey="#{reg.id}"
+                >
 
                     <p:ajax event="rowSelect"
-                            listener="#{compraFrm.selectionHandler}"
+                            listener="#{compraFrm.seleccionarRegistro}"
                             update=":pnlDetalle :pnlTabla"/>
 
                     <p:column headerText="ID">
@@ -33,7 +35,7 @@
                     </p:column>
 
                     <p:column headerText="Proveedor">
-                        <h:outputText value="#{reg.proveedor != null ? reg.proveedor.nombre : '-'}"/>
+                        <h:outputText value="#{reg.idProveedor != null ? reg.idProveedor.nombre : '-'}"/>
                     </p:column>
 
                     <p:column headerText="Fecha">
@@ -73,7 +75,7 @@
 
                             <p:outputLabel for="cmbProveedor" value="Proveedor:"/>
                             <p:selectOneMenu id="cmbProveedor"
-                                             value="#{compraFrm.registro.proveedor}"
+                                             value="#{compraFrm.registro.idProveedor.nombre}"
                                              required="true"
                                              requiredMessage="Debe seleccionar un proveedor."
                                              converter="proveedorConverter">

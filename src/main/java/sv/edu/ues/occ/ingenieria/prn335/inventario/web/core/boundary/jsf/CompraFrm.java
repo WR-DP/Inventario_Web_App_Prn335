@@ -66,7 +66,7 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     protected Compra getIdByText(String id) {
         if (id != null) {
             try {
-                UUID buscado = UUID.fromString(id);
+                Long buscado = Long.parseLong(id);
                 return this.modelo.getWrappedData().stream()
                         .filter(r -> r.getId().equals(buscado))
                         .findFirst().orElse(null);
@@ -83,16 +83,30 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
         super.inicializar();
         try {
             listaCompras = compraDAO.findRange(0, Integer.MAX_VALUE);
-            listaProveedores = proveedorDAO.findRange(0, Integer.MAX_VALUE);
+            int size = listaCompras == null ? 0 : listaCompras.size();
+            Logger.getLogger(CompraFrm.class.getName()).log(Level.INFO, "Compras cargadas desde DAO: {0}", size);
+
+            if (listaCompras == null) listaCompras = List.of();
+
+            // Forzar inicialización del modelo si DefaultFrm maneja lazy model
+            try {
+                // inicializarRegistros() existe en DefaultFrm según uso en otras clases
+                this.inicializarRegistros();
+                Logger.getLogger(CompraFrm.class.getName()).log(Level.INFO, "Modelo inicializado/actualizado");
+            } catch (Exception e) {
+                Logger.getLogger(CompraFrm.class.getName()).log(Level.WARNING, "No se pudo inicializarRegistros(): {0}", e.getMessage());
+            }
+
         } catch (Exception ex) {
-            Logger.getLogger(CompraFrm.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CompraFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al cargar compras", ex.getMessage()));
+            listaCompras = List.of();
         }
     }
 
     @Override
     protected Compra nuevoRegistro() {
         Compra c = new Compra();
-        c.setId(UUID.randomUUID());
         c.setEstado("ACTIVA");
         c.setObservaciones("");
         return c;
@@ -105,7 +119,7 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
 
     @Override
     protected Compra buscarRegistroPorId(Object id) {
-        if (id instanceof UUID buscado && this.modelo != null) {
+        if (id instanceof Long buscado && this.modelo != null) {
             return this.modelo.getWrappedData().stream()
                     .filter(r -> r.getId().equals(buscado))
                     .findFirst().orElse(null);
@@ -141,7 +155,6 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
         return true;
     }
 
-    // -------- GETTERS & SETTERS ----------
 
     public List<Compra> getListaCompras() {
         return listaCompras;
@@ -167,11 +180,11 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
         this.nombreBean = nombreBean;
     }
 
-    public CompraDetalleFrm getCompraDetalleFrm() {
-        if (this.registro != null && this.registro.getId() != null) {
-            compraDetalleFrm.setIdCompra(this.registro.getId());
-        }
-        return compraDetalleFrm;
-    }
+//    public CompraDetalleFrm getCompraDetalleFrm() {
+//        if (this.registro != null && this.registro.getId() != null) {
+//            compraDetalleFrm.setIdCompra(this.registro.getId());
+//        }
+//        return compraDetalleFrm;
+//    }
 
 }
