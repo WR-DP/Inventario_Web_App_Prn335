@@ -47,6 +47,14 @@
                     <p:column headerText="Observaciones">
                         <h:outputText value="#{reg.observaciones}"/>
                     </p:column>
+
+                    <p:column headerText="Monto Total">
+                    <h:outputText value="#{ventaFrm.calcularMontoTotal(reg)}">
+                        <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                    </h:outputText>
+                    </p:column>
+
+
                 </p:dataTable>
 
                 <ues:botones-top formulario="#{ventaFrm}" actualizar=":pnlDetalle :pnlTabla"/>

@@ -8,14 +8,13 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.primefaces.event.SelectEvent;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ClienteDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.VentaDAO;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.*;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Cliente;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Venta;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.VentaDetalle;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +33,9 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
 
     @Inject
     private ClienteDAO clienteDAO;
+
+    @Inject
+    private VentaDetalleDAO ventaDetalleDAO;
 
     @Inject
     protected VentaDetalleFrm ventaDetalleFrm;
@@ -113,6 +115,20 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
                     .orElse(null);
         }
         return null;
+    }
+
+
+    public java.math.BigDecimal calcularMontoTotal(Venta venta) {
+        if (venta == null || venta.getId() == null) {
+            return BigDecimal.ZERO;
+        }
+        try {
+            List<VentaDetalle> detalles = ventaDetalleDAO.findByIdVenta(venta.getId(), 0, Integer.MAX_VALUE);
+            return ventaDetalleDAO.calcularMontoTotal(detalles);
+        } catch (Exception ex) {
+            Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            return BigDecimal.ZERO;
+        }
     }
 
 
