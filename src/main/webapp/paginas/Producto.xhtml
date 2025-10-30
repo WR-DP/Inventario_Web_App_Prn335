@@ -254,11 +254,13 @@
                                         value="#{productoFrm.productoTipoProductoFrm.registro.idTipoProducto}"
                                         var="tp"
                                         converter="tipoProductoConverter"
-                                        itemLabel="#{tp.nombre} (#{tp.id})"
+                                        itemLabel="#{tp.nombre}"
                                         itemValue="#{tp}"
                                         forceSelection="true"
                                         dropdown="true"
-                                        size="40"/>
+                                        size="40"
+                                        placeholder="Escribe el nombre del tipo de producto"
+                                        emptyMessage="No se encontraron tipos de producto activos con ese nombre"/>
                     </h:panelGrid>
                     <h:commandButton value="Seleccionar" procces="@from"
                                      actionListener="#{productoFrm.productoTipoProductoFrm.btnSeleccionarTipoProductoHandler}"

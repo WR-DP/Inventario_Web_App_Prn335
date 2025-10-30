@@ -262,11 +262,14 @@
                                         value="#{ventaFrm.registro.idCliente}"
                                         var="cli"
                                         converter="clienteConverter"
-                                        itemLabel="#{cli.nombre} (#{cli.id})"
+                                        itemLabel="#{cli.nombre}"
                                         itemValue="#{cli}"
                                         forceSelection="true"
                                         dropdown="true"
-                                        size="40"/>
+                                        size="40"
+                                        placeholder="Escribe el nombre del cliente"
+                                        emptyMessage="No se encontraron clientes activos con ese nombre"/>
+
                     </h:panelGrid>
                     <h:commandButton value="Seleccionar" process="@from"
                                      actionListener="#{ventaFrm.btnSeleccionarClienteHandler}"
@@ -286,11 +289,13 @@
                                         value="#{ventaFrm.ventaDetalleFrm.registro.idProducto}"
                                         var="prod"
                                         converter="productoConverter"
-                                        itemLabel="#{prod.nombreProducto} (#{prod.id})"
+                                        itemLabel="#{prod.nombreProducto}"
                                         itemValue="#{prod}"
                                         forceSelection="true"
                                         dropdown="true"
-                                        size="40"/>
+                                        size="40"
+                                        placeholder="Escribe el nombre del producto"
+                                        emptyMessage="No se encontraron productos activos con ese nombre"/>
                     </h:panelGrid>
                     <h:commandButton value="Seleccionar" process="@from"
                                      actionListener="#{ventaFrm.ventaDetalleFrm.btnSeleccionarProductoHandler}"

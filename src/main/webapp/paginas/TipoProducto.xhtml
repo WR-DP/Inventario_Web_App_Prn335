@@ -203,11 +203,13 @@
                                         value="#{tipoProductoFrm.tipoProductoCaracteristicaFrm.registro.idCaracteristica}"
                                         var="c"
                                         converter="caracteristicaConverter"
-                                        itemLabel="#{c.nombre} (#{c.id})"
+                                        itemLabel="#{c.nombre}"
                                         itemValue="#{c}"
                                         forceSelection="true"
                                         dropdown="true"
-                                        size="40"/>
+                                        size="40"
+                                        placeholder="Escribe el nombre de la característica"
+                                        emptyMessage="No se encontraron características activas con ese nombre"/>
                     </h:panelGrid>
                     <h:commandButton value="Seleccionar" procces="@from"
                                      actionListener="#{tipoProductoFrm.tipoProductoCaracteristicaFrm.btnSeleccionarCaracteristicaHandler}"
