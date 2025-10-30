@@ -9,10 +9,13 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Proveedor;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless
 @LocalBean
 public class ProveedorDAO extends InventarioDefaultDataAccess<Proveedor, Object> implements Serializable {
+
     @PersistenceContext(unitName = "InventarioPU")
     private EntityManager em;
 
@@ -30,7 +33,6 @@ public class ProveedorDAO extends InventarioDefaultDataAccess<Proveedor, Object>
         return Proveedor.class;
     }
 
-    // buscar por idProveedor
     List<Proveedor> findByIdProveedor(Integer idProveedor, int first, int max) {
         if (idProveedor != null) {
             try {
@@ -40,13 +42,12 @@ public class ProveedorDAO extends InventarioDefaultDataAccess<Proveedor, Object>
                 q.setMaxResults(max);
                 return q.getResultList();
             } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
+                throw new IllegalStateException("Parámetro no válido", ex);
             }
         }
         return List.of();
     }
 
-    //buscar todos
     List<Proveedor> findAllProveedor(int first, int max) {
         try {
             TypedQuery<Proveedor> q = em.createNamedQuery("Proveedor.findAllProveedor", Proveedor.class);
@@ -54,11 +55,10 @@ public class ProveedorDAO extends InventarioDefaultDataAccess<Proveedor, Object>
             q.setMaxResults(max);
             return q.getResultList();
         } catch (Exception ex) {
-            throw new IllegalStateException("Parametro no valido", ex);
+            throw new IllegalStateException("Parámetro no válido", ex);
         }
     }
 
-    //buscar por activo
     List<Proveedor> findByActivo(Boolean activo, int first, int max) {
         if (activo != null) {
             try {
@@ -68,48 +68,46 @@ public class ProveedorDAO extends InventarioDefaultDataAccess<Proveedor, Object>
                 q.setMaxResults(max);
                 return q.getResultList();
             } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
+                throw new IllegalStateException("Parámetro no válido", ex);
             }
         }
         return List.of();
     }
 
-    //contar por id
-    public int countByIdProveedor(Integer idProveedor) {
-        if (idProveedor != null) {
-            try {
-                TypedQuery<Long> q = em.createNamedQuery("Proveedor.countByIdProveedor", Long.class);
-                q.setParameter("idProveedor", idProveedor);
-                return ((Long) q.getSingleResult()).intValue();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
-            }
-        }
-        return 0;
-    }
-
-    //contar todos
-    public int countAllProveedor() {
+    long countAllProveedor() {
         try {
             TypedQuery<Long> q = em.createNamedQuery("Proveedor.countAllProveedor", Long.class);
-            return ((Long) q.getSingleResult()).intValue();
+            return q.getSingleResult();
         } catch (Exception ex) {
-            throw new IllegalStateException("Parametro no valido", ex);
+            throw new IllegalStateException("No se pudo contar", ex);
         }
     }
 
-    //contar por activo
-    public int countByActivo(Boolean activo) {
+    long countByActivo(Boolean activo) {
         if (activo != null) {
             try {
                 TypedQuery<Long> q = em.createNamedQuery("Proveedor.countByActivo", Long.class);
                 q.setParameter("activo", activo);
-                return ((Long) q.getSingleResult()).intValue();
+                return q.getSingleResult();
             } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
+                throw new IllegalStateException("Parámetro no válido", ex);
             }
         }
         return 0;
     }
 
+    public List<Proveedor> buscarProveedorPorNombre(final String nombre, int first, int max) {
+        try {
+            if (nombre != null && !nombre.isBlank() && first >= 0 && max > 0) {
+                TypedQuery<Proveedor> q = em.createNamedQuery("Proveedor.buscarProveedorPorNombre", Proveedor.class);
+                q.setParameter("nombre", "%" + nombre.trim().toUpperCase() + "%");
+                q.setFirstResult(first);
+                q.setMaxResults(max);
+                return q.getResultList();
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ProveedorDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return List.of();
+    }
 }

@@ -12,7 +12,8 @@ import java.util.UUID;
         @NamedQuery(name="Cliente.findAllCliente", query = "SELECT c FROM Cliente c"),
         @NamedQuery(name="Cliente.findByActivo", query = "SELECT c FROM Cliente c WHERE c.activo = :activo"),
         @NamedQuery(name="Cliente.countAllCliente", query = "SELECT COUNT(c) FROM Cliente c"),
-        @NamedQuery(name="Cliente.countByActivo", query = "SELECT COUNT(c) FROM Cliente c WHERE c.activo = :activo")
+        @NamedQuery(name="Cliente.countByActivo", query = "SELECT COUNT(c) FROM Cliente c WHERE c.activo = :activo"),
+        @NamedQuery(name="Cliente.buscarClientePorNombre", query = "SELECT c FROM Cliente c WHERE upper(c.nombre) LIKE :nombre")
 })
 public class Cliente {
     @Id

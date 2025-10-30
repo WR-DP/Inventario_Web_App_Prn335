@@ -240,7 +240,7 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
     public List<TipoProducto> buscarTiposPorNombres(final String nombres) {
         try {
             if (nombres != null && !nombres.isBlank()) {
-                return tipoProductoDAO.findByNameLike(nombres, 0, 25);
+                return tipoProductoDAO.findByNameLike(nombres, 0, Integer.MAX_VALUE);
             }
         } catch (Exception ex) {
             Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
@@ -421,7 +421,7 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
 
     @Override
     public void seleccionarRegistro(org.primefaces.event.SelectEvent<ProductoTipoProducto> event) {
-        super.seleccionarRegistro((org.primefaces.event.SelectEvent) event);
+        super.seleccionarRegistro(event);
         asegurarFechaCreacion();
     }
 
