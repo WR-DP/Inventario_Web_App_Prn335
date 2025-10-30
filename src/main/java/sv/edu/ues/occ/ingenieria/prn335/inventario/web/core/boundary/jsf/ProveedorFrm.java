@@ -7,14 +7,13 @@ import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProveedorDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProveedorDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Proveedor;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +29,9 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
 
     private List<Proveedor> proveedores;
 
-    public ProveedorFrm() {}
+    public ProveedorFrm() {
+    }
+
 
     @Override
     protected FacesContext getFacesContext() {
@@ -45,7 +46,7 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
     @Override
     protected String getIdAsText(Proveedor r) {
         if (r != null && r.getId() != null) {
-            return r.getId().toString();
+            return String.valueOf(r.getId());
         }
         return null;
     }
@@ -54,11 +55,13 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
     protected Proveedor getIdByText(String id) {
         if (id != null) {
             try {
-                UUID buscado = UUID.fromString(id);
-                return this.modelo.getWrappedData().stream()
+                Integer buscado = Integer.valueOf(id);
+                return this.modelo.getWrappedData()
+                        .stream()
                         .filter(r -> r.getId().equals(buscado))
-                        .findFirst().orElse(null);
-            } catch (IllegalArgumentException e) {
+                        .findFirst()
+                        .orElse(null);
+            } catch (NumberFormatException e) {
                 Logger.getLogger(ProveedorFrm.class.getName()).log(Level.SEVERE, null, e);
             }
         }
@@ -74,11 +77,13 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
 
     @Override
     protected Proveedor nuevoRegistro() {
-        Proveedor proveedor = new Proveedor();
-        proveedor.setId(UUID.randomUUID());
-        proveedor.setNombre("");
-        proveedor.setActivo(true);
-        return proveedor;
+        Proveedor p = new Proveedor();
+        p.setActivo(true);
+        p.setNombre("");
+        p.setRazonSocial("");
+        p.setNit("");
+        p.setObservaciones("");
+        return p;
     }
 
     @Override
@@ -88,33 +93,94 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
 
     @Override
     protected Proveedor buscarRegistroPorId(Object id) {
-        if (id instanceof UUID buscado && this.modelo != null) {
-            return this.modelo.getWrappedData().stream()
+        if (id instanceof Integer buscado && this.modelo != null) {
+            return this.modelo.getWrappedData()
+                    .stream()
                     .filter(r -> r.getId().equals(buscado))
-                    .findFirst().orElse(null);
+                    .findFirst()
+                    .orElse(null);
         }
         return null;
     }
 
-    public List<Proveedor> buscarProveedorPorNombre(final String nombre){
-        try{
-            if(nombre != null && !nombre.isEmpty()) {
-                return proveedorDAO.buscarProveedorPorNombre(nombre, 0, Integer.MAX_VALUE);
+    @Override
+    public void btnGuardarHandler(ActionEvent actionEvent) {
+        try {
+            if (registro != null) {// Validar antes de guardar
+                if (!validarCampos()) {
+                    return;// Si no pasa la validación, no continúa
+                }
+
+                getDao().create(registro);
+                this.enviarMensaje("Proveedor registrado correctamente", FacesMessage.SEVERITY_INFO);
+                this.estado = ESTADO_CRUD.NADA;
+                this.registro = null;
+                inicializarRegistros();
+                return;
             }
-        }catch (Exception ex){
-            Logger.getLogger(ProveedorFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        } catch (Exception ex) {
+            enviarMensaje("Error al crear el proveedor: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
+            return;
         }
-        return List.of();
+        enviarMensaje("El registro a almacenar no puede ser nulo", FacesMessage.SEVERITY_WARN);
+        this.estado = ESTADO_CRUD.NADA;
     }
 
-    // GETTERS / SETTERS
+    @Override
+    public void btnModificarHandler(ActionEvent actionEvent) {
+        if (this.registro == null) {
+            this.enviarMensaje("No hay proveedor seleccionado", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
+        try {// Validar antes de modificar
+            if (!validarCampos()) {
+                return;// Si no pasa la validación, no continúa
+            }
+
+            this.getDao().update(this.registro);
+            enviarMensaje("Proveedor modificado correctamente", FacesMessage.SEVERITY_INFO);
+            this.inicializarRegistros();
+            this.estado = ESTADO_CRUD.NADA;
+            this.registro = null;
+        } catch (Exception ex) {
+            enviarMensaje("Error al modificar el proveedor: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
+        }
+    }
+
+    /**
+     *  Validar que el NIT tenga exactamente 14 dígitos
+     */
+    private boolean validarCampos() {
+        if (registro.getNit() == null || registro.getNit().trim().isEmpty()) {
+            enviarMensaje("El NIT es obligatorio.", FacesMessage.SEVERITY_WARN);
+            return false;
+        }
+
+        if (registro.getNit().length() != 14) {
+            enviarMensaje("El NIT debe tener exactamente 14 dígitos.", FacesMessage.SEVERITY_WARN);
+            return false;
+        }
+
+        return true;
+    }
+
+
+    protected String nombreBean = "page.proveedor";
+
+    public String getNombreBean() {
+        return nombreBean;
+    }
+
+    public void setNombreBean(String nombreBean) {
+        this.nombreBean = nombreBean;
+    }
 
     public List<Proveedor> getListaProveedores() {
         return proveedores;
     }
 
-    public void setListaProveedores(List<Proveedor> proveedores) {
-        this.proveedores = proveedores;
+    public void setListaProveedores(List<Proveedor> listaProveedores) {
+        this.proveedores = listaProveedores;
     }
 }
-
