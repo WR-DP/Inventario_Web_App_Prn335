@@ -22,7 +22,7 @@
                     databaseName="inventario_prn335"
                     portNumber="5432"
                     user="postgres"
-                    password="abc123"/>
+                    password="postgresmy"/>
     </dataSource>
 
 
