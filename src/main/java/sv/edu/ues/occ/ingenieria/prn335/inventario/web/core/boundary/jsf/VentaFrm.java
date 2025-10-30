@@ -89,15 +89,16 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
             Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
     @Override
     protected Venta nuevoRegistro() {
         Venta v = new Venta();
         v.setId(UUID.randomUUID());
         v.setEstado("ACTIVA");
         v.setObservaciones("");
+        v.setFecha(OffsetDateTime.now());
         return v;
     }
+
 
     @Override
     public InventarioDefaultDataAccess getDataAccess() {
@@ -201,10 +202,6 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         }
         return List.of();
     }
-
-
-
-
 
     public List<Venta> getListaVentas() {
         return listaVentas;

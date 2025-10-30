@@ -95,7 +95,7 @@ public class ClienteDAO extends InventarioDefaultDataAccess<Cliente, Object> imp
         return 0;
     }
 
-    public List<Cliente> buscarClientePorNombre(final String nombre, int first, int max) {
+    /*public List<Cliente> buscarClientePorNombre(final String nombre, int first, int max) {
         //Logica para ir a buscar clientes por nombre
         try{
             if(nombre!=null && !nombre.isBlank() && first>=0 && max>0){
@@ -109,5 +109,23 @@ public class ClienteDAO extends InventarioDefaultDataAccess<Cliente, Object> imp
             Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
         return List.of();
+    }*/
+
+    public List<Cliente> buscarClientePorNombre(String nombre, int first, int max) {
+        if (nombre != null && !nombre.isBlank()) {
+            try {
+                TypedQuery<Cliente> q = em.createQuery(
+                        "SELECT c FROM Cliente c WHERE LOWER(c.nombre) LIKE LOWER(CONCAT('%', :nombre, '%')) AND c.activo = true",
+                        Cliente.class);
+                q.setParameter("nombre", nombre);
+                q.setFirstResult(first);
+                q.setMaxResults(max);
+                return q.getResultList();
+            } catch (Exception ex) {
+                throw new IllegalStateException("Error al buscar clientes activos por nombre", ex);
+            }
+        }
+        return List.of();
     }
+
 }
