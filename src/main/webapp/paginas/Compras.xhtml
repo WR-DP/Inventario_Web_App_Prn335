@@ -4,79 +4,122 @@
         xmlns:h="jakarta.faces.html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ues="jakarta.faces.composite/ues"
-        template="../WEB-INF/plantilla/default.xhtml"
-        xmlns="http://www.w3.org/1999/xhtml">
+        xmlns="http://www.w3.org/1999/xhtml"
+        template="../WEB-INF/plantilla/default.xhtml">
 
     <ui:define name="header">
-        <h1>Compras</h1>
+        <h1>#{defaultfrm['page.compra']}</h1>
     </ui:define>
 
     <ui:define name="contenido-tabla">
         <h:panelGrid>
             <h:form id="frmTop">
-                <p:dataTable id="tabla-top"
-                             lazy="true"
+                <p:dataTable lazy="true"
                              rendered="#{compraFrm.estado == 'NADA'}"
-                             styleClass="tabla-crud"
                              rows="#{compraFrm.pageSize}"
                              paginator="true"
                              paginatorPosition="bottom"
-                             value="#{compraFrm.modelo}" var="compra"
+                             value="#{compraFrm.modelo}" var="reg"
                              selectionMode="single"
-                             selection="#{compraFrm.registro}">
-                    <p:ajax event="rowSelect" listener="#{compraFrm.selectionHandler}"
+                             selection="#{compraFrm.registro}"
+                             styleClass="tabla-crud">
+
+                    <p:ajax event="rowSelect"
+                            listener="#{compraFrm.selectionHandler}"
                             update=":pnlDetalle :pnlTabla"/>
-                    <p:column headerText="ID"><h:outputText value="#{compra.id}"/></p:column>
-                    <p:column headerText="Proveedor"><h:outputText value="#{compra.proveedor.nombre}"/></p:column>
-                    <p:column headerText="Fecha"><h:outputText value="#{compra.fecha}"/></p:column>
-                    <p:column headerText="Estado"><h:outputText value="#{compra.estado}"/></p:column>
-                    <p:column headerText="Observaciones"><h:outputText value="#{compra.observaciones}"/></p:column>
+
+                    <p:column headerText="ID">
+                        <h:outputText value="#{reg.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Proveedor">
+                        <h:outputText value="#{reg.proveedor != null ? reg.proveedor.nombre : '-'}"/>
+                    </p:column>
+
+                    <p:column headerText="Fecha">
+                        <h:outputText value="#{reg.fecha}">
+                            <f:convertDateTime type="offsetDateTime" pattern="dd/MM/yyyy HH:mm:ss" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Estado">
+                        <h:outputText value="#{reg.estado}"/>
+                    </p:column>
+
+                    <p:column headerText="Observaciones">
+                        <h:outputText value="#{reg.observaciones}"/>
+                    </p:column>
+
                 </p:dataTable>
 
-                <!-- BOTONES: NUEVO / CANCELAR -->
                 <ues:botones-top formulario="#{compraFrm}" actualizar=":pnlDetalle :pnlTabla"/>
             </h:form>
         </h:panelGrid>
     </ui:define>
 
+
     <ui:define name="contenido-detalle">
-        <h:form id="frmCrear" rendered="#{compraFrm.estado != 'NADA'}">
-            <h:panelGrid columns="2">
-                <p:outputLabel for="txtId" value="ID:"/>
-                <p:inputText id="txtId" value="#{compraFrm.registro.id}" readonly="true" disabled="true"/>
+        <p:tabView id="tabCompra" cache="false" dynamic="true" rendered="#{compraFrm.estado != 'NADA'}">
+            <p:tab closable="false" title="Generalidades">
 
-                <p:outputLabel for="cmbProveedor" value="Proveedor:"/>
-                <p:selectOneMenu id="cmbProveedor" value="#{compraFrm.idProveedorSeleccionado}">
-                    <f:selectItem itemLabel="--Seleccione--" itemValue="" />
-                    <f:selectItems value="#{compraFrm.proveedoresActivos}"
-                                   var="prov"
-                                   itemLabel="#{prov.nombre}"
-                                   itemValue="#{prov.id}"/>
-                </p:selectOneMenu>
+                <h:panelGroup id="pnlProveedor">
+                    <h:form id="frmCrear">
+                        <h:panelGrid columns="2">
 
-                <p:outputLabel for="txtFecha" value="Fecha:"/>
-                <p:calendar id="txtFecha"
-                            value="#{compraFrm.registro.fecha}"
-                            pattern="yyyy-MM-dd'T'HH:mm"
-                            showTime="true">
-                    <f:converter converterId="offsetDateTimeConverter" />
-                </p:calendar>
+                            <p:outputLabel for="txtId" value="ID:"/>
+                            <p:inputText id="txtId"
+                                         value="#{compraFrm.registro.id}"
+                                         readonly="true" disabled="true"/>
 
-                <p:outputLabel for="cmbEstado" value="Estado:"/>
-                <p:selectOneMenu id="cmbEstado" value="#{compraFrm.registro.estado}">
-                    <f:selectItem itemLabel="Creada" itemValue="CREADA" />
-                    <f:selectItem itemLabel="Aprobada" itemValue="APROBADA" />
-                    <f:selectItem itemLabel="Rechazada" itemValue="RECHAZADA" />
-                    <f:selectItem itemLabel="Anulada" itemValue="ANULADA" />
-                </p:selectOneMenu>
+                            <p:outputLabel for="cmbProveedor" value="Proveedor:"/>
+                            <p:selectOneMenu id="cmbProveedor"
+                                             value="#{compraFrm.registro.proveedor}"
+                                             required="true"
+                                             requiredMessage="Debe seleccionar un proveedor."
+                                             converter="proveedorConverter">
+                                <f:selectItem itemLabel="Seleccione" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{proveedorFrm.listaProveedores}"
+                                               var="p"
+                                               itemLabel="#{p.nombre}"
+                                               itemValue="#{p}"/>
+                            </p:selectOneMenu>
 
+                            <p:outputLabel for="dpFecha" value="Fecha de compra:"/>
+                            <p:datePicker id="dpFecha"
+                                          value="#{compraFrm.registro.fecha}"
+                                          showTime="true"
+                                          hourFormat="24"
+                                          timeInput="true"
+                                          timeZone="America/El_Salvador"
+                                          pattern="yyyy-MM-dd'T'HH:mm"
+                                          converter="offsetDateTimeConverter"
+                                          required="true"
+                                          requiredMessage="La fecha es obligatoria"/>
 
-                <p:outputLabel for="txtObservaciones" value="Observaciones:"/>
-                <p:inputTextarea id="txtObservaciones" value="#{compraFrm.registro.observaciones}" rows="4" cols="50"/>
-            </h:panelGrid>
-            <ues:botones-crud formulario="#{compraFrm}" actualizar=":pnlDetalle :pnlTabla"/>
-        </h:form>
+                            <p:outputLabel for="cmbEstado" value="Estado:"/>
+                            <p:selectOneMenu id="cmbEstado"
+                                             value="#{compraFrm.registro.estado}"
+                                             required="true"
+                                             requiredMessage="Debe seleccionar un estado.">
+                                <f:selectItem itemLabel="Seleccione" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="ACTIVA" itemValue="ACTIVA"/>
+                                <f:selectItem itemLabel="ANULADA" itemValue="ANULADA"/>
+                                <f:selectItem itemLabel="FINALIZADA" itemValue="FINALIZADA"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="txtObservaciones" value="Observaciones:"/>
+                            <p:inputTextarea id="txtObservaciones"
+                                             value="#{compraFrm.registro.observaciones}"
+                                             rows="4" cols="50"/>
+
+                        </h:panelGrid>
+
+                        <ues:botones-crud formulario="#{compraFrm}" actualizar=":pnlDetalle :pnlTabla"/>
+                    </h:form>
+                </h:panelGroup>
+
+            </p:tab>
+        </p:tabView>
     </ui:define>
 
 </ui:composition>
-

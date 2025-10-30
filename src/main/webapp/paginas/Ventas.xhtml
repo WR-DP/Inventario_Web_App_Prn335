@@ -80,6 +80,7 @@
                             </h:panelGroup>
 
                             <p:outputLabel for="dpFecha" value="Fecha de venta:"/>
+
                             <p:datePicker id="dpFecha"
                                           value="#{ventaFrm.registro.fecha}"
                                           showTime="true"
@@ -90,7 +91,9 @@
                                           converter="offsetDateTimeConverter"
                                           required="true"
                                           requiredMessage="La fecha es obligatoria"
-                                          touchUI="false"/>
+                                          touchUI="false"
+                                          defaultDate="#{now}"/>
+
 
                             <p:outputLabel for="cmbEstado" value="Estado:"/>
                             <p:selectOneMenu id="cmbEstado"
