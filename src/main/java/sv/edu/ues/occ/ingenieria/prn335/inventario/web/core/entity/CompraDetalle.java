@@ -2,8 +2,6 @@ package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-//import org.hibernate.annotations.OnDelete;
-//import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -16,9 +14,12 @@ public class CompraDetalle {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "id_compra")
     private Compra idCompra;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_producto")
+    private Producto idProducto;
 
     @Column(name = "cantidad", precision = 8, scale = 2)
     private BigDecimal cantidad;
@@ -30,7 +31,8 @@ public class CompraDetalle {
     @Column(name = "estado", length = 10)
     private String estado;
 
-    @Column(name = "observaciones", length = Integer.MAX_VALUE)
+    @Lob
+    @Column(name = "observaciones")
     private String observaciones;
 
     public UUID getId() {
@@ -47,6 +49,14 @@ public class CompraDetalle {
 
     public void setIdCompra(Compra idCompra) {
         this.idCompra = idCompra;
+    }
+
+    public Producto getIdProducto() {
+        return idProducto;
+    }
+
+    public void setIdProducto(Producto idProducto) {
+        this.idProducto = idProducto;
     }
 
     public BigDecimal getCantidad() {

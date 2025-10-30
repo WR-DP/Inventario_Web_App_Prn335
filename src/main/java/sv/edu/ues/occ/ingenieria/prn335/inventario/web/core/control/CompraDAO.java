@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Compra;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -30,15 +31,24 @@ public class CompraDAO extends InventarioDefaultDataAccess<Compra, Object> imple
         return Compra.class;
     }
 
-    //Validacion ya existe compra para ese proveedor
-    public boolean existeCompraDeProveedor(Integer idProveedor) {
-        TypedQuery<Compra> q = em.createNamedQuery("Compra.findByProveedor", Compra.class);
-        q.setParameter("idProveedor", idProveedor);
-        q.setMaxResults(1);
-        return !q.getResultList().isEmpty();
+    @Override
+    public int count() throws IllegalStateException {
+        return super.count();
     }
 
-    // Opcionales ya existentes
+    // Buscar por idCompra
+    public List<Compra> findByIdCompra(Long idCompra, int first, int max) {
+        if (idCompra != null) {
+            TypedQuery<Compra> q = em.createNamedQuery("Compra.findByIdCompra", Compra.class);
+            q.setParameter("idCompra", idCompra);
+            q.setFirstResult(first);
+            q.setMaxResults(max);
+            return q.getResultList();
+        }
+        return List.of();
+    }
+
+    // Buscar todas las compras
     public List<Compra> findAllCompra(int first, int max) {
         TypedQuery<Compra> q = em.createNamedQuery("Compra.findAllCompra", Compra.class);
         q.setFirstResult(first);
@@ -46,11 +56,17 @@ public class CompraDAO extends InventarioDefaultDataAccess<Compra, Object> imple
         return q.getResultList();
     }
 
-    public List<Compra> findByEstado(String estado, int first, int max) {
-        TypedQuery<Compra> q = em.createNamedQuery("Compra.findByEstado", Compra.class);
-        q.setParameter("estado", estado);
-        q.setFirstResult(first);
-        q.setMaxResults(max);
-        return q.getResultList();
+    // Buscar por proveedor
+    public List<Compra> findByProveedor(Object idProveedor, int first, int max) {
+        if (idProveedor != null) {
+            TypedQuery<Compra> q = em.createNamedQuery("Compra.findByProveedor", Compra.class);
+            q.setParameter("idProveedor", idProveedor);
+            q.setFirstResult(first);
+            q.setMaxResults(max);
+            return q.getResultList();
+        }
+        return List.of();
     }
+
+
 }
