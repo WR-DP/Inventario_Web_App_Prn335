@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "compra", schema = "public")
@@ -22,6 +23,10 @@ public class Compra {
 
     @Column(name = "fecha")
     private OffsetDateTime fecha;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name= "id_proveedor")
+    private Proveedor idProveedor;
 
     @Size(max = 10)
     @Column(name = "estado", length = 10)
@@ -62,4 +67,10 @@ public class Compra {
         this.observaciones = observaciones;
     }
 
+    public Proveedor getIdProveedor() {
+        return idProveedor;
+    }
+    public void setIdProveedor(Proveedor idProveedor) {
+        this.idProveedor = idProveedor;
+    }
 }

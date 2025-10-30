@@ -23,7 +23,8 @@ import java.util.UUID;
         @NamedQuery(name = "VentaDetalle.countByIdProducto", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.idProducto.id = :idProducto"),
         @NamedQuery(name = "VentaDetalle.countByCantidad", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.cantidad = :cantidad"),
         @NamedQuery(name = "VentaDetalle.countByPrecioRange", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.precio BETWEEN :minPrecio AND :maxPrecio"),
-        @NamedQuery(name = "VentaDetalle.countByEstado", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.estado = :estado")
+        @NamedQuery(name = "VentaDetalle.countByEstado", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.estado = :estado"),
+        @NamedQuery(name="VentaDetalle.buscarProductosPorNombre", query = "SELECT vd FROM VentaDetalle vd WHERE upper(vd.idProducto.nombreProducto) LIKE :nombreProducto")
 })
 public class VentaDetalle {
     @Id
