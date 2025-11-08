@@ -7,11 +7,6 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "unidad_medida", schema = "public")
 @NamedQueries({
-        @NamedQuery(name = "UnidadMedida.findByIdUnidadMedida", query = "SELECT um FROM UnidadMedida um WHERE um.id = :idUnidadMedida"),
-        @NamedQuery(name = "UnidadMedida.findAllUnidadMedida", query = "SELECT um FROM UnidadMedida um"),
-        @NamedQuery(name = "UnidadMedida.findByActivo", query = "SELECT um FROM UnidadMedida um WHERE um.activo = :activo"),
-        @NamedQuery(name = "UnidadMedida.countAllUnidadMedida", query = "SELECT COUNT(um) FROM UnidadMedida um"),
-        @NamedQuery(name = "UnidadMedida.countByActivo", query = "SELECT COUNT(um) FROM UnidadMedida um WHERE um.activo = :activo"),
         @NamedQuery(name = "UnidadMedida.findByIdTipoUnidadMedida", query = "SELECT um FROM UnidadMedida um WHERE um.idTipoUnidadMedida.id = :idTipoUnidadMedida"),
         @NamedQuery(name = "UnidadMedida.countByIdTipoUnidadMedida", query = "SELECT COUNT(um) FROM UnidadMedida um WHERE um.idTipoUnidadMedida.id = :idTipoUnidadMedida")
 

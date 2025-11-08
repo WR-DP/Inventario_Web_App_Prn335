@@ -8,14 +8,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "kardex_detalle", schema = "public")
-@NamedQueries({
-        @NamedQuery(name="KardexDetalle.findByIdKardexDetalle", query = "SELECT kd FROM KardexDetalle kd WHERE kd.id = :idKardexDetalle"),
-        @NamedQuery(name="KardexDetalle.findAllKardexDetalle", query = "SELECT kd FROM KardexDetalle kd"),
-        @NamedQuery(name="KardexDetalle.findByLote", query = "SELECT kd FROM KardexDetalle kd WHERE kd.lote = :lote"),
-        @NamedQuery(name="KardexDetalle.countByIdKardexDetalle", query = "SELECT COUNT(kd) FROM KardexDetalle kd WHERE kd.id = :idKardexDetalle"),
-        @NamedQuery(name="KardexDetalle.countAllKardexDetalle", query = "SELECT COUNT(kd) FROM KardexDetalle kd"),
-        @NamedQuery(name="KardexDetalle.countByLote", query = "SELECT COUNT(kd) FROM KardexDetalle kd WHERE kd.lote = :lote")
-})
 public class KardexDetalle {
     @Id
     @Column(name = "id_kardex_detalle", nullable = false)

@@ -69,77 +69,7 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
         }
         return 0L;
     }
-    /**
-     * Mantengo métodos auxiliares existentes (buscar por id de la entidad TipoProductoCaracteristica)
-     */
-    public List<TipoProductoCaracteristica> findByIdCaracteristica(final Long id, int first, int max) {
-        if (id != null) {
-            try {
-                return em.createNamedQuery("TipoProductoCaracteristica.findById", TipoProductoCaracteristica.class)
-                        .setParameter("id", id)
-                        .setFirstResult(first)
-                        .setMaxResults(max)
-                        .getResultList();
-            } catch (Exception ex) {
-                Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-            }
-        }
-        return List.of();
-    }
-    public Long countByIdCaracteristica(final Long id) {
-        if (id != null) {
-            try {
-                TypedQuery<Long> q = em.createNamedQuery("TipoProductoCaracteristica.countById", Long.class);
-                q.setParameter("id", id);
-                return q.getSingleResult();
-            } catch (Exception ex) {
-                Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-            }
-        }
-        return 0L;
-    }
-    public List<TipoProductoCaracteristica> findByIdPadre(final Long idPadre, int first, int max) {
-        if (idPadre != null) {
-            try {
-                return em.createNamedQuery("TipoProductoCaracteristica.findByIdPadre", TipoProductoCaracteristica.class)
-                        .setParameter("idTipoProductoPadre", idPadre)
-                        .setFirstResult(first)
-                        .setMaxResults(max)
-                        .getResultList();
-            } catch (Exception ex) {
-                Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-            }
-        }
-        return List.of();
-    }
-    public List<TipoProductoCaracteristica> findByNombreCaracteristica(final String nombreCaracteristica, int first, int max) {
-        if (nombreCaracteristica != null && !nombreCaracteristica.isBlank()) {
-            try {
-                return em.createNamedQuery("TipoProductoCaracteristica.findByNombreCaracteristica", TipoProductoCaracteristica.class)
-                        .setParameter("nombreCaracteristica", "%" + nombreCaracteristica + "%")
-                        .setFirstResult(first)
-                        .setMaxResults(max)
-                        .getResultList();
-            } catch (Exception ex) {
-                Logger.getLogger(TipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-            }
-        }
-        return List.of();
-    }
-    public List<ProductoTipoProductoCaracteristica> findByProductoTipoProducto(UUID idProductoTipoProducto, int first, int max) {
-        if (idProductoTipoProducto == null) return Collections.emptyList();
-        try {
-            TypedQuery<ProductoTipoProductoCaracteristica> q =
-                    em.createNamedQuery("ProductoTipoProductoCaracteristica.findByIdProductoTipoProducto", ProductoTipoProductoCaracteristica.class);
-            q.setParameter("id", idProductoTipoProducto);
-            q.setFirstResult(first);
-            q.setMaxResults(max);
-            return q.getResultList();
-        } catch (Exception ex) {
-            Logger.getLogger(ProductoTipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return Collections.emptyList();
-        }
-    }
+
     public ProductoTipoProductoCaracteristica save(ProductoTipoProductoCaracteristica entidad) {
         try {
             if (entidad.getId() == null) {
@@ -153,19 +83,7 @@ public class TipoProductoCaracteristicaDAO extends InventarioDefaultDataAccess<T
             return null;
         }
     }
-    public boolean removeByProductoTipoProductoAndCaracteristica(UUID idProductoTipoProducto, Long idTipoProductoCaracteristica) {
-        try {
-            int deleted = em.createNamedQuery(
-                            "ProductoTipoProductoCaracteristica.removeByProductoTipoProductoAndCaracteristica")
-                    .setParameter("idPtpp", idProductoTipoProducto)
-                    .setParameter("idCar", idTipoProductoCaracteristica)
-                    .executeUpdate();
-            return deleted > 0;
-        } catch (Exception ex) {
-            Logger.getLogger(ProductoTipoProductoCaracteristicaDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-    }
+
     public TipoProductoCaracteristica findById(final Long id) {
         if (id == null) return null;
         try {

@@ -9,12 +9,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "venta", schema = "public")
-@NamedQueries({
-        @NamedQuery(name = "Venta.findAll", query = "SELECT v FROM Venta v"),
-        @NamedQuery(name = "Venta.findByIdVenta", query = "SELECT v FROM Venta v WHERE v.id = :idVenta"),
-        @NamedQuery(name = "Venta.findByIdCliente", query = "SELECT v FROM Venta v WHERE v.idCliente.id = :idCliente"),
-        @NamedQuery(name = "Venta.countAll", query = "SELECT COUNT(v) FROM Venta v")
-})
 public class Venta implements Serializable {
 
     @Id

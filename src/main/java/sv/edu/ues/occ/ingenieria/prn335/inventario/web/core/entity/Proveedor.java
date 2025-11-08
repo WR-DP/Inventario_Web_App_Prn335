@@ -5,14 +5,6 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "proveedor", schema = "public")
-@NamedQueries({
-        @NamedQuery(name = "Proveedor.findByIdProveedor", query = "SELECT p FROM Proveedor p WHERE p.id = :idProveedor"),
-        @NamedQuery(name = "Proveedor.findAllProveedor", query = "SELECT p FROM Proveedor p"),
-        @NamedQuery(name = "Proveedor.findByActivo", query = "SELECT p FROM Proveedor p WHERE p.activo = :activo"),
-        @NamedQuery(name = "Proveedor.countByIdProveedor", query = "SELECT COUNT(p) FROM Proveedor p WHERE p.id = :idProveedor"),
-        @NamedQuery(name = "Proveedor.countAllProveedor", query = "SELECT COUNT(p) FROM Proveedor p"),
-        @NamedQuery(name = "Proveedor.countByActivo", query = "SELECT COUNT(p) FROM Proveedor p WHERE p.activo = :activo")
-})
 public class Proveedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

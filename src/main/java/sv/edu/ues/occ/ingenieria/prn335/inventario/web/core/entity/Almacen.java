@@ -4,11 +4,6 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "almacen", schema = "public")
-@NamedQueries({
-        @NamedQuery(name = "Almacen.findByIdAlmacen", query = "SELECT a FROM Almacen a WHERE a.id = :id"),
-        @NamedQuery(name = "Almacen.findAlmacenWithTipoAlmacen", query = "SELECT a FROM Almacen a JOIN a.idTipoAlmacen ta WHERE ta.id = :idTipoAlmacen"),
-        @NamedQuery(name = "Almacen.findAll", query = "SELECT a FROM Almacen a")
-})
 public class Almacen {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

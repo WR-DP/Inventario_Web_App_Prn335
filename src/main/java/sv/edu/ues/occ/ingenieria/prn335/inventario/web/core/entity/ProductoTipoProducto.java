@@ -11,11 +11,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "producto_tipo_producto", schema = "public")
 @NamedQueries({
-        @NamedQuery(name = "ProductoTipoProducto.findAll", query = "SELECT p FROM ProductoTipoProducto p"),
-        @NamedQuery(name = "ProductoTipoProducto.findByIdProductoTipoProducto", query = "SELECT p FROM ProductoTipoProducto p WHERE p.id = :id"),
         @NamedQuery(name = "ProductoTipoProducto.findByIdProducto", query = "SELECT p FROM ProductoTipoProducto p WHERE p.idProducto.id = :idProducto"),
-        @NamedQuery(name = "ProductoTipoProducto.countAll", query = "SELECT COUNT(p) FROM ProductoTipoProducto p"),
-        @NamedQuery(name = "ProductoTipoProducto.countByIdProductoTipoProducto", query = "SELECT COUNT(p) FROM ProductoTipoProducto p WHERE p.id = :id"),
         @NamedQuery(name = "ProductoTipoProducto.countByIdProducto", query = "SELECT COUNT(p) FROM ProductoTipoProducto p WHERE p.idProducto.id = :idProducto")
 })
 public class ProductoTipoProducto {

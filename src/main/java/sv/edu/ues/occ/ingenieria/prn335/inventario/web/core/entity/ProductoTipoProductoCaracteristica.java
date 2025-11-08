@@ -7,15 +7,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "producto_tipo_producto_caracteristica", schema = "public")
 @NamedQueries({
-        @NamedQuery(name = "ProductoTipoProductoCaracteristica.findByIdProducto",
-                query = "SELECT p FROM ProductoTipoProductoCaracteristica p WHERE p.idProductoTipoProducto.idProducto.id = :idProducto"),
-        @NamedQuery(name = "ProductoTipoProductoCaracteristica.findByProductoTipoProductoId",
+     @NamedQuery(name = "ProductoTipoProductoCaracteristica.findByProductoTipoProductoId",
                 query = "SELECT p FROM ProductoTipoProductoCaracteristica p WHERE p.idProductoTipoProducto.id = :idProductoTipoProducto"),
-        @NamedQuery(name="ProductoTipoProductoCaracteristica.findByIdProductoTipoProducto",
-                query ="SELECT p FROM ProductoTipoProductoCaracteristica p WHERE p.idProductoTipoProducto.id = :id"),
-        @NamedQuery(name="ProductoTipoProductoCaracteristica.removeByProductoTipoProductoAndCaracteristica",
-                query="DELETE FROM ProductoTipoProductoCaracteristica p WHERE p.idProductoTipoProducto.id = :idPtpp AND p.idTipoProductoCaracteristica.id = :idCar")
-})
+    })
 public class ProductoTipoProductoCaracteristica {
     @Id
     @Column(name = "id_producto_tipo_producto_caracteristica", nullable = false)

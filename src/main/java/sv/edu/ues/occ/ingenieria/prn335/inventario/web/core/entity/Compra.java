@@ -8,14 +8,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "compra", schema = "public")
-@NamedQueries({
-        @NamedQuery(name= "Compra.findByIdCompra", query = "SELECT c FROM Compra c WHERE c.id = :idCompra"),
-        @NamedQuery(name= "Compra.findAllCompra", query = "SELECT c FROM Compra c"),
-        @NamedQuery(name= "Compra.findByEstado", query = "SELECT c FROM Compra c WHERE c.estado = :estado"),
-        @NamedQuery(name="Compra.findByFecha", query = "SELECT c FROM Compra c WHERE c.fecha = :fecha"),
-        @NamedQuery(name= "Compra.countByIdCompra", query = "SELECT COUNT(c) FROM Compra c WHERE c.id = :idCompra"),
-        @NamedQuery(name= "Compra.countAllCompra", query = "SELECT COUNT(c) FROM Compra c")
-})
 public class Compra {
     @Id
     @Column(name = "id_compra", nullable = false)

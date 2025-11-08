@@ -36,37 +36,4 @@ public class CompraDAO extends InventarioDefaultDataAccess<Compra, Object> imple
         return super.count();
     }
 
-    // Buscar por idCompra
-    public List<Compra> findByIdCompra(Long idCompra, int first, int max) {
-        if (idCompra != null) {
-            TypedQuery<Compra> q = em.createNamedQuery("Compra.findByIdCompra", Compra.class);
-            q.setParameter("idCompra", idCompra);
-            q.setFirstResult(first);
-            q.setMaxResults(max);
-            return q.getResultList();
-        }
-        return List.of();
-    }
-
-    // Buscar todas las compras
-    public List<Compra> findAllCompra(int first, int max) {
-        TypedQuery<Compra> q = em.createNamedQuery("Compra.findAllCompra", Compra.class);
-        q.setFirstResult(first);
-        q.setMaxResults(max);
-        return q.getResultList();
-    }
-
-    // Buscar por proveedor
-    public List<Compra> findByProveedor(Object idProveedor, int first, int max) {
-        if (idProveedor != null) {
-            TypedQuery<Compra> q = em.createNamedQuery("Compra.findByProveedor", Compra.class);
-            q.setParameter("idProveedor", idProveedor);
-            q.setFirstResult(first);
-            q.setMaxResults(max);
-            return q.getResultList();
-        }
-        return List.of();
-    }
-
-
 }

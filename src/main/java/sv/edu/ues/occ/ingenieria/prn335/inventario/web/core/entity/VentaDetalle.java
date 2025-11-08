@@ -11,21 +11,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "venta_detalle", schema = "public")
 @NamedQueries({
-        @NamedQuery(name = "VentaDetalle.findByIdVentaDetalle", query = "SELECT vd FROM VentaDetalle vd WHERE vd.id = :idVentaDetalle"),
-        @NamedQuery(name = "VentaDetalle.findAllVentaDetalle", query = "SELECT vd FROM VentaDetalle vd"),
         @NamedQuery(name = "VentaDetalle.findByIdVenta", query = "SELECT vd FROM VentaDetalle vd WHERE vd.idVenta.id = :idVenta"),
-        @NamedQuery(name = "VentaDetalle.findByIdProducto", query = "SELECT vd FROM VentaDetalle vd WHERE vd.idProducto.id = :idProducto"),
-        @NamedQuery(name = "VentaDetalle.findByCantidad", query = "SELECT vd FROM VentaDetalle vd WHERE vd.cantidad = :cantidad"),
-        @NamedQuery(name = "VentaDetalle.findByPrecioRange", query = "SELECT vd FROM VentaDetalle vd WHERE vd.precio BETWEEN :minPrecio AND :maxPrecio"),
-        @NamedQuery(name = "VentaDetalle.findByEstado", query = "SELECT vd FROM VentaDetalle vd WHERE vd.estado = :estado"),
-        @NamedQuery(name = "VentaDetalle.countAllVentaDetalle", query = "SELECT COUNT(vd) FROM VentaDetalle vd"),
         @NamedQuery(name = "VentaDetalle.countByIdVenta", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.idVenta.id = :idVenta"),
-        @NamedQuery(name = "VentaDetalle.countByIdProducto", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.idProducto.id = :idProducto"),
-        @NamedQuery(name = "VentaDetalle.countByCantidad", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.cantidad = :cantidad"),
-        @NamedQuery(name = "VentaDetalle.countByPrecioRange", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.precio BETWEEN :minPrecio AND :maxPrecio"),
-        @NamedQuery(name = "VentaDetalle.countByEstado", query = "SELECT COUNT(vd) FROM VentaDetalle vd WHERE vd.estado = :estado"),
-        @NamedQuery(name="VentaDetalle.buscarProductosPorNombre", query = "SELECT vd FROM VentaDetalle vd WHERE upper(vd.idProducto.nombreProducto) LIKE :nombreProducto")
-})
+        })
 public class VentaDetalle {
     @Id
     @Column(name = "id_venta_detalle", nullable = false)

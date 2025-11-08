@@ -6,10 +6,6 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "tipo_almacen", schema = "public")
-@NamedQueries({
-        @NamedQuery(name = "TipoAlmacen.findByIdTipoAlmacen", query = "SELECT t FROM TipoAlmacen t WHERE t.id = :id"),
-        @NamedQuery(name = "TipoAlmacen.findAllAlmacen", query = "SELECT t FROM TipoAlmacen t")
-})
 public class TipoAlmacen {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

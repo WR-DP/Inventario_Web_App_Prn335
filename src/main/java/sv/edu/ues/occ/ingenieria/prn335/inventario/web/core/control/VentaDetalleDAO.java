@@ -34,35 +34,6 @@ public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, O
         return VentaDetalle.class;
     }
 
-
-    // buscar por idVentaDetalle
-    List<VentaDetalle> findByIdVentaDetalle(Integer idVentaDetalle, int first, int max) {
-        if (idVentaDetalle != null) {
-            try {
-                TypedQuery<VentaDetalle> q = em.createNamedQuery("VentaDetalle.findByIdVentaDetalle", VentaDetalle.class);
-                q.setParameter("idVentaDetalle", idVentaDetalle);
-                q.setFirstResult(first);
-                q.setMaxResults(max);
-                return q.getResultList();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
-            }
-        }
-        return List.of();
-    }
-
-    //buscar todos
-    List<VentaDetalle> findAllVentaDetalle(int first, int max) {
-        try {
-            TypedQuery<VentaDetalle> q = em.createNamedQuery("VentaDetalle.findAllVentaDetalle", VentaDetalle.class);
-            q.setFirstResult(first);
-            q.setMaxResults(max);
-            return q.getResultList();
-        } catch (Exception ex) {
-            throw new IllegalStateException("Parametro no valido", ex);
-        }
-    }
-
     //buscar por idVenta<---------------------------------------------------------------------------------------------------------
     public List<VentaDetalle> findByIdVenta(UUID idVenta, int first, int max) {
         if (idVenta != null) {
@@ -79,81 +50,6 @@ public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, O
         return List.of();
     }
 
-    // buscar por idProducto
-    List<VentaDetalle> findByIdProducto(Integer idProducto, int first, int max) {
-        if (idProducto != null) {
-            try {
-                TypedQuery<VentaDetalle> q = em.createNamedQuery("VentaDetalle.findByIdProducto", VentaDetalle.class);
-                q.setParameter("idProducto", idProducto);
-                q.setFirstResult(first);
-                q.setMaxResults(max);
-                return q.getResultList();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
-            }
-        }
-        return List.of();
-    }
-
-    //buscar por cantidad
-    List<VentaDetalle> findByCantidad(Integer cantidad, int first, int max) {
-        if (cantidad != null) {
-            try {
-                TypedQuery<VentaDetalle> q = em.createNamedQuery("VentaDetalle.findByCantidad", VentaDetalle.class);
-                q.setParameter("cantidad", cantidad);
-                q.setFirstResult(first);
-                q.setMaxResults(max);
-                return q.getResultList();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
-            }
-        }
-        return List.of();
-    }
-
-    //buscar por rango de precio
-    List<VentaDetalle> findByPrecio(Double minPrecio, Double maxPrecio, int first, int max) {
-        if (minPrecio != null && maxPrecio != null) {
-            try {
-                TypedQuery<VentaDetalle> q = em.createNamedQuery("VentaDetalle.findByPrecioRange", VentaDetalle.class);
-                q.setParameter("minPrecio", minPrecio);
-                q.setParameter("maxPrecio", maxPrecio);
-                q.setFirstResult(first);
-                q.setMaxResults(max);
-                return q.getResultList();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parámetro no válido", ex);
-            }
-        }
-        return List.of();
-    }
-
-    //buscar por estado
-    List<VentaDetalle> findByEstado(Boolean estado, int first, int max) {
-        if (estado != null) {
-            try {
-                TypedQuery<VentaDetalle> q = em.createNamedQuery("VentaDetalle.findByEstado", VentaDetalle.class);
-                q.setParameter("estado", estado);
-                q.setFirstResult(first);
-                q.setMaxResults(max);
-                return q.getResultList();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
-            }
-        }
-        return List.of();
-    }
-
-    //contar todos
-    public int countAllVentaDetalle() {
-        try {
-            TypedQuery<Long> q = em.createNamedQuery("VentaDetalle.countAllVentaDetalle", Long.class);
-            return ((Long) q.getSingleResult()).intValue();
-        } catch (Exception ex) {
-            throw new IllegalStateException("Parametro no valido", ex);
-        }
-    }
-
     //contar por idVenta<---------------------------------------------------------------------------------------------------------
     public int countByIdVenta(UUID idVenta) {
         if (idVenta != null) {
@@ -167,64 +63,6 @@ public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, O
         }
         return 0;
     }
-
-    // contar por idProducto
-    public int countByIdProducto(Integer idProducto) {
-        if (idProducto != null) {
-            try {
-                TypedQuery<Long> q = em.createNamedQuery("VentaDetalle.countByIdProducto", Long.class);
-                q.setParameter("idProducto", idProducto);
-                return ((Long) q.getSingleResult()).intValue();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
-            }
-        }
-        return 0;
-    }
-
-    // contar por cantidad
-    public int countByCantidad(Integer cantidad) {
-        if (cantidad != null) {
-            try {
-                TypedQuery<Long> q = em.createNamedQuery("VentaDetalle.countByCantidad", Long.class);
-                q.setParameter("cantidad", cantidad);
-                return ((Long) q.getSingleResult()).intValue();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
-            }
-        }
-        return 0;
-    }
-
-    // contar por rango de precio
-    public int countByPrecio(Double minPrecio, Double maxPrecio) {
-        if (minPrecio != null && maxPrecio != null) {
-            try {
-                TypedQuery<Long> q = em.createNamedQuery("VentaDetalle.countByPrecioRange", Long.class);
-                q.setParameter("minPrecio", minPrecio);
-                q.setParameter("maxPrecio", maxPrecio);
-                return ((Long) q.getSingleResult()).intValue();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
-            }
-        }
-        return 0;
-    }
-
-    // contar por estado
-    public int countByEstado(Boolean estado) {
-        if (estado != null) {
-            try {
-                TypedQuery<Long> q = em.createNamedQuery("VentaDetalle.countByEstado", Long.class);
-                q.setParameter("estado", estado);
-                return ((Long) q.getSingleResult()).intValue();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Parametro no valido", ex);
-            }
-        }
-        return 0;
-    }
-
 
     public java.math.BigDecimal calcularMontoTotal(java.util.List<sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.VentaDetalle> detalles) {
         java.math.BigDecimal total = java.math.BigDecimal.ZERO;
@@ -263,21 +101,6 @@ public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, O
             Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
         return total;
-    }
-
-    public List<VentaDetalle> buscarProductosPorNombre(final String nombreProducto, int first, int max) {
-        try {
-            if (nombreProducto != null && !nombreProducto.isBlank() && first >= 0 && max > 0) {
-                TypedQuery<VentaDetalle> query = em.createNamedQuery("VentaDetalle.buscarProductosPorNombre", VentaDetalle.class);
-                query.setParameter("nombreProducto", "%" + nombreProducto + "%");
-                query.setFirstResult(first);
-                query.setMaxResults(max);
-                return query.getResultList();
-            }
-        } catch (Exception ex) {
-            throw new IllegalStateException("Error al buscar productos por nombre", ex);
-        }
-        return List.of();
     }
 
 
