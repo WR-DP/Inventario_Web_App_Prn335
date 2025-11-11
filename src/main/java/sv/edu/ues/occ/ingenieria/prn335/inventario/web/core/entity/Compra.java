@@ -1,9 +1,11 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -21,8 +23,10 @@ public class Compra {
     @Column(name = "id_compra", nullable = false)
     private Long id;
 
-    @Column(name = "fecha")
-    private OffsetDateTime fecha;
+    @NotNull // 10 de nov
+    @Temporal(TemporalType.TIMESTAMP) // Necesario para almacenar fecha y hora
+    @Column(name = "fecha", nullable = false)
+    private Date fecha;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "id_proveedor")
@@ -43,11 +47,11 @@ public class Compra {
         this.id = id;
     }
 
-    public OffsetDateTime getFecha() {
+    public Date getFecha() {
         return fecha;
     }
 
-    public void setFecha(OffsetDateTime fecha) {
+    public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 
