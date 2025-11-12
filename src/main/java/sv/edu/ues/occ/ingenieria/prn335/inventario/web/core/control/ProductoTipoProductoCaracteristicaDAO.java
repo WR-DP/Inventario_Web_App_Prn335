@@ -31,17 +31,6 @@ public class ProductoTipoProductoCaracteristicaDAO extends InventarioDefaultData
         return ProductoTipoProductoCaracteristica.class;
     }
 
-    public List<ProductoTipoProductoCaracteristica> findByIdProducto(UUID idProducto) {
-        if (idProducto == null) return new java.util.ArrayList<>();
-        try {
-            TypedQuery<ProductoTipoProductoCaracteristica> q =
-                    em.createNamedQuery("ProductoTipoProductoCaracteristica.findByIdProducto", ProductoTipoProductoCaracteristica.class);
-            q.setParameter("idProducto", idProducto);
-            return q.getResultList();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Error al buscar las caracteristicas del producto", e);
-        }
-    }
     public List<ProductoTipoProductoCaracteristica> findByProductoTipoProductoId(UUID id, int first, int maxValue) {
         if (id == null) return new java.util.ArrayList<>();
         try {
@@ -56,17 +45,6 @@ public class ProductoTipoProductoCaracteristicaDAO extends InventarioDefaultData
         }
     }
 
-    public int deleteByProductoTipoProductoAndCaracteristica(UUID idPtpp, Long idTipoProductoCaracteristica) {
-        try {
-            javax.persistence.Query q =
-                    (javax.persistence.Query) em.createNamedQuery("ProductoTipoProductoCaracteristica.removeByProductoTipoProductoAndCaracteristica");
-            q.setParameter("idPtpp", idPtpp);
-            q.setParameter("idCar", idTipoProductoCaracteristica);
-            return q.executeUpdate();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Error al eliminar asignacion", e);
-        }
-    }
     public boolean exists(UUID id) {
         if (id == null) return false;
         return em.find(ProductoTipoProductoCaracteristica.class, id) != null;

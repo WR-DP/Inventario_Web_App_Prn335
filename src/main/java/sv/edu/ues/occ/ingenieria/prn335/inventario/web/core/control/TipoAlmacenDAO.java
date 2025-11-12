@@ -40,19 +40,4 @@ public class TipoAlmacenDAO extends InventarioDefaultDataAccess<TipoAlmacen, Obj
         return super.count();
     }
 
-
-
-
-    private static final Logger log = Logger.getLogger(TipoAlmacenDAO.class.getName());
-
-public List<TipoAlmacen> findAllAlmacen(int first, int max) {
-        try{
-    TypedQuery<TipoAlmacen> query = em.createNamedQuery("TipoAlmacen.findAllAlmacen", TipoAlmacen.class);
-    query.setFirstResult(first);
-    query.setMaxResults(max);
-    return query.getResultList();
-    } catch (Exception e) {
-            throw new IllegalArgumentException("Error al buscar todos los tipos de almacen", e);
-        }
-    }
 }

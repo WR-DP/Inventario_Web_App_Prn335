@@ -11,19 +11,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "kardex", schema = "public")
-@NamedQueries({
-        //query para buscar el almacen con mas productos desde kardex
-        @NamedQuery(name = "Kardex.findAlmacenWithMostProductos", query = "SELECT k.idAlmacen, COUNT(k.idProducto) AS productCount FROM Kardex k GROUP BY k.idAlmacen ORDER BY productCount DESC"),
-        @NamedQuery(name= "Kardex.findByIdKardex", query = "SELECT k FROM Kardex k WHERE k.id = :idKardex"),
-        @NamedQuery(name= "Kardex.findAllKardex", query = "SELECT k FROM Kardex k"),
-        @NamedQuery(name= "Kardex.findByIdCompra", query = "SELECT k FROM Kardex k WHERE k.idCompraDetalle.id = :idCompraDetalle"),
-        @NamedQuery(name= "Kardex.findByIdVenta", query = "SELECT k FROM Kardex k WHERE k.idVentaDetalle.id = :idVentaDetalle"),
-        @NamedQuery(name= "Kardex.findByIdAlmacen", query = "SELECT k FROM Kardex k WHERE k.idAlmacen.id = :idAlmacen"),
-        @NamedQuery(name= "Kardex.findByCantidad", query = "SELECT k FROM Kardex k WHERE k.cantidad = :cantidad"),
-        @NamedQuery(name= "Kardex.findByPrecioRange", query = "SELECT k FROM Kardex k WHERE k.precio BETWEEN :minPrecio AND :maxPrecio"),
-        @NamedQuery(name= "Kardex.countByIdKardex", query = "SELECT COUNT(k) FROM Kardex k WHERE k.id = :idKardex"),
-        @NamedQuery(name= "Kardex.countAll", query = "SELECT COUNT(k) FROM Kardex k")
-})
 public class Kardex {
     @Id
     @Column(name = "id_kardex", nullable = false)

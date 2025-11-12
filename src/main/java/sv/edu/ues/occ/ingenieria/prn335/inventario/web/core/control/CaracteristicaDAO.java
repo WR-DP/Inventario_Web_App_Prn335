@@ -53,19 +53,7 @@ public class CaracteristicaDAO extends InventarioDefaultDataAccess<Caracteristic
         return List.of();
     }
 
-    public int countByIdCaracteristica(Integer idCaracteristica) {
-        if (idCaracteristica != null) {
-            try {
-                TypedQuery<Long> q = em.createNamedQuery("Caracteristica.countByIdCaracteristica", Long.class);
-                q.setParameter("id", idCaracteristica);
-                Long count = q.getSingleResult();
-                return count.intValue();
-            } catch (Exception ex) {
-                Logger.getLogger(CaracteristicaDAO.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-            }
-        }
-        return 0;
-    }
+
 
     public List<Caracteristica> findByNombreLike(final String nombre , int first, int max){
         try{

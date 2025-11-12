@@ -11,10 +11,6 @@ import java.util.Date;
 @Table(name = "tipo_producto_caracteristica", schema = "public")
 @NamedQueries({
         @NamedQuery(name = "TipoProductoCaracteristica.findByIdTipoProducto", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipoProducto"),
-        @NamedQuery(name = "TipoProductoCaracteristica.findByNombreCaracteristica", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idCaracteristica.nombre = :nombreCaracteristica"),
-        @NamedQuery(name = "TipoProductoCaracteristica.findByIdPadre", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.idTipoProductoPadre = :idTipoProductoPadre"),
-        @NamedQuery(name = "TipoProductoCaracteristica.countById", query = "SELECT COUNT(tpc) FROM TipoProductoCaracteristica tpc WHERE tpc.id = :id"),
-        @NamedQuery(name="TipoProductoCaracteristica.findByIdTipoProductoCaracteristica", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipoProducto"),
         @NamedQuery(name = "TipoProductoCaracteristica.findById", query = "SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.id = :id"),
         @NamedQuery(name = "TipoProductoCaracteristica.countByIdTipoProducto", query = "SELECT COUNT(tpc) FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipoProducto"),
         @NamedQuery(name="TipoProductoCaracteristica.findObligatoriasByTipo", query="SELECT tpc FROM TipoProductoCaracteristica tpc WHERE tpc.idTipoProducto.id = :idTipo AND tpc.obligatorio = true ")

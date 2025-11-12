@@ -62,46 +62,6 @@ public class TipoProductoDAO extends InventarioDefaultDataAccess<TipoProducto, O
             return List.of();
         }
     }
-    private static final Logger log = Logger.getLogger(TipoProductoDAO.class.getName());
-
-    public List<TipoProducto> findAllTipoProducto(int first, int max) {
-        try{
-            TypedQuery<TipoProducto> q = em.createNamedQuery("TipoProducto.findAllTipoProducto", TipoProducto.class);
-            q.setFirstResult(first);
-            q.setMaxResults(max);
-            return q.getResultList();
-        } catch (Exception ex) {
-            throw new IllegalArgumentException("El parametro no es valido",ex);
-        }
-    }
-
-    public List<TipoProducto> findByIdTipoProducto(Integer idTipoProducto, int first, int max) {
-       if(idTipoProducto != null){
-        try{
-            TypedQuery<TipoProducto> q = em.createNamedQuery("TipoProducto.findByIdTipoProducto", TipoProducto.class);
-            q.setParameter("id", idTipoProducto);
-            q.setFirstResult(first);
-            q.setMaxResults(max);
-            return q.getResultList();
-        } catch (Exception ex) {
-            throw new IllegalArgumentException("El parametro no es valido",ex);
-        }
-       }
-       return Collections.emptyList();
-    }
-
-    public int countByIdTipoProducto(Integer idTipoProducto) {
-        if(idTipoProducto != null){
-            try{
-                TypedQuery<Long> q = em.createNamedQuery("TipoProducto.countByIdTipoProducto", Long.class);
-                q.setParameter("idTipoProducto", idTipoProducto);
-                return q.getSingleResult().intValue();
-            } catch (Exception ex) {
-                throw new IllegalArgumentException("El parametro no es valido",ex);
-            }
-        }
-        return Collections.emptyList().size();
-    }
 
     public List<TipoProducto> findByNameLike(final String nombre , int first, int max){
         try{

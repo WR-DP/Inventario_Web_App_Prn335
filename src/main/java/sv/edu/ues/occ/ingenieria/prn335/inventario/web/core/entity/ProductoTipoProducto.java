@@ -1,5 +1,6 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 //import org.hibernate.annotations.OnDelete;
@@ -12,11 +13,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "producto_tipo_producto", schema = "public")
 @NamedQueries({
-        @NamedQuery(name = "ProductoTipoProducto.findAll", query = "SELECT p FROM ProductoTipoProducto p"),
-        @NamedQuery(name = "ProductoTipoProducto.findByIdProductoTipoProducto", query = "SELECT p FROM ProductoTipoProducto p WHERE p.id = :id"),
         @NamedQuery(name = "ProductoTipoProducto.findByIdProducto", query = "SELECT p FROM ProductoTipoProducto p WHERE p.idProducto.id = :idProducto"),
-        @NamedQuery(name = "ProductoTipoProducto.countAll", query = "SELECT COUNT(p) FROM ProductoTipoProducto p"),
-        @NamedQuery(name = "ProductoTipoProducto.countByIdProductoTipoProducto", query = "SELECT COUNT(p) FROM ProductoTipoProducto p WHERE p.id = :id"),
         @NamedQuery(name = "ProductoTipoProducto.countByIdProducto", query = "SELECT COUNT(p) FROM ProductoTipoProducto p WHERE p.idProducto.id = :idProducto")
 })
 public class ProductoTipoProducto {
@@ -24,16 +21,20 @@ public class ProductoTipoProducto {
     @Column(name = "id_producto_tipo_producto", nullable = false)
     private UUID id;
 
+
+    @JsonbTransient
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_producto")
     private Producto idProducto;
 
+    @JsonbTransient
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_tipo_producto")
     @NotNull
     private TipoProducto idTipoProducto;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonbTransient
     @Column(name = "fecha_creacion")
     private Date fechaCreacion;
 

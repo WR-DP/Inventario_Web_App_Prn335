@@ -9,10 +9,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "tipo_producto", schema = "public")
 @NamedQueries({
-        @NamedQuery(name = "TipoProducto.findAllTipoProducto", query = "SELECT t FROM TipoProducto t"),
-        @NamedQuery(name = "TipoProducto.findByIdTipoProducto", query = "SELECT t FROM TipoProducto t WHERE t.id = :id"),
-        @NamedQuery(name = "TipoProducto.findByActivo", query = "SELECT t FROM TipoProducto t WHERE t.activo = :activo"),
-        @NamedQuery(name = "TipoProducto.countByIdTipoProducto", query = "SELECT COUNT(t.id) FROM TipoProducto t where t.idTipoProductoPadre.id = :idTipoProducto"),
         @NamedQuery(name="TipoProducto.findByNombreLike", query = "SELECT t FROM TipoProducto t WHERE upper(t.nombre) like :nombre"),
         @NamedQuery(name="TipoProducto.findTiposPadre", query="SELECT t FROM TipoProducto t WHERE t.idTipoProductoPadre IS NULL ORDER BY t.nombre"),
         @NamedQuery(name="TipoProducto.findHijosByPadre", query = "SELECT t FROM TipoProducto t WHERE t.idTipoProductoPadre.id = :idPadre ORDER BY t.nombre")

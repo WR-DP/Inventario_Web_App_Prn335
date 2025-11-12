@@ -28,8 +28,4 @@ public class TipoUnidadMedidaDAO extends InventarioDefaultDataAccess<TipoUnidadM
         return TipoUnidadMedida.class;
     }
 
-//    @Override
-//    public int count(TipoUnidadMedida registro) throws IllegalStateException {
-//        return em.createQuery("select count(t) from TipoUnidadMedida t", Integer.class).getSingleResult() ;
-//    }
 }

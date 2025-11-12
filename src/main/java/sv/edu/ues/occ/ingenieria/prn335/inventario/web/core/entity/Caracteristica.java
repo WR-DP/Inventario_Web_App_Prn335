@@ -6,9 +6,6 @@ import jakarta.persistence.*;
 @Table(name = "caracteristica", schema = "public")
 @NamedQueries({
         @NamedQuery(name = "Caracteristica.findByIdCaracteristica", query = "SELECT c FROM Caracteristica c WHERE c.id = :id"),
-        @NamedQuery(name = "Caracteristica.findByActivo", query = "SELECT c FROM Caracteristica c WHERE c.activo = :activo"),
-        @NamedQuery(name = "Caracteristica.countByActivo", query = "SELECT COUNT(c) FROM Caracteristica c WHERE c.activo = :activo"),
-        @NamedQuery(name = "Caracteristica.countByIdCaracteristica", query = "SELECT COUNT(c) FROM Caracteristica c WHERE c.id = :id"),
         @NamedQuery(name="Caracteristica.findByNombreLike", query = "SELECT c FROM Caracteristica c WHERE upper(c.nombre) like :nombre")
 })
 public class Caracteristica {
