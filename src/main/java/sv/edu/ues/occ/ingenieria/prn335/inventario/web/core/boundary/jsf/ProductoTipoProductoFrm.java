@@ -12,6 +12,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.*;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -108,7 +109,7 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
 
             if (asignacion == null) {
                 asignacion = new ProductoTipoProductoCaracteristica();
-                asignacion.setId(java.util.UUID.randomUUID());
+                asignacion.setId(UUID.randomUUID());
                 asignacion.setIdProductoTipoProducto(this.registro);
                 asignacion.setIdTipoProductoCaracteristica(this.seleccionCaracteristicaAsignada);
             }
@@ -130,10 +131,10 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
         }
     }
 
-    public String getEquivalenciaPara(sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProductoCaracteristica tpc) {
+    public String getEquivalenciaPara(TipoProductoCaracteristica tpc) {
         if (tpc == null) return "";
         if (this.asignacionesPersistentes == null || this.asignacionesPersistentes.isEmpty()) return "";
-        for (sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.ProductoTipoProductoCaracteristica ap : this.asignacionesPersistentes) {
+        for (ProductoTipoProductoCaracteristica ap : this.asignacionesPersistentes) {
             if (ap.getIdTipoProductoCaracteristica() != null
                     && ap.getIdTipoProductoCaracteristica().getId() != null
                     && ap.getIdTipoProductoCaracteristica().getId().equals(tpc.getId())) {
@@ -204,12 +205,14 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
         ProductoTipoProducto producto = new ProductoTipoProducto();
         producto.setActivo(true);
         producto.setId(UUID.randomUUID());
+        producto.setFechaCreacion(new Date());
         if (idProducto != null) {
             producto.setIdProducto(new Producto());
             producto.getIdProducto().setId(idProducto);
         }
         return producto;
     }
+
 
     List<ProductoTipoProducto> listaTipoProducto;
 
@@ -420,7 +423,7 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
 
 
     @Override
-    public void seleccionarRegistro(org.primefaces.event.SelectEvent<ProductoTipoProducto> event) {
+    public void seleccionarRegistro(SelectEvent<ProductoTipoProducto> event) {
         super.seleccionarRegistro(event);
         asegurarFechaCreacion();
     }

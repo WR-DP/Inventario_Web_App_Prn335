@@ -16,6 +16,8 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Compra;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Proveedor;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -110,6 +112,7 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
         c.setEstado("ACTIVA");
         c.setIdProveedor(new Proveedor());
         c.setObservaciones("");
+        c.setFecha(new Date());
         return c;
     }
 

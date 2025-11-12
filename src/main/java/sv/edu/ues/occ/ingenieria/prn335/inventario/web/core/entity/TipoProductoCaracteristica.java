@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 //import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.OffsetDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "tipo_producto_caracteristica", schema = "public")
@@ -31,8 +32,10 @@ public class TipoProductoCaracteristica {
     @Column(name = "obligatorio")
     private Boolean obligatorio;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "fecha_creacion")
-    private OffsetDateTime fechaCreacion;
+    private Date fechaCreacion;
+
 
     @Override
     public boolean equals(Object o) {
@@ -74,12 +77,14 @@ public class TipoProductoCaracteristica {
     public void setObligatorio(Boolean obligatorio) {
         this.obligatorio = obligatorio;
     }
-    public OffsetDateTime getFechaCreacion() {
+
+    public Date getFechaCreacion() {
         return fechaCreacion;
     }
-    public void setFechaCreacion(OffsetDateTime fechaCreacion) {
+    public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
+
     public java.util.stream.Stream<TipoProductoCaracteristica> stream() {
         return java.util.stream.Stream.of(this);
     }

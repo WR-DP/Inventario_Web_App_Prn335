@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 //import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -32,9 +33,19 @@ public class ProductoTipoProducto {
     @NotNull
     private TipoProducto idTipoProducto;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @JsonbTransient
     @Column(name = "fecha_creacion")
-    private OffsetDateTime fechaCreacion;
+    private Date fechaCreacion;
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
 
     @Column(name = "activo")
     private Boolean activo;
@@ -53,12 +64,6 @@ public class ProductoTipoProducto {
     }
     public void setIdProducto(Producto idProducto) {
         this.idProducto = idProducto;
-    }
-    public OffsetDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
-    public void setFechaCreacion(OffsetDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
     }
     public Boolean getActivo() {
         return activo;

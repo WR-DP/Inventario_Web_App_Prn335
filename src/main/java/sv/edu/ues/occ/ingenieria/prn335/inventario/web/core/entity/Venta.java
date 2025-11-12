@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -20,8 +20,9 @@ public class Venta implements Serializable {
     private Cliente idCliente;
 
     @NotNull
+    @Temporal(TemporalType.TIMESTAMP) // Para almacenar fecha y hora
     @Column(name = "fecha", nullable = false)
-    private OffsetDateTime fecha;
+    private Date fecha;
 
     @Size(max = 20)
     @Column(name = "estado", length = 20)
@@ -46,11 +47,11 @@ public class Venta implements Serializable {
         this.idCliente = idCliente;
     }
 
-    public OffsetDateTime getFecha() {
+    public Date getFecha() {
         return fecha;
     }
 
-    public void setFecha(OffsetDateTime fecha) {
+    public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 
