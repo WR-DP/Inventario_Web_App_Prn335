@@ -1,5 +1,6 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -19,6 +20,7 @@ public class ProductoTipoProductoCaracteristica {
     @JoinColumn(name = "id_producto_tipo_producto")
     private ProductoTipoProducto idProductoTipoProducto;
 
+    @JsonbTransient
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_tipo_producto_caracteristica")
     private TipoProductoCaracteristica idTipoProductoCaracteristica;

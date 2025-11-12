@@ -1,5 +1,6 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity;
 
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 //import org.hibernate.annotations.OnDelete;
@@ -19,15 +20,19 @@ public class ProductoTipoProducto {
     @Column(name = "id_producto_tipo_producto", nullable = false)
     private UUID id;
 
+
+    @JsonbTransient
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_producto")
     private Producto idProducto;
 
+    @JsonbTransient
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_tipo_producto")
     @NotNull
     private TipoProducto idTipoProducto;
 
+    @JsonbTransient
     @Column(name = "fecha_creacion")
     private OffsetDateTime fechaCreacion;
 
