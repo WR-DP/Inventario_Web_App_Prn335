@@ -16,6 +16,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.VentaDetalle;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -98,6 +99,7 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         v.setId(UUID.randomUUID());
         v.setEstado("ACTIVA");
         v.setObservaciones("");
+        v.setFecha(new Date()); // inicializa con la fecha actual
         return v;
     }
 

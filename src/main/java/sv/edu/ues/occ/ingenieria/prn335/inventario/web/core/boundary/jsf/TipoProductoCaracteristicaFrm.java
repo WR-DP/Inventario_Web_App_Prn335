@@ -16,6 +16,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProductoC
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -148,7 +149,7 @@ public class TipoProductoCaracteristicaFrm extends DefaultFrm<TipoProductoCaract
     @Override
     protected TipoProductoCaracteristica nuevoRegistro() {
         TipoProductoCaracteristica tipoProductoCaracteristica = new TipoProductoCaracteristica();
-        tipoProductoCaracteristica.setFechaCreacion(OffsetDateTime.now());
+        tipoProductoCaracteristica.setFechaCreacion(new Date());
         tipoProductoCaracteristica.setObligatorio(true);
         return tipoProductoCaracteristica;
     }

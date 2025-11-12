@@ -40,7 +40,7 @@
 
                     <p:column headerText="Fecha">
                         <h:outputText value="#{reg.fecha}">
-                            <f:convertDateTime type="offsetDateTime" pattern="dd/MM/yyyy HH:mm:ss" />
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="America/El_Salvador"/>
                         </h:outputText>
                     </p:column>
 
@@ -93,10 +93,10 @@
                                           hourFormat="24"
                                           timeInput="true"
                                           timeZone="America/El_Salvador"
-                                          pattern="yyyy-MM-dd'T'HH:mm"
-                                          converter="offsetDateTimeConverter"
+                                          pattern="yyyy-MM-dd HH:mm:ss"
                                           required="true"
-                                          requiredMessage="La fecha es obligatoria"/>
+                                          requiredMessage="La fecha es obligatoria"
+                                          touchUI="false"/>
 
                             <p:outputLabel for="cmbEstado" value="Estado:"/>
                             <p:selectOneMenu id="cmbEstado"
