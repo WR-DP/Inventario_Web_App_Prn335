@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "proveedor", schema = "public")
+@NamedQueries({
+        @NamedQuery(name="Proveedor.buscarProveedorPorNombre", query = "SELECT p FROM Proveedor p WHERE upper(p.nombre) LIKE :nombre")
+})
 public class Proveedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

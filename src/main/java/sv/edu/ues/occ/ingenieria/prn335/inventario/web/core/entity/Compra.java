@@ -3,32 +3,35 @@ package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
 @Table(name = "compra", schema = "public")
-public class Compra {
+public class Compra  implements Serializable{
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_compra", nullable = false)
     private Long id;
 
-    @NotNull // 10 de nov
-    @Temporal(TemporalType.TIMESTAMP) // Necesario para almacenar fecha y hora
-    @Column(name = "fecha", nullable = false)
-    private Date fecha;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "id_proveedor")
     private Proveedor idProveedor;
 
-    @Size(max = 10)
-    @Column(name = "estado", length = 10)
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP) // Necesario para almacenar fecha y hora
+    @Column(name = "fecha", nullable = false)
+    private Date fecha;
+
+    @Size(max = 20)
+    @Column(name = "estado", length = 20)
     private String estado;
 
-    @Column(name = "observaciones", length = Integer.MAX_VALUE)
+    @Column(name = "observaciones", length = 500)
     private String observaciones;
 
     public Long getId() {
@@ -47,6 +50,14 @@ public class Compra {
         this.fecha = fecha;
     }
 
+    public Proveedor getIdProveedor() {
+        return idProveedor;
+    }
+
+    public void setIdProveedor(Proveedor idProveedor) {
+        this.idProveedor = idProveedor;
+    }
+
     public String getEstado() {
         return estado;
     }
@@ -63,10 +74,4 @@ public class Compra {
         this.observaciones = observaciones;
     }
 
-    public Proveedor getIdProveedor() {
-        return idProveedor;
-    }
-    public void setIdProveedor(Proveedor idProveedor) {
-        this.idProveedor = idProveedor;
-    }
 }
