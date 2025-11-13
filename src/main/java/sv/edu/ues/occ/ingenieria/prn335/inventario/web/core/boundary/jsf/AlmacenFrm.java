@@ -1,6 +1,8 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.jsf;
 
+import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -126,6 +128,42 @@ public class AlmacenFrm extends DefaultFrm<Almacen> implements Serializable {
     @Override
     public String getNombreBean(){
         return nombreBean;
+    }
+
+    @Override
+    public void btnGuardarHandler(ActionEvent actionEvent) {
+        // Validación: no permitir tipos de almacén inactivos
+        if (this.registro != null &&
+                this.registro.getIdTipoAlmacen() != null &&
+                !this.registro.getIdTipoAlmacen().getActivo()) {
+
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error de validación",
+                            "No se puede crear un almacén con un Tipo de Almacén INACTIVO."));
+            return;
+        }
+
+        super.btnGuardarHandler(actionEvent);
+    }
+
+
+    @Override
+    public void btnModificarHandler(ActionEvent actionEvent) {
+
+        if (this.registro != null &&
+                this.registro.getIdTipoAlmacen() != null &&
+                Boolean.FALSE.equals(this.registro.getIdTipoAlmacen().getActivo())) {
+
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error de validación",
+                            "No se puede modificar un almacén usando un Tipo de Almacén INACTIVO."));
+
+            return;
+        }
+
+        super.btnModificarHandler(actionEvent);
     }
 
 

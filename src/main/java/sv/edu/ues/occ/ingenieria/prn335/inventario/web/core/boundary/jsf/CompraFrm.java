@@ -7,7 +7,6 @@ import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import org.primefaces.event.SelectEvent;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.CompraDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProveedorDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
@@ -16,10 +15,8 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Compra;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Proveedor;
 
 import java.io.Serializable;
-import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -133,15 +130,45 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
 
     @Override
     public void btnGuardarHandler(ActionEvent actionEvent) {
+
+        // VALIDACIÓN: no permitir guardar si el proveedor está inactivo
+        if (this.registro != null &&
+                this.registro.getIdProveedor() != null &&
+                Boolean.FALSE.equals(this.registro.getIdProveedor().getActivo())) {
+
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Proveedor inactivo",
+                            "No se puede crear una compra con un proveedor INACTIVO."));
+            return;
+        }
+
         if (!validarCampos()) return;
+
         super.btnGuardarHandler(actionEvent);
     }
 
+
     @Override
     public void btnModificarHandler(ActionEvent actionEvent) {
+
+        // VALIDACIÓN: no permitir modificar si el proveedor está inactivo
+        if (this.registro != null &&
+                this.registro.getIdProveedor() != null &&
+                Boolean.FALSE.equals(this.registro.getIdProveedor().getActivo())) {
+
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Proveedor inactivo",
+                            "No se puede modificar esta compra porque el proveedor está INACTIVO."));
+            return;
+        }
+
         if (!validarCampos()) return;
+
         super.btnModificarHandler(actionEvent);
     }
+
 
     private boolean validarCampos() {
         if (registro.getIdProveedor() == null) {

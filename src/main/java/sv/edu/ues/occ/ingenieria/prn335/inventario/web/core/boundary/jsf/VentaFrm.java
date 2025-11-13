@@ -136,15 +136,36 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
 
     @Override
     public void btnGuardarHandler(ActionEvent actionEvent) {
+
+        // VALIDAR QUE EL CLIENTE ESTÉ ACTIVO
+        if (registro.getIdCliente() != null &&
+                Boolean.FALSE.equals(registro.getIdCliente().getActivo())) {
+
+            enviarMensaje("No puedes crear una venta con un cliente INACTIVO.",
+                    FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
         if (!validarCampos()) return;
         super.btnGuardarHandler(actionEvent);
     }
 
+
     @Override
     public void btnModificarHandler(ActionEvent actionEvent) {
+
+        if (registro.getIdCliente() != null &&
+                Boolean.FALSE.equals(registro.getIdCliente().getActivo())) {
+
+            enviarMensaje("No puedes modificar esta venta porque el cliente está INACTIVO.",
+                    FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
         if (!validarCampos()) return;
         super.btnModificarHandler(actionEvent);
     }
+
 
     @Override
     public void seleccionarRegistro(SelectEvent<Venta> event) {
@@ -233,7 +254,6 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         }
         return List.of();
     }
-
 
     public List<Venta> getListaVentas() {
         return listaVentas;

@@ -382,6 +382,19 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
 
     @Override
     public void btnModificarHandler(ActionEvent actionEvent) {
+
+        // VALIDACIÓN: no permitir modificar si el TipoProducto está INACTIVO
+        if (this.registro != null &&
+                this.registro.getIdTipoProducto() != null &&
+                Boolean.FALSE.equals(this.registro.getIdTipoProducto().getActivo())) {
+
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error de validación",
+                            "No se puede modificar esta asignación porque el Tipo de Producto está INACTIVO."));
+            return;
+        }
+
         if (this.registro == null) {
             this.enviarMensaje("No hay registro seleccionado", FacesMessage.SEVERITY_ERROR);
             return;
@@ -505,4 +518,24 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
     public String getNombreBean() {
         return nombreBean;
     }
+
+    @Override
+    public void btnGuardarHandler(ActionEvent actionEvent) {
+
+        // VALIDACIÓN: bloquear si TipoProducto está inactivo
+        if (this.registro != null &&
+                this.registro.getIdTipoProducto() != null &&
+                Boolean.FALSE.equals(this.registro.getIdTipoProducto().getActivo())) {
+
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error de validación",
+                            "No se puede asignar un Tipo de Producto INACTIVO a un producto."));
+            return; // bloquear guardado
+        }
+
+        super.btnGuardarHandler(actionEvent);
+    }
+
+
 }
