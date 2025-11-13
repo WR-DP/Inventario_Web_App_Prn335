@@ -9,8 +9,6 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Cliente;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Stateless
 @LocalBean
@@ -33,20 +31,26 @@ public class ClienteDAO extends InventarioDefaultDataAccess<Cliente, Object> imp
     }
 
     public List<Cliente> buscarClientePorNombre(String nombre, int first, int max) {
-        if (nombre != null && !nombre.isBlank()) {
-            try {
-                TypedQuery<Cliente> q = em.createQuery(
-                        "SELECT c FROM Cliente c WHERE LOWER(c.nombre) LIKE LOWER(CONCAT('%', :nombre, '%')) AND c.activo = true",
-                        Cliente.class);
-                q.setParameter("nombre", nombre);
+        try {
+            if (nombre != null && !nombre.isBlank() && first >= 0 && max > 0) {
+
+                TypedQuery<Cliente> q = em.createNamedQuery(
+                        "Cliente.buscarClientePorNombre",
+                        Cliente.class
+                );
+
+                q.setParameter("nombre", "%" + nombre.toUpperCase() + "%");
                 q.setFirstResult(first);
                 q.setMaxResults(max);
+
                 return q.getResultList();
-            } catch (Exception ex) {
-                throw new IllegalStateException("Error al buscar clientes activos por nombre", ex);
             }
+        } catch (Exception ex) {
+            throw new IllegalStateException("Error al buscar clientes por nombre", ex);
         }
+
         return List.of();
     }
+
 
 }

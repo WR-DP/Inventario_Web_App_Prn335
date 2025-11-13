@@ -7,10 +7,6 @@ import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
-import org.checkerframework.checker.units.qual.C;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ClienteDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
@@ -165,20 +161,6 @@ public class ClienteFrm extends DefaultFrm<Cliente> implements Serializable {
 
         return true;
     }
-
-
-    public List<Cliente> buscarClientesPorNombre(final String nombre){
-        try{
-            if(nombre !=null && !nombre.isEmpty()) {
-                return clienteDAO.buscarClientePorNombre(nombre, 0, Integer.MAX_VALUE);
-            }
-        }catch (Exception ex){
-            Logger.getLogger(ClienteFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-        }
-        return List.of();
-    }
-
-
 
     private String nombreBean = "page.cliente";
 
