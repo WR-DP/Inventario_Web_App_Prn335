@@ -97,6 +97,7 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
         c = new Compra();
         c.setEstado("ACTIVA");
         c.setObservaciones("");
+        c.setFecha(new Date());
         return c;
     }
 
