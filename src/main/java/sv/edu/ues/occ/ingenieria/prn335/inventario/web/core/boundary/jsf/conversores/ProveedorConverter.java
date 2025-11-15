@@ -9,6 +9,9 @@ import jakarta.inject.Inject;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProveedorDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Proveedor;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 @FacesConverter(value = "proveedorConverter", managed = true)
 @Dependent
 public class ProveedorConverter implements Converter<Proveedor> {
@@ -21,40 +24,22 @@ public class ProveedorConverter implements Converter<Proveedor> {
         if (value == null || value.trim().isEmpty()) {
             return null;
         }
+
         try {
-            Object key = null;
-            String v = value.trim();
-            try {
-                key = Integer.valueOf(v);
-            } catch (NumberFormatException exInt) {
-                try {
-                    key = Long.valueOf(v);
-                } catch (NumberFormatException exLong) {
-                    try {
-                        key = java.util.UUID.fromString(v);
-                    } catch (IllegalArgumentException exUuid) {
-                        key = v;
-                    }
-                }
-            }
-            if (proveedorDAO != null) {
-                return proveedorDAO.findById(key);
-            } else {
-                return null;
-            }
-        } catch (Exception ex) {
+            Integer id = Integer.valueOf(value);  // solo integer
+            return proveedorDAO.findById(id);
+        } catch (NumberFormatException e) {
+            Logger.getLogger(ProveedorConverter.class.getName())
+                    .log(Level.SEVERE, "ID inválido para Proveedor: " + value, e);
             return null;
         }
     }
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Proveedor value) {
-        if (value == null) return "";
-        try {
-            Object id = value.getId();
-            return (id == null) ? "" : id.toString();
-        } catch (Exception ex) {
+        if (value == null || value.getId() == null) {
             return "";
         }
+        return value.getId().toString(); // <-- RETORNA INTEGER COMO STRING
     }
 }
