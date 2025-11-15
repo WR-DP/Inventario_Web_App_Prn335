@@ -1,10 +1,13 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.jsf;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.DeleteManager;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProductoDAO;
@@ -98,5 +101,49 @@ public class ProductoFrm extends DefaultFrm<Producto> implements Serializable {
             productoTipoProductoFrm.setIdProducto(this.registro.getId());
         }
         return productoTipoProductoFrm;
+    }
+
+    @Inject
+    DeleteManager deleteManager;
+
+    @Override
+    public void btnEliminarHandler(ActionEvent evt) {
+
+        if (this.registro == null) {
+            enviarMensaje("No hay producto seleccionado", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
+        UUID id = this.registro.getId();
+
+        int relaciones = deleteManager.contarRelacionesProducto(id);
+        int caracteristicas = deleteManager.contarCaracteristicasDeProducto(id);
+
+        if (relaciones > 0 || caracteristicas > 0) {
+            enviarMensaje(
+                    "Este producto tiene " + relaciones +
+                            " tipos asignados y " + caracteristicas +
+                            " características asociadas.",
+                    FacesMessage.SEVERITY_WARN
+            );
+        }
+
+        try {
+            // 1. eliminar dependencias
+            deleteManager.eliminarRelacionesProducto(id);
+
+            // 2. eliminar producto padre
+            this.getDao().delete(this.registro);
+
+            enviarMensaje("Producto eliminado correctamente",
+                    FacesMessage.SEVERITY_INFO);
+
+            inicializarRegistros();
+            this.estado = ESTADO_CRUD.NADA;
+            this.registro = null;
+
+        } catch (Exception ex) {
+            enviarMensaje("Error al eliminar: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
+        }
     }
 }

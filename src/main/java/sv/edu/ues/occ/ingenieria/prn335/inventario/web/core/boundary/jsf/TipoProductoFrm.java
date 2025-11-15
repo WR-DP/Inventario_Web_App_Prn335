@@ -1,6 +1,7 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.jsf;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
@@ -9,6 +10,7 @@ import jakarta.inject.Named;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.DeleteManager;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoProductoDAO;
@@ -155,12 +157,52 @@ public class TipoProductoFrm extends DefaultFrm<TipoProducto> implements Seriali
         }
     }
 
+    @Inject
+    DeleteManager deleteManager;
+
     @Override
     public void btnEliminarHandler(ActionEvent actionEvent) {
-        super.btnEliminarHandler(actionEvent);
-        if (this.estado == ESTADO_CRUD.NADA) { // Solo si se eliminó exitosamente
-            cargarArbol();
-            listaTipoProducto = tipoProductoDAO.findRange(0, Integer.MAX_VALUE);
+
+        if (this.registro == null) {
+            enviarMensaje("No hay tipo de producto seleccionado", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
+        Long id = this.registro.getId();
+
+        // ===== CONTAR DEPENDENCIAS =====
+        int totalProductos = deleteManager.contarProductosDeTipo(id);
+        int totalCaracteristicas = deleteManager.contarCaracteristicasDeTipo(id);
+
+        if (totalProductos > 0 || totalCaracteristicas > 0) {
+            enviarMensaje(
+                    "Este tipo de producto tenia " + totalProductos +
+                            " productos relacionados y " + totalCaracteristicas +
+                            " características dependientes.",
+                    FacesMessage.SEVERITY_WARN
+            );
+        }
+
+        try {
+
+            // ===== ELIMINAR EN CASCADA (HIJOS) =====
+            deleteManager.eliminarTipoProductoEnCascada(id);
+
+            // ===== AHORA ELIMINAR EL PADRE (TipoProducto) =====
+            super.btnEliminarHandler(actionEvent);
+
+            if (this.estado == ESTADO_CRUD.NADA) {
+                cargarArbol();
+                listaTipoProducto = tipoProductoDAO.findRange(0, Integer.MAX_VALUE);
+            }
+
+            enviarMensaje(
+                    "Tipo de producto eliminado correctamente.",
+                    FacesMessage.SEVERITY_INFO
+            );
+
+        } catch (Exception ex) {
+            enviarMensaje("Error al eliminar: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
         }
     }
 

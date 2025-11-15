@@ -280,5 +280,49 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         return ventaDetalleFrm;
     }
 
+    @Inject
+    DeleteManager deleteManager;
+
+    @Override
+    public void btnEliminarHandler(ActionEvent actionEvent) {
+
+        if (this.registro == null) {
+            enviarMensaje("No hay venta seleccionada", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
+        UUID idVenta = this.registro.getId();
+
+        // ===== CONTAR DEPENDENCIAS =====
+        int totalDetalles = deleteManager.contarDetallesDeVenta(idVenta);
+        int totalKardex = deleteManager.contarKardexDeVenta(idVenta);
+
+        if (totalDetalles > 0 || totalKardex > 0) {
+            enviarMensaje(
+                    "Esta venta tiene " + totalDetalles +
+                            " detalles y " + totalKardex +
+                            " movimientos de kardex relacionados.",
+                    FacesMessage.SEVERITY_WARN
+            );
+        }
+
+        try {
+
+            // ===== ELIMINAR EN CASCADA =====
+            deleteManager.eliminarVentaEnCascada(idVenta);
+
+            enviarMensaje(
+                    "Venta eliminada correctamente.",
+                    FacesMessage.SEVERITY_INFO
+            );
+
+            inicializarRegistros();
+            this.estado = ESTADO_CRUD.NADA;
+            this.registro = null;
+
+        } catch (Exception ex) {
+            enviarMensaje("Error al eliminar la venta: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
+        }
+    }
 
 }
