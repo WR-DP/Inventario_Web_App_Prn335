@@ -17,7 +17,6 @@ public class Compra  implements Serializable{
     @Column(name = "id_compra", nullable = false)
     private Long id;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "id_proveedor")
     private Proveedor idProveedor;
@@ -33,6 +32,7 @@ public class Compra  implements Serializable{
 
     @Column(name = "observaciones", length = 500)
     private String observaciones;
+
 
     public Long getId() {
         return id;

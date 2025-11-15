@@ -16,6 +16,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.CompraDetalle
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -24,19 +25,14 @@ import java.util.logging.Logger;
 @Named
 @ViewScoped
 public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
-
     @Inject
     FacesContext facesContext;
-
     @Inject
     CompraDAO compraDAO;
-
     @Inject
     private ProveedorDAO proveedorDAO;
-
     @Inject
     private CompraDetalleDAO compraDetalleDAO;
-
     @Inject
     protected CompraDetalleFrm compraDetalleFrm;
 
@@ -44,7 +40,6 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     private List<Proveedor> listaProveedores;
 
     private String nombreBean = "page.compra";
-
     public CompraFrm() {}
 
     @Override
@@ -69,12 +64,12 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     protected Compra getIdByText(String id) {
         if (id != null) {
             try {
-                UUID buscado = UUID.fromString(id);
+                Long buscado = Long.parseLong(id);
                 return this.modelo.getWrappedData().stream()
                         .filter(r -> r.getId().equals(buscado))
                         .findFirst().orElse(null);
             } catch (IllegalArgumentException e) {
-                Logger.getLogger(CompraFrm.class.getName()).log(Level.SEVERE, null, e);
+                Logger.getLogger(CompraFrm.class.getName()).log(Level.SEVERE, e.getMessage(), e);
             }
         }
         return null;
@@ -87,7 +82,7 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
             listaCompras = compraDAO.findRange(0, Integer.MAX_VALUE);
             listaProveedores = proveedorDAO.findRange(0, Integer.MAX_VALUE);
         } catch (Exception ex) {
-            Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VentaFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 
@@ -108,7 +103,7 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
 
     @Override
     protected Compra buscarRegistroPorId(Object id) {
-        if (id instanceof UUID buscado && this.modelo != null) {
+        if (id instanceof Long buscado && this.modelo != null) {
             return this.modelo.getWrappedData().stream()
                     .filter(r -> r.getId().equals(buscado))
                     .findFirst().orElse(null);
@@ -145,8 +140,29 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
         }
 
         if (!validarCampos()) return;
+        try {
+            // Asegurar que el proveedor sea una entidad gestionada (evita violaciones de FK al persistir)
+            if (this.registro != null && this.registro.getIdProveedor() != null && this.registro.getIdProveedor().getId() != null) {
+                try {
+                    var prov = proveedorDAO.findById(this.registro.getIdProveedor().getId());
+                    if (prov != null) {
+                        this.registro.setIdProveedor(prov);
+                    }
+                } catch (Exception e) {
+                    Logger.getLogger(getClass().getName()).log(Level.WARNING, "No se pudo cargar proveedor gestionado antes de guardar", e);
+                }
+            }
 
-        super.btnGuardarHandler(actionEvent);
+            super.btnGuardarHandler(actionEvent);
+        } catch (Exception ex) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            Throwable root = ex;
+            while (root.getCause() != null) root = root.getCause();
+            facesContext.addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error al crear el registro: " + root.toString(),
+                            null));
+        }
     }
 
 
@@ -166,6 +182,18 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
         }
 
         if (!validarCampos()) return;
+
+        // Asegurar proveedor gestionado al modificar
+        if (this.registro != null && this.registro.getIdProveedor() != null && this.registro.getIdProveedor().getId() != null) {
+            try {
+                var prov = proveedorDAO.findById(this.registro.getIdProveedor().getId());
+                if (prov != null) {
+                    this.registro.setIdProveedor(prov);
+                }
+            } catch (Exception e) {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "No se pudo cargar proveedor gestionado antes de modificar", e);
+            }
+        }
 
         super.btnModificarHandler(actionEvent);
     }

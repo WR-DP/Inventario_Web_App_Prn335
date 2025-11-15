@@ -15,12 +15,9 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.CompraDetall
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Producto;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Compra;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.CompraDetalle;
-import jakarta.faces.validator.ValidatorException;
-import jakarta.faces.application.FacesMessage;
 import java.math.BigDecimal;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,13 +26,10 @@ import java.util.List;
 @Dependent
 @Named
 public class CompraDetalleFrm extends DefaultFrm<CompraDetalle> implements Serializable {
-
     @Inject
     FacesContext facesContext;
-
     @Inject
     CompraDetalleDAO compraDetalleDAO;
-
     @Inject
     ProductoDAO productoDAO;
 

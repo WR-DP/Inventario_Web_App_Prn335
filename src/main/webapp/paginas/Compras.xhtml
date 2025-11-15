@@ -277,21 +277,21 @@
             <h:form id="frmDlgProductSelect">
                 <h:panelGrid>
                     <h:panelGrid columns="2">
-                        <p:outputLabel value="Seleccione el Producto:" for="txtProductSelect"/>
-                        <p:autoComplete id="txtProveedorSelect"
-                                        completeMethod="#{compraFrm.buscarProveedorPorNombre}"
-                                        value="#{compraFrm.registro.idProveedor}"
-                                        var="prov"
-                                        converter="proveedorConverter"
-                                        itemLabel="#{prov.nombre}"
-                                        itemValue="#{prov}"
+                        <p:outputLabel value="Seleccione el Producto:" for="txtProductoSelect"/>
+                        <p:autoComplete id="txtProductoSelect"
+                                        completeMethod="#{compraFrm.compraDetalleFrm.buscarProductosPorNombre}"
+                                        value="#{compraFrm.compraDetalleFrm.registro.idProducto}"
+                                        var="produ"
+                                        converter="productoConverter"
+                                        itemLabel="#{produ.nombreProducto}"
+                                        itemValue="#{produ}"
                                         forceSelection="true"
                                         dropdown="true"
                                         size="40"
-                                        placeholder="Escribe el nombre del proveedor"
-                                        emptyMessage="No se encontraron proveedores activos con ese nombre"/>
+                                        placeholder="Escribe el nombre del producto"
+                                        emptyMessage="No se encontraron productos con ese nombre"/>
                     </h:panelGrid>
-                    <h:commandButton value="Seleccionar" process="@from"
+                    <h:commandButton value="Seleccionar" process="@form"
                                      actionListener="#{compraFrm.compraDetalleFrm.btnSeleccionarProductoHandler}"
                                      update=":tabCompra:pnlDetalleCompra:pnlProducto"
                                      oncomplete="PF('dlgProductSelect').hide();"/>

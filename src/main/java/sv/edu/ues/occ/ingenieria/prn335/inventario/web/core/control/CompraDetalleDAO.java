@@ -10,7 +10,6 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.CompraDetalle
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,7 +54,7 @@ public class CompraDetalleDAO extends InventarioDefaultDataAccess<CompraDetalle,
     public int countByIdCompra(Long idCompra) {
         if (idCompra!= null) {
             try {
-                TypedQuery<Long> q = em.createNamedQuery("CompraDetalle.countByIdCompra", long.class);
+                TypedQuery<Long> q = em.createNamedQuery("CompraDetalle.countByIdCompra", Long.class);
                 q.setParameter("idCompra", idCompra);
                 return ((Long) q.getSingleResult()).intValue();
             } catch (Exception ex) {
