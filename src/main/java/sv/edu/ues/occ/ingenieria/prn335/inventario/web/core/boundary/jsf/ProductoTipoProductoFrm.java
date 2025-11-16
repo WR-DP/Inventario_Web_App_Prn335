@@ -56,25 +56,112 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
      * Listener llamado desde la vista cuando se selecciona una caracteristica asignada.
      * Carga la asignacion persistente correspondiente y llena equivalenciaEditable.
      */
-    public void seleccionarCaracteristicaAsignada(jakarta.faces.event.AjaxBehaviorEvent event) {
+    public void seleccionarCaracteristicaAsignada(SelectEvent<ProductoTipoProducto> event) {
+        super.seleccionarRegistro(event);
+        asegurarFechaCreacion();
+        cargarCaracteristicasParaRegistro();
+
+
+//        try {
+//            if (seleccionCaracteristicaAsignada == null || this.registro == null || this.registro.getId() == null) {
+//                this.equivalenciaEditable = null;
+//                return;
+//            }
+//            // cargar asignaciones persistentes para el ProductoTipoProducto seleccionado
+//            this.asignacionesPersistentes = productoTipoProductoCaracteristicaDAO.findByProductoTipoProductoId(this.registro.getId(), 0, Integer.MAX_VALUE);
+//            ProductoTipoProductoCaracteristica encontrada = this.asignacionesPersistentes.stream()
+//                    .filter(a -> a.getIdTipoProductoCaracteristica() != null
+//                            && a.getIdTipoProductoCaracteristica().getId() != null
+//                            && a.getIdTipoProductoCaracteristica().getId().equals(seleccionCaracteristicaAsignada.getId()))
+//                    .findFirst()
+//                    .orElse(null);
+//            this.equivalenciaEditable = (encontrada != null) ? encontrada.getValor() : null;
+//        } catch (Exception ex) {
+//            Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+//            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al cargar equivalencia", ex.getMessage()));
+//            this.equivalenciaEditable = null;
+//        }
+    }
+
+    /**
+     * Centraliza la lógica que prepara:
+     * - asignacionesPersistentes
+     * - caracteristicasAsignadas
+     * - posibleCaracteristicas
+     * y asegura incluir las obligatorias.
+     *
+     * Se puede llamar desde la selección de registro y desde el botón de seleccionar tipo.
+     */
+    private void cargarCaracteristicasParaRegistro() {
         try {
-            if (seleccionCaracteristicaAsignada == null || this.registro == null || this.registro.getId() == null) {
-                this.equivalenciaEditable = null;
+            if (this.registro == null || this.registro.getIdTipoProducto() == null) {
+                // limpiar listas si no hay registro/tipo seleccionado
+                this.posibleCaracteristicas = List.of();
+                this.caracteristicasAsignadas = new java.util.ArrayList<>();
+                this.asignacionesPersistentes = new java.util.ArrayList<>();
                 return;
             }
-            // cargar asignaciones persistentes para el ProductoTipoProducto seleccionado
-            this.asignacionesPersistentes = productoTipoProductoCaracteristicaDAO.findByProductoTipoProductoId(this.registro.getId(), 0, Integer.MAX_VALUE);
-            ProductoTipoProductoCaracteristica encontrada = this.asignacionesPersistentes.stream()
-                    .filter(a -> a.getIdTipoProductoCaracteristica() != null
-                            && a.getIdTipoProductoCaracteristica().getId() != null
-                            && a.getIdTipoProductoCaracteristica().getId().equals(seleccionCaracteristicaAsignada.getId()))
-                    .findFirst()
-                    .orElse(null);
-            this.equivalenciaEditable = (encontrada != null) ? encontrada.getValor() : null;
+
+            Long idTipo = this.registro.getIdTipoProducto().getIdTipoProducto();
+            // obtener posibles características para el tipo
+            this.posibleCaracteristicas = tipoProductoCaracteristicaDAO.findByIdTipoProducto(idTipo, 0, Integer.MAX_VALUE);
+
+            // cargar asignaciones persistentes (si el registro ya existe)
+            if (this.registro != null && this.registro.getId() != null) {
+                this.asignacionesPersistentes = productoTipoProductoCaracteristicaDAO.findByProductoTipoProductoId(this.registro.getId(), 0, Integer.MAX_VALUE);
+                asegurarFechaCreacion();
+            } else {
+                this.asignacionesPersistentes = new java.util.ArrayList<>();
+            }
+
+            // construir lista de caracteristicasAsignadas desde asignacionesPersistentes
+            this.caracteristicasAsignadas = this.asignacionesPersistentes.stream()
+                    .map(ProductoTipoProductoCaracteristica::getIdTipoProductoCaracteristica)
+                    .toList();
+
+            // asegurar listas mutables
+            if (this.posibleCaracteristicas != null) {
+                this.posibleCaracteristicas = new java.util.ArrayList<>(this.posibleCaracteristicas);
+            } else {
+                this.posibleCaracteristicas = new java.util.ArrayList<>();
+            }
+            if (this.caracteristicasAsignadas != null) {
+                this.caracteristicasAsignadas = new java.util.ArrayList<>(this.caracteristicasAsignadas);
+            } else {
+                this.caracteristicasAsignadas = new java.util.ArrayList<>();
+            }
+            if (this.asignacionesPersistentes != null) {
+                this.asignacionesPersistentes = new java.util.ArrayList<>(this.asignacionesPersistentes);
+            } else {
+                this.asignacionesPersistentes = new java.util.ArrayList<>();
+            }
+
+            // remover de posibles aquellas ya asignadas
+            if (this.posibleCaracteristicas != null) {
+                this.posibleCaracteristicas.removeIf(pc ->
+                        this.asignacionesPersistentes.stream()
+                                .anyMatch(ap -> ap.getIdTipoProductoCaracteristica().getId().equals(pc.getId())));
+            }
+
+            // añadir las obligatorias que falten
+            List<TipoProductoCaracteristica> obligatorias = tipoProductoCaracteristicaDAO.findObligatoriasByTipo(idTipo);
+            for (TipoProductoCaracteristica tpc : obligatorias) {
+                boolean ya = this.asignacionesPersistentes.stream()
+                        .anyMatch(ap -> ap.getIdTipoProductoCaracteristica().getId().equals(tpc.getId()));
+                if (!ya) {
+                    ProductoTipoProductoCaracteristica nueva = new ProductoTipoProductoCaracteristica();
+                    nueva.setId(UUID.randomUUID());
+                    nueva.setIdProductoTipoProducto(this.registro);
+                    nueva.setIdTipoProductoCaracteristica(tpc);
+                    this.asignacionesPersistentes.add(nueva);
+                }
+            }
         } catch (Exception ex) {
             Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al cargar equivalencia", ex.getMessage()));
-            this.equivalenciaEditable = null;
+            // asegurar no dejar nulls que rompan la vista
+            if (this.posibleCaracteristicas == null) this.posibleCaracteristicas = List.of();
+            if (this.caracteristicasAsignadas == null) this.caracteristicasAsignadas = new java.util.ArrayList<>();
+            if (this.asignacionesPersistentes == null) this.asignacionesPersistentes = new java.util.ArrayList<>();
         }
     }
 
@@ -252,59 +339,63 @@ public class ProductoTipoProductoFrm extends DefaultFrm<ProductoTipoProducto> im
     }
 
     public void btnSeleccionarTipoProductoHandler(ActionEvent event) {
-        try {
-            Long idTipo = this.registro.getIdTipoProducto().getIdTipoProducto();
-            this.posibleCaracteristicas = tipoProductoCaracteristicaDAO.findByIdTipoProducto(idTipo, 0, Integer.MAX_VALUE);
-            if (this.registro != null && this.registro.getId() != null) {
-                this.asignacionesPersistentes = productoTipoProductoCaracteristicaDAO.findByProductoTipoProductoId(this.registro.getId(), 0, Integer.MAX_VALUE);
-                asegurarFechaCreacion();
-            } else {
-                this.asignacionesPersistentes = new java.util.ArrayList<>();
-            }
-            this.caracteristicasAsignadas = this.asignacionesPersistentes.stream()
-                    .map(ProductoTipoProductoCaracteristica::getIdTipoProductoCaracteristica)
-                    .map(tpc -> tpc)
-                    .toList();
-            if (this.posibleCaracteristicas != null) {
-                this.posibleCaracteristicas = new java.util.ArrayList<>(this.posibleCaracteristicas);
-            } else {
-                this.posibleCaracteristicas = new java.util.ArrayList<>();
-            }
-            if (this.caracteristicasAsignadas != null) {
-                this.caracteristicasAsignadas = new java.util.ArrayList<>(this.caracteristicasAsignadas);
-            } else {
-                this.caracteristicasAsignadas = new java.util.ArrayList<>();
-            }
-            if (this.asignacionesPersistentes != null) {
-                this.asignacionesPersistentes = new java.util.ArrayList<>(this.asignacionesPersistentes);
-            } else {
-                this.asignacionesPersistentes = new java.util.ArrayList<>();
-            }
-            if (this.posibleCaracteristicas != null) {
-                this.posibleCaracteristicas.removeIf(pc ->
-                        this.asignacionesPersistentes.stream()
-                                .anyMatch(ap -> ap.getIdTipoProductoCaracteristica().getId().equals(pc.getId())));
-            }
-            List<TipoProductoCaracteristica> obligatorias = tipoProductoCaracteristicaDAO.findObligatoriasByTipo(idTipo);
-            for (TipoProductoCaracteristica tpc : obligatorias) {
-                boolean ya = this.asignacionesPersistentes.stream()
-                        .anyMatch(ap -> ap.getIdTipoProductoCaracteristica().getId().equals(tpc.getId()));
-                if (!ya) {
-                    ProductoTipoProductoCaracteristica nueva = new ProductoTipoProductoCaracteristica();
-                    nueva.setId(UUID.randomUUID());
-                    nueva.setIdProductoTipoProducto(this.registro);
-                    nueva.setIdTipoProductoCaracteristica(tpc);
-                    // obligatorias no tienen flag en la entidad intermedia; la obligación está en TipoProductoCaracteristica.obligatorio
-                    this.asignacionesPersistentes.add(nueva);
-                }
-            }
-            return;
-        } catch (Exception ex) {
-            Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-        }
-        this.posibleCaracteristicas = List.of();
-        this.caracteristicasAsignadas = new java.util.ArrayList<>();
-        this.asignacionesPersistentes = new java.util.ArrayList<>();
+        cargarCaracteristicasParaRegistro();
+//        try {
+//            Long idTipo = this.registro.getIdTipoProducto().getIdTipoProducto();
+//            this.posibleCaracteristicas = tipoProductoCaracteristicaDAO.findByIdTipoProducto(idTipo, 0, Integer.MAX_VALUE);
+//            if (this.registro != null && this.registro.getId() != null) {
+//                this.asignacionesPersistentes = productoTipoProductoCaracteristicaDAO.findByProductoTipoProductoId(this.registro.getId(), 0, Integer.MAX_VALUE);
+//                asegurarFechaCreacion();
+//            } else {
+//                this.asignacionesPersistentes = new java.util.ArrayList<>();
+//            }
+//            this.caracteristicasAsignadas = this.asignacionesPersistentes.stream()
+//                    .map(ProductoTipoProductoCaracteristica::getIdTipoProductoCaracteristica)
+//                    .map(tpc -> tpc)
+//                    .toList();
+//            if (this.posibleCaracteristicas != null) {
+//                this.posibleCaracteristicas = new java.util.ArrayList<>(this.posibleCaracteristicas);
+//            } else {
+//                this.posibleCaracteristicas = new java.util.ArrayList<>();
+//            }
+//            if (this.caracteristicasAsignadas != null) {
+//                this.caracteristicasAsignadas = new java.util.ArrayList<>(this.caracteristicasAsignadas);
+//            } else {
+//                this.caracteristicasAsignadas = new java.util.ArrayList<>();
+//            }
+//            if (this.asignacionesPersistentes != null) {
+//                this.asignacionesPersistentes = new java.util.ArrayList<>(this.asignacionesPersistentes);
+//            } else {
+//                this.asignacionesPersistentes = new java.util.ArrayList<>();
+//            }
+//            if (this.posibleCaracteristicas != null) {
+//                this.posibleCaracteristicas.removeIf(pc ->
+//                        this.asignacionesPersistentes.stream()
+//                                .anyMatch(ap -> ap.getIdTipoProductoCaracteristica().getId().equals(pc.getId())));
+//            }
+//            List<TipoProductoCaracteristica> obligatorias = tipoProductoCaracteristicaDAO.findObligatoriasByTipo(idTipo);
+//            for (TipoProductoCaracteristica tpc : obligatorias) {
+//                boolean ya = this.asignacionesPersistentes.stream()
+//                        .anyMatch(ap -> ap.getIdTipoProductoCaracteristica().getId().equals(tpc.getId()));
+//                if (!ya) {
+//                    ProductoTipoProductoCaracteristica nueva = new ProductoTipoProductoCaracteristica();
+//                    nueva.setId(UUID.randomUUID());
+//                    nueva.setIdProductoTipoProducto(this.registro);
+//                    nueva.setIdTipoProductoCaracteristica(tpc);
+//                    // obligatorias no tienen flag en la entidad intermedia; la obligación está en TipoProductoCaracteristica.obligatorio
+//                    this.asignacionesPersistentes.add(nueva);
+//                }
+//            }
+//            return;
+//        } catch (Exception ex) {
+//            Logger.getLogger(ProductoTipoProductoFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+//        }
+
+
+//        this.posibleCaracteristicas = List.of();
+//        this.caracteristicasAsignadas = new java.util.ArrayList<>();
+//        this.asignacionesPersistentes = new java.util.ArrayList<>();
+
     }
 
     public void btnAgregarPosibleCaracteristicaHandler(ActionEvent event) {
