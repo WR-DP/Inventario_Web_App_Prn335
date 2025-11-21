@@ -8,6 +8,13 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "compra_detalle", schema = "public")
+@NamedQueries({
+        @NamedQuery(name = "CompraDetalle.findByIdCompra",
+                query = "SELECT cd FROM CompraDetalle cd WHERE cd.idCompra.id = :idCompra"),
+
+        @NamedQuery(name = "CompraDetalle.countByIdCompra",
+                query = "SELECT COUNT(cd) FROM CompraDetalle cd WHERE cd.idCompra.id = :idCompra"),
+})
 public class CompraDetalle {
     @Id
     @Column(name = "id_compra_detalle", nullable = false)
