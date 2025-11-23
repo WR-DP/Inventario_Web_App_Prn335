@@ -15,12 +15,12 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Path("producto")
-public class ProductoResource extends AbstractResource<Producto, Object> implements Serializable {
+public class ProductoResource extends AbstractResource<Producto> implements Serializable {
     @Inject
     ProductoDAO productoDAO;
 
     @Override
-    public InventarioDefaultDataAccess<Producto, Object> getBean(){ return this.productoDAO;}
+    public InventarioDefaultDataAccess getBean(){ return this.productoDAO;}
 
     @Override
     public UUID getIdEntity(Producto entity) {

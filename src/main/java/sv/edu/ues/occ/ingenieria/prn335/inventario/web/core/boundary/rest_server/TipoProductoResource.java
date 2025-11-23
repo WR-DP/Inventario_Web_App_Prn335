@@ -8,6 +8,13 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.headers.Header;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoProductoDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProducto;
 
@@ -22,6 +29,29 @@ public class TipoProductoResource {
     //tecnologia marchal
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @APIResponse(
+            responseCode = "200",
+            description = "List of entities",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(type= SchemaType.ARRAY, implementation = TipoProducto.class)),
+            headers = {
+                    @Header(name= "Total-records", description = "Indicates the total number of records", schema = @Schema(type = SchemaType.INTEGER))
+            }
+    )
+    @APIResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            headers = {
+                    @Header(name= "Server-exception", description = "Indicates a server exception ocurred during data access", schema = @Schema(type = SchemaType.STRING))
+            }
+    )
+    @APIResponse(
+            responseCode = "422",
+            description = "Invalid parameters",
+            headers = {
+                    @Header(name= "Missing-parameter", description = "Indicates missing or invalid parameters", schema = @Schema(type = SchemaType.INTEGER))
+            }
+    )
+    @Operation(summary="Find entities in a specified range", description="Returns a list of entities based on the provided range parameters 'first' and 'max'.")
     public Response fidnReange(
             @Min(0)
             @DefaultValue("0")
@@ -31,24 +61,15 @@ public class TipoProductoResource {
             @DefaultValue("10")
             @QueryParam("max")
             int max) {
-
-
-        if (first >= 0 && max <= 50) {
-
+        if (first >= 0 && max <= 100) {
             try {
-                tipoProductoDAO.count();
-                return Response.ok(tipoProductoDAO.findRange(first, max)).header("Total-records", "").build();
+                int total = tipoProductoDAO.count();
+                return Response.ok(tipoProductoDAO.findRange(first, max)).header("Total-records", total).build();
             } catch (Exception e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "").build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
             }
-
-
         }
-        Response.status(422).header("Missing-parameter", "first,max").build();
-
-
-        //public List<TipoProducto> getTipoProducto()
-        return (Response) tipoProductoDAO.findRange(0, 100);
+        return Response.status(422).header("Missing-parameter", "first,max").build();
     }
 
     @GET
@@ -56,19 +77,16 @@ public class TipoProductoResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response findById(@PathParam("id") Long id) {
         if (id != null) {
-
             try {
                 TipoProducto resp = tipoProductoDAO.findById(id);
                 if (resp != null) {
                     return Response.ok(resp).build();
                 }
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "").build();
-
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id "+id+" not found").build();
             } catch (Exception e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "").build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
             }
         }
-
         return Response.status(422).header("Missing-parameter", "id").build();
     }
 
@@ -104,7 +122,7 @@ public class TipoProductoResource {
                     entity.setIdTipoProductoPadre(padre);
                 }
                 tipoProductoDAO.create(entity);
-                return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(entity.getId())).build()).entity(entity).build();
+                return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(entity.getId())).build()).build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot acces db").build();
             }
@@ -112,5 +130,4 @@ public class TipoProductoResource {
             return Response.status(422).header("Missing-parameter", "entity must not be null and entity.id be null").build();
         }
     }
-
 }

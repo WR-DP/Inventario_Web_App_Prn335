@@ -13,10 +13,10 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class AbstractResource<T, ID> implements Serializable {
+public abstract class AbstractResource<T> implements Serializable {
 
-    private InventarioDefaultDataAccess<T, ID> bean;
-    public abstract InventarioDefaultDataAccess<T, ID> getBean();
+    private InventarioDefaultDataAccess<T, Object> bean;
+    public abstract InventarioDefaultDataAccess<T, Object> getBean();
     public abstract UUID getIdEntity(T entity);
 
     @POST
@@ -114,7 +114,7 @@ public abstract class AbstractResource<T, ID> implements Serializable {
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response findById(@PathParam("id") ID id) {
+    public Response findById(@PathParam("id") Integer id) {
         if (id != null) {
             try {
                 bean = getBean();
