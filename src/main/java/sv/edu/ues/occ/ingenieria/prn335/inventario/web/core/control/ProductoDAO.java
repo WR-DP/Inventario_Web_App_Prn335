@@ -51,5 +51,20 @@ public class ProductoDAO extends InventarioDefaultDataAccess<Producto, Object> i
         return List.of();
     }
 
+    public List<Producto> buscarProductoPorNombre(final String nombreProducto, int first, int max) {
+        try {
+            if (nombreProducto != null && !nombreProducto.isBlank() && first >= 0 && max > 0) {
+                TypedQuery<Producto> query = em.createNamedQuery("Producto.buscarProductosPorNombre",Producto.class);
+                query.setParameter("nombreProducto", "%" + nombreProducto + "%");
+                query.setFirstResult(first);
+                query.setMaxResults(max);
+                return query.getResultList();
+            }
+        } catch (Exception ex) {
+            throw new IllegalStateException("Error al buscar productos por nombre", ex);
+        }
+        return List.of();
+    }
+
 
 }

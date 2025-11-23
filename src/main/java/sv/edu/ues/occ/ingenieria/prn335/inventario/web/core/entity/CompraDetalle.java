@@ -2,22 +2,30 @@ package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+//import org.hibernate.annotations.OnDelete;
+//import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
 @Table(name = "compra_detalle", schema = "public")
+@NamedQueries({
+        @NamedQuery(name = "CompraDetalle.findByIdCompra", query = "SELECT cd FROM CompraDetalle cd WHERE cd.idCompra.id = :idCompra"),
+        @NamedQuery(name = "CompraDetalle.countByIdCompra", query = "SELECT COUNT(cd) FROM CompraDetalle cd WHERE cd.idCompra.id = :idCompra"),
+})
 public class CompraDetalle {
     @Id
     @Column(name = "id_compra_detalle", nullable = false)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    //    @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "id_compra")
     private Compra idCompra;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    //    @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "id_producto")
     private Producto idProducto;
 
@@ -31,8 +39,7 @@ public class CompraDetalle {
     @Column(name = "estado", length = 10)
     private String estado;
 
-    @Lob
-    @Column(name = "observaciones")
+    @Column(name = "observaciones", length = Integer.MAX_VALUE)
     private String observaciones;
 
     public UUID getId() {

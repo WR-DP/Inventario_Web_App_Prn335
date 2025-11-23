@@ -2,15 +2,14 @@ package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.jsf;
 
 
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.primefaces.model.LazyDataModel;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.CaracteristicaDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoUnidadMedidaDAO;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.*;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Caracteristica;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoUnidadMedida;
 
@@ -132,6 +131,54 @@ public class CaracteristicaFrm extends DefaultFrm<Caracteristica> implements Ser
     public void setIdTipoUnidadMedidaSeleccionado(Integer idTipoUnidadMedida){
         if(idTipoUnidadMedida != null && this.registro != null && this.tipoUnidadMedidasList != null && !this.tipoUnidadMedidasList.isEmpty()) {
             this.registro.setIdTipoUnidadMedida(this.tipoUnidadMedidasList.stream().filter(r->r.getId().equals(idTipoUnidadMedida)).findFirst().orElse(null));
+        }
+    }
+
+    @Inject
+    DeleteManager deleteManager;
+
+    @Override
+    public void btnEliminarHandler(ActionEvent actionEvent) {
+
+        if (this.registro == null) {
+            enviarMensaje("No hay característica seleccionada", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
+        Integer idCar = this.registro.getId();
+
+        // ===== CONTAR DEPENDENCIAS =====
+        int totalTipos = deleteManager.contarTiposConCaracteristica(idCar);
+        int totalProductos = deleteManager.contarProductosConCaracteristica(idCar);
+
+        if (totalTipos > 0 || totalProductos > 0) {
+            enviarMensaje(
+                    "Esta característica está asociada a " + totalTipos +
+                            " tipos de producto y " + totalProductos +
+                            " valores de características en productos.",
+                    FacesMessage.SEVERITY_WARN
+            );
+        }
+
+        try {
+
+            // ===== ELIMINAR EN CASCADA =====
+            deleteManager.eliminarCaracteristicaEnCascada(idCar);
+
+            // ===== ELIMINAR CARACTERÍSTICA PADRE =====
+            this.getDao().delete(this.registro);
+
+            enviarMensaje(
+                    "Característica eliminada correctamente.",
+                    FacesMessage.SEVERITY_INFO
+            );
+
+            inicializarRegistros();
+            this.estado = ESTADO_CRUD.NADA;
+            this.registro = null;
+
+        } catch (Exception ex) {
+            enviarMensaje("Error al eliminar: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
         }
     }
 

@@ -7,11 +7,8 @@ import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
-import org.checkerframework.checker.units.qual.C;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ClienteDAO;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.DeleteManager;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Cliente;
@@ -166,20 +163,6 @@ public class ClienteFrm extends DefaultFrm<Cliente> implements Serializable {
         return true;
     }
 
-
-    public List<Cliente> buscarClientesPorNombre(final String nombre){
-        try{
-            if(nombre !=null && !nombre.isEmpty()) {
-                return clienteDAO.buscarClientePorNombre(nombre, 0, Integer.MAX_VALUE);
-            }
-        }catch (Exception ex){
-            Logger.getLogger(ClienteFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-        }
-        return List.of();
-    }
-
-
-
     private String nombreBean = "page.cliente";
 
     public String getNombreBean() {
@@ -196,6 +179,53 @@ public class ClienteFrm extends DefaultFrm<Cliente> implements Serializable {
 
     public void setListaClientes(List<Cliente> clientes) {
         this.clientes = clientes;
+    }
+
+    @Inject
+    DeleteManager deleteManager;
+
+    @Override
+    public void btnEliminarHandler(ActionEvent actionEvent) {
+        if (this.registro == null) {
+            enviarMensaje("No hay cliente seleccionado", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
+        UUID id = this.registro.getId();
+
+        // ===== CONTAR DEPENDENCIAS =====
+        int totalVentas = deleteManager.contarVentasDeCliente(id);
+        int totalDetalles = deleteManager.contarDetallesDeVentaCliente(id);
+        int totalKardex = deleteManager.contarKardexDeCliente(id);
+
+        if (totalVentas > 0) {
+            enviarMensaje(
+                    "Este cliente tenía " + totalVentas + " ventas, " +
+                            totalDetalles + " detalles y " + totalKardex + " movimientos de kardex.",
+                    FacesMessage.SEVERITY_WARN
+            );
+        }
+
+        try {
+
+            // ===== ELIMINAR EN CASCADA =====
+            deleteManager.eliminarVentasDeCliente(id);
+
+            // ===== ELIMINAR CLIENTE =====
+            this.getDao().delete(this.registro);
+
+            enviarMensaje(
+                    "Cliente eliminado correctamente",
+                    FacesMessage.SEVERITY_INFO
+            );
+
+            inicializarRegistros();
+            this.estado = ESTADO_CRUD.NADA;
+            this.registro = null;
+
+        } catch (Exception ex) {
+            enviarMensaje("Error al eliminar: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
+        }
     }
 }
 

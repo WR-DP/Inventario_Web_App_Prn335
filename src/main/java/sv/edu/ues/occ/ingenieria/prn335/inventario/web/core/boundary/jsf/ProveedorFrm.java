@@ -13,6 +13,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProveedorDAO
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Proveedor;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,8 +30,7 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
 
     private List<Proveedor> proveedores;
 
-    public ProveedorFrm() {
-    }
+    public ProveedorFrm() {}
 
 
     @Override
@@ -46,7 +46,7 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
     @Override
     protected String getIdAsText(Proveedor r) {
         if (r != null && r.getId() != null) {
-            return String.valueOf(r.getId());
+            return r.getId().toString();
         }
         return null;
     }
@@ -55,12 +55,10 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
     protected Proveedor getIdByText(String id) {
         if (id != null) {
             try {
-                Integer buscado = Integer.valueOf(id);
-                return this.modelo.getWrappedData()
-                        .stream()
+                Integer buscado =Integer.valueOf(id);;
+                return this.modelo.getWrappedData().stream()
                         .filter(r -> r.getId().equals(buscado))
-                        .findFirst()
-                        .orElse(null);
+                        .findFirst().orElse(null);
             } catch (NumberFormatException e) {
                 Logger.getLogger(ProveedorFrm.class.getName()).log(Level.SEVERE, null, e);
             }
@@ -77,13 +75,13 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
 
     @Override
     protected Proveedor nuevoRegistro() {
-        Proveedor p = new Proveedor();
-        p.setActivo(true);
-        p.setNombre("");
-        p.setRazonSocial("");
-        p.setNit("");
-        p.setObservaciones("");
-        return p;
+        Proveedor proveedor = new Proveedor();
+        proveedor.setNombre("");
+        proveedor.setRazonSocial("");
+        proveedor.setNit("");
+        proveedor.setActivo(true);
+        proveedor.setObservaciones("");
+        return proveedor;
     }
 
     @Override
@@ -94,11 +92,9 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
     @Override
     protected Proveedor buscarRegistroPorId(Object id) {
         if (id instanceof Integer buscado && this.modelo != null) {
-            return this.modelo.getWrappedData()
-                    .stream()
+            return this.modelo.getWrappedData().stream()
                     .filter(r -> r.getId().equals(buscado))
-                    .findFirst()
-                    .orElse(null);
+                    .findFirst().orElse(null);
         }
         return null;
     }
@@ -180,7 +176,7 @@ public class ProveedorFrm extends DefaultFrm<Proveedor> implements Serializable 
         return proveedores;
     }
 
-    public void setListaProveedores(List<Proveedor> listaProveedores) {
-        this.proveedores = listaProveedores;
+    public void setListaProveedores(List<Proveedor> proveedores) {
+        this.proveedores = proveedores;
     }
 }

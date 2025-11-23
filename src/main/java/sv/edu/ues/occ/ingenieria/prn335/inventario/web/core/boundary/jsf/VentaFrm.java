@@ -25,19 +25,14 @@ import java.util.logging.Logger;
 @Named
 @ViewScoped
 public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
-
     @Inject
     FacesContext facesContext;
-
     @Inject
     VentaDAO ventaDAO;
-
     @Inject
     private ClienteDAO clienteDAO;
-
     @Inject
     private VentaDetalleDAO ventaDetalleDAO;
-
     @Inject
     protected VentaDetalleFrm ventaDetalleFrm;
 
@@ -45,7 +40,6 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
     private List<Cliente> listaClientes;
 
     private String nombreBean = "page.venta";
-
     public VentaFrm() {}
 
     @Override
@@ -136,15 +130,36 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
 
     @Override
     public void btnGuardarHandler(ActionEvent actionEvent) {
+
+        // VALIDAR QUE EL CLIENTE ESTÉ ACTIVO
+        if (registro.getIdCliente() != null &&
+                Boolean.FALSE.equals(registro.getIdCliente().getActivo())) {
+
+            enviarMensaje("No puedes crear una venta con un cliente INACTIVO.",
+                    FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
         if (!validarCampos()) return;
         super.btnGuardarHandler(actionEvent);
     }
 
+
     @Override
     public void btnModificarHandler(ActionEvent actionEvent) {
+
+        if (registro.getIdCliente() != null &&
+                Boolean.FALSE.equals(registro.getIdCliente().getActivo())) {
+
+            enviarMensaje("No puedes modificar esta venta porque el cliente está INACTIVO.",
+                    FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
         if (!validarCampos()) return;
         super.btnModificarHandler(actionEvent);
     }
+
 
     @Override
     public void seleccionarRegistro(SelectEvent<Venta> event) {
@@ -234,7 +249,6 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         return List.of();
     }
 
-
     public List<Venta> getListaVentas() {
         return listaVentas;
     }
@@ -266,5 +280,49 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         return ventaDetalleFrm;
     }
 
+    @Inject
+    DeleteManager deleteManager;
+
+    @Override
+    public void btnEliminarHandler(ActionEvent actionEvent) {
+
+        if (this.registro == null) {
+            enviarMensaje("No hay venta seleccionada", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
+        UUID idVenta = this.registro.getId();
+
+        // ===== CONTAR DEPENDENCIAS =====
+        int totalDetalles = deleteManager.contarDetallesDeVenta(idVenta);
+        int totalKardex = deleteManager.contarKardexDeVenta(idVenta);
+
+        if (totalDetalles > 0 || totalKardex > 0) {
+            enviarMensaje(
+                    "Esta venta tiene " + totalDetalles +
+                            " detalles y " + totalKardex +
+                            " movimientos de kardex relacionados.",
+                    FacesMessage.SEVERITY_WARN
+            );
+        }
+
+        try {
+
+            // ===== ELIMINAR EN CASCADA =====
+            deleteManager.eliminarVentaEnCascada(idVenta);
+
+            enviarMensaje(
+                    "Venta eliminada correctamente.",
+                    FacesMessage.SEVERITY_INFO
+            );
+
+            inicializarRegistros();
+            this.estado = ESTADO_CRUD.NADA;
+            this.registro = null;
+
+        } catch (Exception ex) {
+            enviarMensaje("Error al eliminar la venta: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
+        }
+    }
 
 }
