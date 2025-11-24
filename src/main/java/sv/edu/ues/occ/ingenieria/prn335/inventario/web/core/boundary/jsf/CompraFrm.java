@@ -15,10 +15,8 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.CompraDetalle
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,6 +33,9 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
     private CompraDetalleDAO compraDetalleDAO;
     @Inject
     protected CompraDetalleFrm compraDetalleFrm;
+
+    @Inject
+    NotificadorKardex notificadorKardex;
 
     private List<Compra> listaCompras;
     private List<Proveedor> listaProveedores;
@@ -316,6 +317,15 @@ public class CompraFrm extends DefaultFrm<Compra> implements Serializable {
             compraDetalleFrm.setIdCompra(this.registro.getId());
         }
         return compraDetalleFrm;
+    }
+
+    public void notificarCambioKardex(ActionEvent actionEvent) {
+        if (this.registro != null && this.registro.getId() != null) {
+            this.registro.setEstado("ACTIVA");
+            super.btnModificarHandler(actionEvent);
+            notificadorKardex.notificarCambioKardex("Cambio en compra ID: ");
+
+        }
     }
 
 }
