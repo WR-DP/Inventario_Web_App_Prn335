@@ -25,19 +25,14 @@ import java.util.logging.Logger;
 @Named
 @ViewScoped
 public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
-
     @Inject
     FacesContext facesContext;
-
     @Inject
     VentaDAO ventaDAO;
-
     @Inject
     private ClienteDAO clienteDAO;
-
     @Inject
     private VentaDetalleDAO ventaDetalleDAO;
-
     @Inject
     protected VentaDetalleFrm ventaDetalleFrm;
 
@@ -45,7 +40,6 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
     private List<Cliente> listaClientes;
 
     private String nombreBean = "page.venta";
-
     public VentaFrm() {}
 
     @Override

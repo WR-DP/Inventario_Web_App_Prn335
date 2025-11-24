@@ -9,6 +9,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Compra;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Stateless
 @LocalBean

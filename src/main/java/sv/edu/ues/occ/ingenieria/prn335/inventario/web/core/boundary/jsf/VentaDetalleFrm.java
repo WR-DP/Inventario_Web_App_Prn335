@@ -15,12 +15,9 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.VentaDetalle
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Producto;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Venta;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.VentaDetalle;
-import jakarta.faces.validator.ValidatorException;
-import jakarta.faces.application.FacesMessage;
 import java.math.BigDecimal;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -29,12 +26,10 @@ import java.util.logging.Logger;
 @Dependent
 @Named
 public class VentaDetalleFrm extends DefaultFrm<VentaDetalle> implements Serializable {
-
     @Inject
     FacesContext facesContext;
     @Inject
     VentaDetalleDAO ventaDetalleDAO;
-
     @Inject
     ProductoDAO productoDAO;
 
@@ -98,7 +93,7 @@ public class VentaDetalleFrm extends DefaultFrm<VentaDetalle> implements Seriali
     public List<sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Producto> buscarProductosPorNombre(final String nombreProducto){
         try{
             if(nombreProducto!=null && !nombreProducto.isBlank()){
-                return productoDAO.buscarProductosPorNombre(nombreProducto, 0, Integer.MAX_VALUE);
+                return productoDAO.buscarProductoPorNombre(nombreProducto, 0, Integer.MAX_VALUE);
             }
         } catch (Exception ex) {
             Logger.getLogger(VentaDetalleFrm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
