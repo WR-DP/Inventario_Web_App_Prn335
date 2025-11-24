@@ -5,6 +5,4 @@ import jakarta.ws.rs.ApplicationPath;
 
 @ApplicationPath("resources/v1")
 public class RestConfig extends Application {
-
-
 }
