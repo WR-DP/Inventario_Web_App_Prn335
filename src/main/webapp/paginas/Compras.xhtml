@@ -118,6 +118,10 @@
 
                         </h:panelGrid>
 
+                        <p:commandButton value="Cerrar Compra"
+                                         actionListener="#{compraFrm.notificarCambioKardex}"
+                                         update=":pnlDetalle :pnlTabla"/>
+
                         <ues:botones-crud formulario="#{compraFrm}" actualizar=":pnlDetalle :pnlTabla :tabCompra"/>
                     </h:form>
                 </h:panelGroup>
