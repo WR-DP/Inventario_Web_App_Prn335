@@ -37,4 +37,7 @@ public class CompraDAO extends InventarioDefaultDataAccess<Compra, Object> imple
         return super.count();
     }
 
+    public Object contarLibrosParaRecepcion() {
+        return null;
+    }
 }
