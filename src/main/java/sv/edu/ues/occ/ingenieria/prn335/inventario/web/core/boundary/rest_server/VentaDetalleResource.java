@@ -1,16 +1,149 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.rest_server;
 
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProductoDAO;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.VentaDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.VentaDetalleDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.VentaDetalle;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.*;
 
 import java.io.Serializable;
 import java.util.UUID;
 
-//@Path("venta/{idVenta}/detalle")
+@Path("venta/{idVenta}/detalle")
 public class VentaDetalleResource  implements Serializable {
+    @Inject
+    VentaDetalleDAO ventaDetalleDAO;
+
+    @Inject
+    VentaDAO ventaDAO;
+
+    @Inject
+    ProductoDAO productoDAO;
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findRange(
+            @Min(0)
+            @DefaultValue("0")
+            @QueryParam("first")
+            int first,
+            @Max(100)
+            @DefaultValue("100")
+            @QueryParam("max")
+            int max,
+            @PathParam("idVenta")
+            UUID idVenta)
+    {
+        if (first >= 0 && max <= 100) {
+            try {
+                int total = ventaDetalleDAO.count();
+                return Response.ok(ventaDetalleDAO.findRange(first, max)).header("Total-records", total).build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
+            }
+        }
+        return Response.status(422).header("Missing-parameter", "first,max").build();
+    }
+
+
+    @GET
+    @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findById(@PathParam("id") UUID id) {
+        if (id != null) {
+            try {
+                VentaDetalle resp = ventaDetalleDAO.findById(id);
+                if (resp != null) {
+                    return Response.ok(resp).build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id "+id+" not found").build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
+            }
+        }
+        return Response.status(422).header("Missing-parameter", "id").build();
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response delete(@PathParam("id") UUID id) {
+        if (id != null) {
+            try {
+                VentaDetalle resp = ventaDetalleDAO.findById(id);
+                if (resp != null) {
+                    ventaDetalleDAO.delete(resp);
+                    return Response.noContent().build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).header("Not-Found", "Record with id " + id + " not found").build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot acces db").build();
+            }
+        }
+        return Response.status(422).header("Missing-parameter", "id").build();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response create(
+            VentaDetalle entity,
+            @PathParam("idVenta") UUID idVenta,
+            @Context UriInfo uriInfo) {
+
+        if (entity == null) {
+            return Response.status(422)
+                    .header("Missing-parameter", "Body cannot be null")
+                    .build();
+        }
+
+        try {
+            Venta venta = ventaDAO.findById(idVenta);
+            if (venta == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .header("Not-found", "Compra with id " + idVenta + " not found")
+                        .build();
+            }
+
+            if (entity.getIdProducto() == null || entity.getIdProducto().getId() == null) {
+                return Response.status(422)
+                        .header("Missing-parameter", "entity.idProducto.id is required")
+                        .build();
+            }
+
+            Producto producto = productoDAO.findById(entity.getIdProducto().getId());
+            if (producto == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .header("Not-found", "Producto with id " + entity.getIdProducto().getId() + " not found")
+                        .build();
+            }
+
+            entity.setId(UUID.randomUUID());
+            entity.setIdVenta(venta);
+            entity.setIdProducto(producto);
+            ventaDetalleDAO.create(entity);
+
+            return Response.created(
+                            uriInfo.getAbsolutePathBuilder()
+                                    .path(entity.getId().toString())
+                                    .build()
+                    )
+                    .entity(entity)
+                    .build();
+
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .header("Server-exception", e.getMessage())
+                    .build();
+        }
+    }
+
 
 }

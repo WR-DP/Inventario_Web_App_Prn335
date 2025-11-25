@@ -23,7 +23,7 @@ public class ProveedorResource implements Serializable {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response fidnReange(
+    public Response findRange(
             @Min(0)
             @DefaultValue("0")
             @QueryParam("first")

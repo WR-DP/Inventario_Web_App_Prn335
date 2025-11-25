@@ -5,6 +5,7 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Cliente;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Venta;
 
 import java.io.Serializable;
@@ -35,5 +36,9 @@ public class VentaDAO extends InventarioDefaultDataAccess<Venta, Object> impleme
     @Override
     public int count() throws IllegalStateException {
         return super.count();
+    }
+
+    public Cliente findClienteById(UUID idCliente) {
+        return em.find(Cliente.class, idCliente);
     }
 }

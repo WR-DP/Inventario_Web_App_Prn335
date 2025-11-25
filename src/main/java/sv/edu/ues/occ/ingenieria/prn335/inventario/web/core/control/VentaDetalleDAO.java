@@ -105,4 +105,6 @@ public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, O
     }
 
 
+
+
 }

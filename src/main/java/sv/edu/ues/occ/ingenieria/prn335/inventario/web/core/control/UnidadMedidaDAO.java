@@ -5,6 +5,7 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoUnidadMedida;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.UnidadMedida;
 
 import java.io.Serializable;
@@ -59,5 +60,8 @@ public class UnidadMedidaDAO extends InventarioDefaultDataAccess<UnidadMedida, O
             }
         }
         return 0L;
+    }
+    public TipoUnidadMedida findTipoUnidadMedidaById(Integer id){
+        return em.find(TipoUnidadMedida.class, id);
     }
 }
