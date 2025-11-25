@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Compra;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Proveedor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -39,5 +40,9 @@ public class CompraDAO extends InventarioDefaultDataAccess<Compra, Object> imple
 
     public Object contarLibrosParaRecepcion() {
         return null;
+    }
+
+    public Proveedor findProveedorById(Integer id){
+        return em.find(Proveedor.class, id);
     }
 }
