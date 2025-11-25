@@ -1,171 +1,156 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control;
 
-import jakarta.persistence.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class InventarioDefaultDataAccessTest {
 
-    private EntityManager emMock;
-    private CriteriaBuilder cbMock;
-    private CriteriaQuery<Object> cqMock;
-    private Root<Object> rootMock;
-    private TypedQuery<Object> typedQueryMock;
-    private TypedQuery<Long> typedQueryLongMock;
+    static class TestEntity {
+        private Integer id;
+        public Integer getId() { return id; }
+        public void setId(Integer id) { this.id = id; }
+    }
 
-    // clase dummy para probar la clase abstracta
-    private InventarioDefaultDataAccess<Object, Object> dao;
+    static class TestDAO extends InventarioDefaultDataAccess<TestEntity, Integer> {
+        private EntityManager em;
+        public TestDAO(Class<TestEntity> cls) { super(cls); }
+        public void setEntityManager(EntityManager em) { this.em = em; }
+        @Override
+        public EntityManager getEntityManager() { return em; }
+        @Override
+        protected Class<TestEntity> getEntityClass() { return TestEntity.class; }
+    }
+
+    @Mock
+    EntityManager em;
+
+    @Mock
+    CriteriaBuilder cb;
+
+    @Mock
+    CriteriaQuery criteriaQuery;
+
+    @Mock
+    CriteriaQuery longCriteriaQuery;
+
+    @Mock
+    Root root;
+
+    @Mock
+    TypedQuery<TestEntity> typedQuery;
+
+    @Mock
+    TypedQuery<Long> longQuery;
+
+    TestDAO dao;
 
     @BeforeEach
-    void setUp() throws Exception {
-
-        emMock = Mockito.mock(EntityManager.class);
-        cbMock = Mockito.mock(CriteriaBuilder.class);
-        cqMock = Mockito.mock(CriteriaQuery.class);
-        rootMock = Mockito.mock(Root.class);
-        typedQueryMock = Mockito.mock(TypedQuery.class);
-        typedQueryLongMock = Mockito.mock(TypedQuery.class);
-
-        // Implementación dummy
-        dao = new InventarioDefaultDataAccess<>(Object.class) {
-            @Override
-            public EntityManager getEntityManager() {
-                return emMock;
-            }
-
-            @Override
-            protected Class<Object> getEntityClass() {
-                return Object.class;
-            }
-        };
-
-        when(emMock.getCriteriaBuilder()).thenReturn(cbMock);
-        when(cbMock.createQuery(Object.class)).thenReturn(cqMock);
-        when(cbMock.createQuery(Long.class)).thenReturn(Mockito.mock(CriteriaQuery.class));
-        when(cqMock.from(Object.class)).thenReturn(rootMock);
-        when(emMock.createQuery(any(CriteriaQuery.class))).thenReturn(typedQueryMock);
-    }
-
-    // --------------------------------------------------------------------
-    // TEST create()
-    // --------------------------------------------------------------------
-    @Test
-    void testCreateValido() {
-        Object entity = new Object();
-        dao.create(entity);
-
-        verify(emMock, times(1)).persist(entity);
+    void setUp() {
+        dao = new TestDAO(TestEntity.class);
+        dao.setEntityManager(em);
     }
 
     @Test
-    void testCreateNull() {
+    void create_null_throws() {
         assertThrows(IllegalArgumentException.class, () -> dao.create(null));
     }
 
-    // --------------------------------------------------------------------
-    // TEST findById()
-    // --------------------------------------------------------------------
     @Test
-    void testFindByIdValido() {
-        Object entity = new Object();
-        when(emMock.find(Object.class, 1L)).thenReturn(entity);
-
-        Object result = dao.findById(1L);
-
-        assertSame(entity, result);
+    void create_success_persists() {
+        TestEntity e = new TestEntity();
+        dao.create(e);
+        verify(em).persist(e);
     }
 
     @Test
-    void testFindByIdNull() {
+    void findById_null_throws() {
         assertThrows(IllegalArgumentException.class, () -> dao.findById(null));
     }
 
-    // --------------------------------------------------------------------
-    // TEST update()
-    // --------------------------------------------------------------------
     @Test
-    void testUpdateValido() {
-        Object entity = new Object();
-
-        when(emMock.merge(entity)).thenReturn(entity);
-
-        Object result = dao.update(entity);
-
-        assertSame(entity, result);
+    void findById_success_returnsEntity() {
+        TestEntity e = new TestEntity(); e.setId(5);
+        when(em.find(TestEntity.class, 5)).thenReturn(e);
+        TestEntity res = dao.findById(5);
+        assertSame(e, res);
     }
 
     @Test
-    void testUpdateNull() {
-        assertThrows(IllegalArgumentException.class, () -> dao.update(null));
-    }
-
-    // --------------------------------------------------------------------
-    // TEST delete()
-    // --------------------------------------------------------------------
-    @Test
-    void testDeleteValido() {
-        Object entity = new Object();
-        Object managed = new Object();
-
-        when(emMock.merge(entity)).thenReturn(managed);
-
-        dao.delete(entity);
-
-        verify(emMock, times(1)).remove(managed);
-    }
-
-    @Test
-    void testDeleteNull() {
+    void delete_null_throws() {
         assertThrows(IllegalArgumentException.class, () -> dao.delete(null));
     }
 
-    // --------------------------------------------------------------------
-    // TEST findRange()
-    // --------------------------------------------------------------------
     @Test
-    void testFindRangeValido() {
-
-        when(typedQueryMock.setFirstResult(0)).thenReturn(typedQueryMock);
-        when(typedQueryMock.setMaxResults(10)).thenReturn(typedQueryMock);
-        when(typedQueryMock.getResultList()).thenReturn(List.of("A", "B"));
-
-        List<Object> result = dao.findRange(0, 10);
-
-        assertEquals(2, result.size());
-        assertEquals("A", result.get(0));
+    void delete_success_mergesAndRemoves() {
+        TestEntity e = new TestEntity(); e.setId(3);
+        TestEntity managed = new TestEntity(); managed.setId(3);
+        when(em.merge(e)).thenReturn(managed);
+        doNothing().when(em).remove(managed);
+        dao.delete(e);
+        verify(em).merge(e);
+        verify(em).remove(managed);
     }
 
     @Test
-    void testFindRangeParametrosInvalidos() {
+    void update_null_throws() {
+        assertThrows(IllegalArgumentException.class, () -> dao.update(null));
+    }
+
+    @Test
+    void update_success_returnsMerged() {
+        TestEntity e = new TestEntity(); e.setId(8);
+        when(em.merge(e)).thenReturn(e);
+        TestEntity r = dao.update(e);
+        assertSame(e, r);
+    }
+
+    @Test
+    void findRange_invalid_throws() {
         assertThrows(IllegalArgumentException.class, () -> dao.findRange(-1, 10));
-        assertThrows(IllegalArgumentException.class, () -> dao.findRange(0, 0));
+        assertThrows(IllegalArgumentException.class, () -> dao.findRange(1, 0));
     }
 
-    // --------------------------------------------------------------------
-    // TEST count()
-    // --------------------------------------------------------------------
     @Test
-    void testCountValido() {
+    void findRange_success_returnsList() {
+        List<TestEntity> list = new ArrayList<>();
+        TestEntity e = new TestEntity(); e.setId(2); list.add(e);
+        when(em.getCriteriaBuilder()).thenReturn(cb);
+        when(cb.createQuery(TestEntity.class)).thenReturn((CriteriaQuery<TestEntity>) criteriaQuery);
+        when(criteriaQuery.from(TestEntity.class)).thenReturn(root);
+        when(em.createQuery((CriteriaQuery<TestEntity>) any())).thenReturn(typedQuery);
+        when(typedQuery.setFirstResult(anyInt())).thenReturn(typedQuery);
+        when(typedQuery.setMaxResults(anyInt())).thenReturn(typedQuery);
+        when(typedQuery.getResultList()).thenReturn(list);
 
-        CriteriaQuery<Long> cqLong = Mockito.mock(CriteriaQuery.class);
-        Root<Object> rootLong = Mockito.mock(Root.class);
+        List<TestEntity> res = dao.findRange(0, 10);
+        assertEquals(1, res.size());
+    }
 
-        when(cbMock.createQuery(Long.class)).thenReturn(cqLong);
-        when(cqLong.from(Object.class)).thenReturn(rootLong);
-        when(emMock.createQuery(cqLong)).thenReturn(typedQueryLongMock);
-        when(typedQueryLongMock.getSingleResult()).thenReturn(7L);
-
-        int count = dao.count();
-
-        assertEquals(7, count);
+    @Test
+    void count_success_returnsInt() {
+        when(em.getCriteriaBuilder()).thenReturn(cb);
+        when(cb.createQuery(Long.class)).thenReturn((CriteriaQuery<Long>) longCriteriaQuery);
+        when(longCriteriaQuery.from(TestEntity.class)).thenReturn(root);
+        when(em.createQuery((CriteriaQuery<Long>) any())).thenReturn((TypedQuery<Long>) longQuery);
+        when(longQuery.getSingleResult()).thenReturn(5L);
+        int c = dao.count();
+        assertEquals(5, c);
     }
 }

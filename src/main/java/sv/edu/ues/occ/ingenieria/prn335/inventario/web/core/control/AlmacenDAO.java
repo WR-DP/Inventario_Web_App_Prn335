@@ -12,8 +12,6 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoAlmacen;
 import java.io.Serializable;
 import java.util.List;
 
-//Revisar esta clase, algo malo tiene xd
-
 @Stateless
 @LocalBean
 public class AlmacenDAO extends InventarioDefaultDataAccess<Almacen, Object> implements Serializable {
