@@ -107,5 +107,26 @@ public class ClienteResource  implements Serializable {
         }
     }
 
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("id") UUID id, Cliente entity) {
+        if (id == null || entity == null) {
+            return Response.status(422).header("Missing-parameter", "id and entity must not be null").build();
+        }
+        try {
+            Cliente existing = clienteDAO.findById(id);
+            if (existing == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + id + " not found").build();
+            }
+            entity.setId(id);
+            Cliente updated = clienteDAO.update(entity);
+            return Response.ok(updated).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", e.getMessage()).build();
+        }
+    }
+
 
 }
