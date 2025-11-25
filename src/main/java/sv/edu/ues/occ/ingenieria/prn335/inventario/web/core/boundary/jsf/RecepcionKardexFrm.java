@@ -1,8 +1,11 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.jsf;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.ActionEvent;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.CompraDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
@@ -16,6 +19,8 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Named
+@ViewScoped
 public class RecepcionKardexFrm extends DefaultFrm<Compra> implements Serializable {
 
     @Inject
@@ -30,7 +35,7 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra> implements Serializab
 
     @Override
     protected FacesContext getFacesContext() {
-        return null;
+        return facesContext;
     }
 
     @Override
@@ -69,7 +74,7 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra> implements Serializab
 
     @Override
     public InventarioDefaultDataAccess getDataAccess() {
-        return null;
+        return compraDAO;
     }
 
     @Override
@@ -80,6 +85,7 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra> implements Serializab
     public String getNombreBean(){
         return "Recibir Productos";
     }
+
 
     @Override
     public void btnNuevoHandler (ActionEvent actionEvent) { return; }
@@ -98,13 +104,13 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra> implements Serializab
 
     @Override
     public List<Compra> cargarDatos(int first, int max){
-        //return compraDAO.buscarLibrosParaRecepcion(first, max); Este metodo no existe por eso da error
-        return null;
+        return compraDAO.buscarLibrosParaRecepcion(first, max);
+
     }
 
     @Override
     public int contarDatos(){
-        return compraDAO.contarLibrosParaRecepcion().hashCode(); // AQUI hay que crear el metodo en compradao y quitar el .hashcode por un .intValue
+        return compraDAO.contarLibrosParaRecepcion().intValue();
 
     }
 
@@ -112,5 +118,8 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra> implements Serializab
         return UUID.randomUUID().toString();
     }
 
+    public void actualizarTabla(ActionEvent  actionEvent) {
+        System.out.println("Actualizar la tabla");
+    }
 
 }

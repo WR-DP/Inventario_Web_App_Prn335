@@ -1,0 +1,89 @@
+<ui:composition
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:f="jakarta.faces.core"
+        xmlns:h="jakarta.faces.html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ues="jakarta.faces.composite/ues"
+        xmlns="http://www.w3.org/1999/xhtml"
+        template="../WEB-INF/plantilla/default.xhtml">
+
+    <ui:define name="header">
+        <h1>#{defaultfrm['page.recepcionKardex']}</h1>
+    </ui:define>
+
+    <ui:define name="contenido-tabla">
+        <h:panelGrid>
+            <h:outputText value="#{recepcionKardexFrm.random}"/>
+            <h:form id="frmTop">
+
+                <p:remoteCommand
+                        name="actualizar" update=":pnlTabla" actionListener="#{recepcionKardexFrm.actualizarTabla}"
+                />
+
+                <p:dataTable lazy="true"
+                             rendered="#{recepcionKardexFrm.estado == 'NADA'}"
+                             rows="#{compraFrm.pageSize}"
+                             paginator="true"
+                             paginatorPosition="bottom"
+                             value="#{recepcionKardexFrm.modelo}" var="reg"
+                             selectionMode="single"
+                             selection="#{recepcionKardexFrm.registro}"
+                             styleClass="tabla-crud">
+                    <p:ajax event="rowSelect"
+                            listener="#{recepcionKardexFrm.seleccionarRegistro}"
+                            update=":pnlDetalle :pnlTabla"/>
+
+                    <p:column headerText="ID">
+                        <h:outputText value="#{reg.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Proveedor">
+                        <h:outputText value="#{reg.idProveedor != null ? reg.idProveedor.nombre : '-'}"/>
+                    </p:column>
+
+                    <p:column headerText="Fecha">
+                        <h:outputText value="#{reg.fecha}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="America/El_Salvador"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Estado">
+                        <h:outputText value="#{reg.estado}"/>
+                    </p:column>
+
+                    <p:column headerText="Observaciones">
+                        <h:outputText value="#{reg.observaciones}"/>
+                    </p:column>
+
+                    <p:column headerText="Monto Total">
+                        <h:outputText value="#{compraFrm.calcularMontoTotal(reg)}">
+                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                        </h:outputText>
+                    </p:column>
+
+
+                </p:dataTable>
+
+                <ues:botones-top formulario="#{recepcionKardexFrm}" />
+            </h:form>
+        </h:panelGrid>
+    </ui:define>
+
+    <ui:define name="contenido-detalle">
+
+    </ui:define>
+
+    <ui:define name="extra">
+        <script>
+            var ws = new WebSocket("ws://localhost:9080/InventarioWebAppPRN335/kardex");
+            ws.onmessage = function (event){
+                let mensaje = event.data;
+                console.log(mensaje);
+                actualizar();
+            };
+            ws.onopen = (e) => {
+                console.log("Conexion establecida con el servidor de WebSocket.");
+            };
+        </script>
+    </ui:define>
+</ui:composition>
