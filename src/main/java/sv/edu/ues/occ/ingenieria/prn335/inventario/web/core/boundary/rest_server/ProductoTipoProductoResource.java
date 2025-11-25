@@ -10,20 +10,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.ProductoTipoP
 import java.io.Serializable;
 import java.util.UUID;
 
-@Path("producto/{idTipoProducto}/tipoProducto")
-public class ProductoTipoProductoResource extends  AbstractResource<ProductoTipoProducto, UUID> implements Serializable{
-    @Inject
-    ProductoTipoProductoDAO productoTipoProductoDAO;
-    @Inject
-    InventarioDefaultDataAccess<ProductoTipoProducto, UUID> bean;
+//@Path("producto/{idTipoProducto}/tipoProducto")
+public class ProductoTipoProductoResource implements Serializable{
 
-    @Override
-    protected InventarioDefaultDataAccess<ProductoTipoProducto, UUID> getBean() {
-        return bean;
-    }
-
-    @Override
-    protected UUID getIdEntity(ProductoTipoProducto entity) {
-        return entity.getId();
-    }
 }

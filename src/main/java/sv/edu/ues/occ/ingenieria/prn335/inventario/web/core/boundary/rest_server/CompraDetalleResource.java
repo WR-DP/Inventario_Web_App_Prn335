@@ -2,6 +2,7 @@ package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.rest_serve
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.CompraDetalleDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.CompraDetalle;
@@ -9,21 +10,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.CompraDetalle
 import java.io.Serializable;
 import java.util.UUID;
 
-@Path("compra/{idCompra}/compraDetalle")
-public class CompraDetalleResource extends AbstractResource<CompraDetalle, UUID> implements Serializable {
-    @Inject
-    CompraDetalleDAO compraDetalleDAO;
-    @Inject
-    InventarioDefaultDataAccess<CompraDetalle, UUID> bean;
+//@Path("compra/{idCompra}/compraDetalle")
+public class CompraDetalleResource  implements Serializable {
 
-
-    @Override
-    protected InventarioDefaultDataAccess<CompraDetalle, UUID> getBean() {
-        return bean;
-    }
-
-    @Override
-    protected UUID getIdEntity(CompraDetalle entity) {
-        return entity.getId();
-    }
 }

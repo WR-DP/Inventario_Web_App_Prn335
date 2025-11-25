@@ -8,20 +8,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Compra;
 
 import java.io.Serializable;
 
-@Path("compra")
-public class CompraResource extends AbstractResource<Compra, Long> implements Serializable {
-    @Inject
-    CompraDAO compraDAO;
-    @Inject
-    InventarioDefaultDataAccess<Compra, Long> bean;
+//@Path("compra")
+public class CompraResource  implements Serializable {
 
-    @Override
-    protected InventarioDefaultDataAccess<Compra, Long> getBean() {
-        return bean;
-    }
-
-    @Override
-    protected Long getIdEntity(Compra entity) {
-        return entity.getId();
-    }
 }

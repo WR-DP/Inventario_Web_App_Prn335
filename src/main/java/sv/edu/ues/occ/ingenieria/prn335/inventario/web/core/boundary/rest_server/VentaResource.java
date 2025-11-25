@@ -9,21 +9,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Venta;
 import java.io.Serializable;
 import java.util.UUID;
 
-@Path("venta")
-public class VentaResource extends AbstractResource<Venta, UUID> implements Serializable {
-    @Inject
-    VentaDAO ventaDAO;
-    @Inject
-    InventarioDefaultDataAccess<Venta, UUID> bean;
+//@Path("venta")
+public class VentaResource  implements Serializable {
 
-
-    @Override
-    protected InventarioDefaultDataAccess<Venta, UUID> getBean() {
-        return bean;
-    }
-
-    @Override
-    protected UUID getIdEntity(Venta entity) {
-        return entity.getId();
-    }
 }

@@ -9,38 +9,8 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Producto;
 import java.io.Serializable;
 import java.util.UUID;
 
-@Path("producto")
-public class ProductoResource extends AbstractResource<Producto, UUID> implements Serializable {
-    @Inject
-    ProductoDAO productoDAO;
-    @Inject
-    InventarioDefaultDataAccess<Producto, UUID> bean;
+//@Path("producto")
+public class ProductoResource implements Serializable {
 
-    @Override
-    protected InventarioDefaultDataAccess<Producto, UUID> getBean() {
-        return bean;
-    }
-
-    @Override
-    protected UUID getIdEntity(Producto entity) {
-        return entity.getId();
-    }
-
-
-    //Metodo propio
-//    @GET
-//    @Path("/{...}/producto")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response findBy...@PathParam("idProducto") UUID id) {
-//        if (id != null) {
-//            try {
-//
-//            } catch (Exception e) {
-//                return Response.status(500).header("Server-Exception", e.getMessage()).build();
-//            }
-//
-//        }
-//        return Response.status(422).header("Missing-parameter", "id producto must not be null and entity.id be null").build();
-//    }
 
 }

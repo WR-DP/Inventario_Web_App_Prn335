@@ -8,20 +8,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.UnidadMedida;
 
 import java.io.Serializable;
 
-@Path("unidadMedida")
-public class UnidadMedidaResource extends AbstractResource<UnidadMedida, Integer> implements Serializable {
-    @Inject
-    UnidadMedidaDAO unidadMedidaDAO;
-    @Inject
-    InventarioDefaultDataAccess<UnidadMedida, Integer> bean;
+//@Path("unidadMedida")
+public class UnidadMedidaResource  implements Serializable {
 
-    @Override
-    protected InventarioDefaultDataAccess<UnidadMedida, Integer> getBean() {
-        return bean;
-    }
-
-    @Override
-    protected Integer getIdEntity(UnidadMedida entity) {
-        return entity.getId();
-    }
 }

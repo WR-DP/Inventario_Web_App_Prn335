@@ -14,28 +14,97 @@ import org.eclipse.microprofile.openapi.annotations.headers.Header;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoProductoDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProducto;
 
-import java.io.Serial;
-import java.io.Serializable;
+import java.util.List;
 
+@Path("tipoProducto")
+public class TipoProductoResource {
 
-@Path("tipo_producto")
-public class TipoProductoResource extends AbstractResource<TipoProducto, Long> implements Serializable {
     @Inject
     TipoProductoDAO tipoProductoDAO;
-    @Inject
-    InventarioDefaultDataAccess<TipoProducto, Long> bean;
 
-    @Override
-    protected InventarioDefaultDataAccess<TipoProducto, Long> getBean() {
-        return bean;
+    //tecnologia marchal
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+     public Response fidnReange(
+            @Min(0)
+            @DefaultValue("0")
+            @QueryParam("first")
+            int first,
+            @Max(20)
+            @DefaultValue("10")
+            @QueryParam("max")
+            int max) {
+        if (first >= 0 && max <= 100) {
+            try {
+                int total = tipoProductoDAO.count();
+                return Response.ok(tipoProductoDAO.findRange(first, max)).header("Total-records", total).build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
+            }
+        }
+        return Response.status(422).header("Missing-parameter", "first,max").build();
     }
 
-    @Override
-    protected Long getIdEntity(TipoProducto entity) {
-        return entity.getId();
+    @GET
+    @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findById(@PathParam("id") Long id) {
+        if (id != null) {
+            try {
+                TipoProducto resp = tipoProductoDAO.findById(id);
+                if (resp != null) {
+                    return Response.ok(resp).build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id "+id+" not found").build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
+            }
+        }
+        return Response.status(422).header("Missing-parameter", "id").build();
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response delete(@PathParam("id") Long id) {
+        if (id != null) {
+            try {
+                TipoProducto resp = tipoProductoDAO.findById(id);
+                if (resp != null) {
+                    tipoProductoDAO.delete(resp);
+                    return Response.noContent().build();
+                }
+                return Response.status(Response.Status.NOT_FOUND).header("Not-Found", "Record with id " + id + " not found").build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot acces db").build();
+            }
+        }
+        return Response.status(422).header("Missing-parameter", "id").build();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response create(TipoProducto entity, @Context UriInfo uriInfo) {
+        if (entity != null && entity.getId() == null) {
+            try {
+                if (entity.getIdTipoProductoPadre() != null && entity.getIdTipoProductoPadre().getId() != null) {
+                    TipoProducto padre = tipoProductoDAO.findById(entity.getIdTipoProductoPadre().getId());
+                    if(padre==null){
+                        return Response.status(422).header("Missing-parameter", "If parent is assigned, must not be null and exist in the db").build();
+                    }
+                    entity.setIdTipoProductoPadre(padre);
+                }
+                tipoProductoDAO.create(entity);
+                return Response.created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(entity.getId())).build()).build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot acces db").build();
+            }
+        } else {
+            return Response.status(422).header("Missing-parameter", "entity must not be null and entity.id be null").build();
+        }
     }
 }
