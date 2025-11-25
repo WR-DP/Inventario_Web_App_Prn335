@@ -18,7 +18,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 
-@Path("ProductoTipoProducto/{idProductoTipoProducto}/tipoProductocaracteristica")
+@Path("productoTipoProducto/{idProductoTipoProducto}/tipoProductocaracteristica")
 public class ProductoTipoProductoCaracteristicaResource implements Serializable {
     @Inject
     ProductoTipoProductoCaracteristicaDAO ptpcDAO;
@@ -113,16 +113,16 @@ public class ProductoTipoProductoCaracteristicaResource implements Serializable 
                         .build();
             }
 
-            if (entity.getIdProductoTipoProducto() == null || entity.getIdProductoTipoProducto().getId() == null) {
+            if (entity.getIdTipoProductoCaracteristica() == null || entity.getIdTipoProductoCaracteristica().getId() == null) {
                 return Response.status(422)
                         .header("Missing-parameter", "entity.idProducto.id is required")
                         .build();
             }
 
-            TipoProductoCaracteristica tpc = tipoProductoCaracteristicaDAO.findById(entity.getIdProductoTipoProducto().getId());
+            TipoProductoCaracteristica tpc = tipoProductoCaracteristicaDAO.findById(entity.getIdTipoProductoCaracteristica().getId());
             if (tpc == null) {
                 return Response.status(Response.Status.NOT_FOUND)
-                        .header("Not-found", "Producto with id " + entity.getIdProductoTipoProducto().getId() + " not found")
+                        .header("Not-found", "Producto with id " + entity.getIdTipoProductoCaracteristica().getId() + " not found")
                         .build();
             }
 
