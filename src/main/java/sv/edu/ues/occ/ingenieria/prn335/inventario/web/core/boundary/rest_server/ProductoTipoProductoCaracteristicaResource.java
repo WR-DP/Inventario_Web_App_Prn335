@@ -56,16 +56,16 @@ public class ProductoTipoProductoCaracteristicaResource implements Serializable 
 
 
     @GET
-    @Path("{id}")
+    @Path("{idProductoTipoProducto}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findById(@PathParam("id") UUID id) {
-        if (id != null) {
+    public Response findById(@PathParam("idProductoTipoProducto") UUID idProductoTipoProducto) {
+        if (idProductoTipoProducto != null) {
             try {
-                ProductoTipoProductoCaracteristica resp = ptpcDAO.findById(id);
+                ProductoTipoProductoCaracteristica resp = ptpcDAO.findById(idProductoTipoProducto);
                 if (resp != null) {
                     return Response.ok(resp).build();
                 }
-                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id "+id+" not found").build();
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id "+idProductoTipoProducto+" not found").build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
             }
@@ -74,16 +74,16 @@ public class ProductoTipoProductoCaracteristicaResource implements Serializable 
     }
 
     @DELETE
-    @Path("{id}")
-    public Response delete(@PathParam("id") UUID id) {
-        if (id != null) {
+    @Path("{idProductoTipoProducto}")
+    public Response delete(@PathParam("idProductoTipoProducto") UUID idProductoTipoProducto) {
+        if (idProductoTipoProducto != null) {
             try {
-                ProductoTipoProductoCaracteristica resp = ptpcDAO.findById(id);
+                ProductoTipoProductoCaracteristica resp = ptpcDAO.findById(idProductoTipoProducto);
                 if (resp != null) {
                     ptpcDAO.delete(resp);
                     return Response.noContent().build();
                 }
-                return Response.status(Response.Status.NOT_FOUND).header("Not-Found", "Record with id " + id + " not found").build();
+                return Response.status(Response.Status.NOT_FOUND).header("Not-Found", "Record with id " + idProductoTipoProducto + " not found").build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot acces db").build();
             }

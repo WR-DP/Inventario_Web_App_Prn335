@@ -55,16 +55,16 @@ public class CompraDetalleResource  implements Serializable {
 
 
     @GET
-    @Path("{id}")
+    @Path("{idCompra}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findById(@PathParam("id") UUID id) {
-        if (id != null) {
+    public Response findById(@PathParam("idCompra") UUID idCompra) {
+        if (idCompra != null) {
             try {
-                CompraDetalle resp = compraDetalleDAO.findById(id);
+                CompraDetalle resp = compraDetalleDAO.findById(idCompra);
                 if (resp != null) {
                     return Response.ok(resp).build();
                 }
-                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id "+id+" not found").build();
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id "+idCompra+" not found").build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
             }
@@ -73,16 +73,16 @@ public class CompraDetalleResource  implements Serializable {
     }
 
     @DELETE
-    @Path("{id}")
-    public Response delete(@PathParam("id") UUID id) {
-        if (id != null) {
+    @Path("{idCompra}")
+    public Response delete(@PathParam("idCompra") UUID idCompra) {
+        if (idCompra != null) {
             try {
-                CompraDetalle resp = compraDetalleDAO.findById(id);
+                CompraDetalle resp = compraDetalleDAO.findById(idCompra);
                 if (resp != null) {
                     compraDetalleDAO.delete(resp);
                     return Response.noContent().build();
                 }
-                return Response.status(Response.Status.NOT_FOUND).header("Not-Found", "Record with id " + id + " not found").build();
+                return Response.status(Response.Status.NOT_FOUND).header("Not-Found", "Record with id " + idCompra + " not found").build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot acces db").build();
             }

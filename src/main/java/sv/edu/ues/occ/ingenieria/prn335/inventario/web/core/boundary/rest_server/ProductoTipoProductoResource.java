@@ -59,16 +59,16 @@ public class ProductoTipoProductoResource {
 
 
     @GET
-    @Path("{id}")
+    @Path("{idProducto}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findById(@PathParam("id") UUID id) {
-        if (id != null) {
+    public Response findById(@PathParam("idProducto") UUID idProducto) {
+        if (idProducto != null) {
             try {
-                ProductoTipoProducto resp = productoTipoProductoDAO.findById(id);
+                ProductoTipoProducto resp = productoTipoProductoDAO.findById(idProducto);
                 if (resp != null) {
                     return Response.ok(resp).build();
                 }
-                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id "+id+" not found").build();
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id "+idProducto+" not found").build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
             }
@@ -77,16 +77,16 @@ public class ProductoTipoProductoResource {
     }
 
     @DELETE
-    @Path("{id}")
-    public Response delete(@PathParam("id") UUID id) {
-        if (id != null) {
+    @Path("{idProducto}")
+    public Response delete(@PathParam("idProducto") UUID idProducto) {
+        if (idProducto != null) {
             try {
-                ProductoTipoProducto resp = productoTipoProductoDAO.findById(id);
+                ProductoTipoProducto resp = productoTipoProductoDAO.findById(idProducto);
                 if (resp != null) {
                     productoTipoProductoDAO.delete(resp);
                     return Response.noContent().build();
                 }
-                return Response.status(Response.Status.NOT_FOUND).header("Not-Found", "Record with id " + id + " not found").build();
+                return Response.status(Response.Status.NOT_FOUND).header("Not-Found", "Record with id " + idProducto + " not found").build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot acces db").build();
             }

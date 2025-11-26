@@ -142,6 +142,7 @@ public class DespachoKardexFrm extends DefaultFrm<Venta> implements Serializable
             Logger.getLogger(DespachoKardexFrm.class.getName())
                     .log(Level.SEVERE, ex.getMessage(), ex);
         }
+
     }
 
 
