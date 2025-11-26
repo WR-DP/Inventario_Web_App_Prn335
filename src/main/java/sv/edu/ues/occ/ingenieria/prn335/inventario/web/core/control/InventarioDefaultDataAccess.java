@@ -33,7 +33,8 @@ public abstract class InventarioDefaultDataAccess<T, ID> implements InventarioDA
             if(em == null){
                 throw new IllegalStateException("Error al acceder al repositorio");
             }
-            em.persist(registro);
+            em.persist(registro);// asegurar que los IDs generados por la BD (IDENTITY) esten disponibles
+            em.flush();
 
         }catch (Exception ex){
             throw new  IllegalStateException("Error al acceder al repositorio",ex);

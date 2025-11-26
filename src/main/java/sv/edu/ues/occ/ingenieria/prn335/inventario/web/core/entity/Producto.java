@@ -28,6 +28,14 @@ public class Producto {
     @Column(name = "comentarios", length = Integer.MAX_VALUE)
     private String comentarios;
 
+    // Generar UUID si no viene desde el cliente
+    @PrePersist
+    public void prePersist() {
+        if (id == null) {
+            id = UUID.randomUUID();
+        }
+    }
+
     public UUID getId() {
         return id;
     }

@@ -91,7 +91,7 @@ public class ProveedorResource implements Serializable {
         }
 
         try {
-            // si el id viene null, el PrePersist lo genera
+            // si el id viene null, la BD lo genera (IDENTITY)
             proveedorDAO.create(entity);
 
             return Response.created(uriInfo.getAbsolutePathBuilder()
@@ -101,6 +101,27 @@ public class ProveedorResource implements Serializable {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .header("Server-exception", e.getMessage())
                     .build();
+        }
+    }
+
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("id") Integer id, Proveedor entity) {
+        if (id == null || entity == null) {
+            return Response.status(422).header("Missing-parameter", "id and entity must not be null").build();
+        }
+        try {
+            Proveedor existing = proveedorDAO.findById(id);
+            if (existing == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + id + " not found").build();
+            }
+            entity.setId(id);
+            Proveedor updated = proveedorDAO.update(entity);
+            return Response.ok(updated).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", e.getMessage()).build();
         }
     }
 
