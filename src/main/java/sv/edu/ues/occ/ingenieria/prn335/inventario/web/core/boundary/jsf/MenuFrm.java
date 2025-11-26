@@ -63,8 +63,8 @@ public class MenuFrm implements Serializable {
             especificos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.caracteristicas") : "Características", "pi pi-tags", "Caracteristica.jsf"));
             especificos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.compras") : "Compras", "pi pi-shopping-cart", "Compras.jsf"));
             especificos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.ventas") : "Ventas", "pi pi-dollar", "Ventas.jsf"));
-            especificos.getElements().add(crearItem(bundle !=null? bundle.getString("menu.recibirProductos") : "Recibir Productos", "pi pi-book", "RecepcionKardex.jsf"));
-            especificos.getElements().add(crearItem(bundle !=null? bundle.getString("menu.despachoProductos") : "Despacho Productos", "pi pi-bookmark", "DespachoKardex.jsf"));
+            especificos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.recibirProductos") : "Recibir Productos", "pi pi-book", "RecepcionKardex.jsf"));
+            especificos.getElements().add(crearItem(bundle != null ? bundle.getString("menu.despachoProductos") : "Despacho Productos", "pi pi-bookmark", "DespachoKardex.jsf"));
 
             model.getElements().add(tipos);
             model.getElements().add(especificos);
