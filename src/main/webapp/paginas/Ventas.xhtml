@@ -49,9 +49,9 @@
                     </p:column>
 
                     <p:column headerText="Monto Total">
-                    <h:outputText value="#{ventaFrm.calcularMontoTotal(reg)}">
-                        <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
-                    </h:outputText>
+                        <h:outputText value="#{ventaFrm.calcularMontoTotal(reg)}">
+                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                        </h:outputText>
                     </p:column>
 
 
@@ -117,6 +117,9 @@
 
 
                         </h:panelGrid>
+                        <p:commandButton value="Cerrar Venta"
+                                         actionListener="#{ventaFrm.notificarCambioKardex}"
+                                         update=":pnlDetalle :pnlTabla"/>
 
                         <ues:botones-crud formulario="#{ventaFrm}" actualizar=":pnlDetalle :pnlTabla :tabVenta"/>
                     </h:form>
