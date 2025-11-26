@@ -1,0 +1,170 @@
+<ui:composition
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:f="jakarta.faces.core"
+        xmlns:h="jakarta.faces.html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ues="jakarta.faces.composite/ues"
+        xmlns="http://www.w3.org/1999/xhtml"
+        template="../WEB-INF/plantilla/default.xhtml">
+
+    <ui:define name="header">
+        <h1>#{defaultfrm['page.despachoKardex']}</h1>
+    </ui:define>
+
+    <ui:define name="contenido-tabla">
+        <h:panelGrid>
+
+            <h:form id="frmTop">
+
+                <p:remoteCommand
+                        name="actualizar" update=":pnlTabla" actionListener="#{despachoKardexFrm.actualizarTabla}"
+                />
+
+                <p:dataTable lazy="true"
+                             rendered="#{despachoKardexFrm.estado == 'NADA'}"
+                             rows="#{ventaFrm.pageSize}"
+                             paginator="true"
+                             paginatorPosition="bottom"
+                             value="#{despachoKardexFrm.modelo}" var="reg"
+                             selectionMode="single"
+                             selection="#{despachoKardexFrm.registro}"
+                             styleClass="tabla-crud">
+                    <p:ajax event="rowSelect"
+                            listener="#{despachoKardexFrm.seleccionarRegistro}"
+                            update=":pnlDetalle :pnlTabla"/>
+
+                    <p:column headerText="ID">
+                        <h:outputText value="#{reg.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Cliente">
+                        <h:outputText value="#{reg.idCliente != null ? reg.idCliente.nombre : '-'}"/>
+                    </p:column>
+
+                    <p:column headerText="Fecha">
+                        <h:outputText value="#{reg.fecha}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="America/El_Salvador"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Estado">
+                        <h:outputText value="#{reg.estado}"/>
+                    </p:column>
+
+                    <p:column headerText="Observaciones">
+                        <h:outputText value="#{reg.observaciones}"/>
+                    </p:column>
+
+                    <p:column headerText="Monto Total">
+                        <h:outputText value="#{ventaFrm.calcularMontoTotal(reg)}">
+                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                        </h:outputText>
+                    </p:column>
+
+
+                </p:dataTable>
+
+            </h:form>
+        </h:panelGrid>
+    </ui:define>
+
+    <ui:define name="contenido-detalle">
+
+        <p:tabView id="tabDespacho"
+                   rendered="#{despachoKardexFrm.estado != 'NADA'}"
+                   cache="false"
+                   dynamic="true">
+
+            <!-- TAB 1: Generalidades -->
+            <p:tab title="Información del Despacho">
+                <h:form id="frmDetalleDespacho">
+                    <h:panelGrid columns="2">
+
+                        <p:outputLabel value="ID:"/>
+                        <h:outputText value="#{despachoKardexFrm.registro.id}" styleClass="texto-blanco"/>
+
+                        <p:outputLabel value="Cliente:"/>
+                        <h:outputText value="#{despachoKardexFrm.registro.idCliente.nombre}" styleClass="texto-blanco"/>
+
+                        <p:outputLabel value="Fecha:"/>
+                        <h:outputText value="#{despachoKardexFrm.registro.fecha}" styleClass="texto-blanco">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"
+                                               timeZone="America/El_Salvador"/>
+                        </h:outputText>
+
+                        <p:outputLabel value="Estado:"/>
+                        <h:outputText value="#{despachoKardexFrm.registro.estado}" styleClass="texto-blanco"/>
+
+                        <p:outputLabel value="Observaciones:"/>
+                        <h:outputText value="#{despachoKardexFrm.registro.observaciones}" styleClass="texto-blanco"/>
+                    </h:panelGrid>
+
+                    <p:spacer height="20"/>
+
+                    <p:commandButton value="Regresar"
+                                     icon="pi pi-arrow-left"
+                                     styleClass="boton-regresar p-button-info"
+                                     actionListener="#{despachoKardexFrm.btnCancelarHandler}"
+                                     update=":pnlTabla :pnlDetalle"/>
+
+
+
+                </h:form>
+            </p:tab>
+
+            <!-- TAB 2: Detalle de Productos -->
+            <p:tab title="Productos">
+                <h:panelGrid>
+                    <h2>Productos del Despacho</h2>
+
+                    <p:dataTable value="#{despachoKardexFrm.registro.detalles}"
+                                 var="d"
+                                 paginator="true"
+                                 rows="10">
+
+                        <p:column headerText="Producto">
+                            <h:outputText value="#{d.idProducto.nombreProducto}"/>
+                        </p:column>
+
+                        <p:column headerText="Cantidad">
+                            <h:outputText value="#{d.cantidad}"/>
+                        </p:column>
+
+                        <p:column headerText="Precio Unitario">
+                            <h:outputText value="#{d.precio}">
+                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Estado">
+                            <h:outputText value="#{d.estado}"/>
+                        </p:column>
+
+                        <p:column headerText="Observaciones">
+                            <h:outputText value="#{d.observaciones}"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </h:panelGrid>
+            </p:tab>
+
+        </p:tabView>
+
+    </ui:define>
+
+
+    <ui:define name="extra">
+        <script>
+            var ws = new WebSocket("ws://localhost:9080/InventarioWebAppPRN335/kardex");
+            ws.onmessage = function (event){
+                let mensaje = event.data;
+                console.log(mensaje);
+                actualizar();
+            };
+            ws.onopen = (e) => {
+                console.log("Conexion establecida con el servidor de WebSocket.");
+            };
+        </script>
+    </ui:define>
+</ui:composition>

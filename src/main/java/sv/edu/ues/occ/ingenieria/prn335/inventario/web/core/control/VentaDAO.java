@@ -36,4 +36,22 @@ public class VentaDAO extends InventarioDefaultDataAccess<Venta, Object> impleme
     public int count() throws IllegalStateException {
         return super.count();
     }
+
+    public List<Venta> buscarVentasParaDespacho(int first, int max) {
+        TypedQuery<Venta> q = em.createQuery(
+                "SELECT v FROM Venta v WHERE v.estado = 'ACTIVA'",
+                Venta.class
+        );
+        q.setFirstResult(first);
+        q.setMaxResults(max);
+        return q.getResultList();
+    }
+
+    public Long contarVentasParaDespacho() {
+        return em.createQuery(
+                "SELECT COUNT(v) FROM Venta v WHERE v.estado = 'ACTIVA'",
+                Long.class
+        ).getSingleResult();
+    }
+
 }

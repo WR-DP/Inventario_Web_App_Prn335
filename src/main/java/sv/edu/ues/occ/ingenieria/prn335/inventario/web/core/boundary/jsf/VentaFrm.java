@@ -36,6 +36,9 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
     @Inject
     protected VentaDetalleFrm ventaDetalleFrm;
 
+    @Inject
+    NotificadorKardex notificadorKardex;
+
     private List<Venta> listaVentas;
     private List<Cliente> listaClientes;
 
@@ -91,9 +94,9 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
     protected Venta nuevoRegistro() {
         Venta v = new Venta();
         v.setId(UUID.randomUUID());
-        v.setEstado("ACTIVA");
+        v.setEstado("PENDIENTE");
         v.setObservaciones("");
-        v.setFecha(new Date()); // inicializa con la fecha actual
+        v.setFecha(new Date());
         return v;
     }
 
@@ -114,7 +117,7 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
     }
 
 
-    public java.math.BigDecimal calcularMontoTotal(Venta venta) {
+    public BigDecimal calcularMontoTotal(Venta venta) {
         if (venta == null || venta.getId() == null) {
             return BigDecimal.ZERO;
         }
@@ -179,7 +182,7 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
     public void btnSeleccionarClienteHandler(ActionEvent event){
         try{
             if (this.registro == null) {
-                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No hay venta activa", null));
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No hay venta pagada", null));
                 return;
             }
 
@@ -323,6 +326,16 @@ public class VentaFrm extends DefaultFrm<Venta> implements Serializable {
         } catch (Exception ex) {
             enviarMensaje("Error al eliminar la venta: " + ex.getMessage(), FacesMessage.SEVERITY_ERROR);
         }
+
     }
+
+    public void notificarCambioKardex(ActionEvent actionEvent) {
+        if (this.registro != null && this.registro.getId() != null) {
+            this.registro.setEstado("ACTIVA");
+            super.btnModificarHandler(actionEvent);
+            notificadorKardex.notificarCambioKardex("Cambio en venta ID: ");
+        }
+    }
+
 
 }
