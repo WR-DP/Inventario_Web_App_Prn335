@@ -8,7 +8,6 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProductoDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.VentaDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.VentaDetalleDAO;
@@ -145,5 +144,42 @@ public class VentaDetalleResource  implements Serializable {
         }
     }
 
+
+    @PUT
+    @Path("{idVenta}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("idVenta") java.util.UUID idVenta, VentaDetalle entity) {
+        if (idVenta == null || entity == null) {
+            return Response.status(422).header("Missing-parameter", "id and entity must not be null").build();
+        }
+        try {
+            VentaDetalle existing = ventaDetalleDAO.findById(idVenta);
+            if (existing == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + idVenta + " not found").build();
+            }
+
+            if (entity.getIdProducto() == null || entity.getIdProducto().getId() == null) {
+                return Response.status(422).header("Missing-parameter", "entity.idProducto.id is required").build();
+            }
+
+            Producto producto = productoDAO.findById(entity.getIdProducto().getId());
+            if (producto == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .header("Not-found", "Producto with id " + entity.getIdProducto().getId() + " not found")
+                        .build();
+            }
+
+            // Preserve parent Venta association
+            entity.setIdVenta(existing.getIdVenta());
+            entity.setIdProducto(producto);
+            entity.setId(idVenta);
+
+            VentaDetalle updated = ventaDetalleDAO.update(entity);
+            return Response.ok(updated).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", e.getMessage()).build();
+        }
+    }
 
 }

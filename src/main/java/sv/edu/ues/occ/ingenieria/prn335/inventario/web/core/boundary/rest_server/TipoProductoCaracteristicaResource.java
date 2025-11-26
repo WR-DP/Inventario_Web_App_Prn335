@@ -142,4 +142,43 @@ public class TipoProductoCaracteristicaResource  implements Serializable {
     }
 
 
+    // update
+
+    @PUT
+    @Path("{idTipoProducto}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("idTipoProducto") Long idTipoProducto, TipoProductoCaracteristica entity) {
+        if (idTipoProducto == null || entity == null) {
+            return Response.status(422).header("Missing-parameter", "id and entity must not be null").build();
+        }
+        try {
+            TipoProductoCaracteristica existing = tipoProductoCaracteristicaDAO.findById(idTipoProducto);
+            if (existing == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + idTipoProducto + " not found").build();
+            }
+
+            if (entity.getIdCaracteristica() == null || entity.getIdCaracteristica().getId() == null) {
+                return Response.status(422).header("Missing-parameter", "entity.idCaracteristica.id is required").build();
+            }
+
+            Caracteristica c = caracteristicaDAO.findById(entity.getIdCaracteristica().getId());
+            if (c == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .header("Not-found", "Caracteristica with id " + entity.getIdCaracteristica().getId() + " not found")
+                        .build();
+            }
+
+            // Preserve parent TipoProducto association
+            entity.setIdTipoProducto(existing.getIdTipoProducto());
+            entity.setIdCaracteristica(c);
+            entity.setId(idTipoProducto);
+
+            TipoProductoCaracteristica updated = tipoProductoCaracteristicaDAO.update(entity);
+            return Response.ok(updated).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", e.getMessage()).build();
+        }
+    }
+
 }

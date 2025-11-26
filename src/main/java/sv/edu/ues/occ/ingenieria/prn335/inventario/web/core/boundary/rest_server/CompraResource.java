@@ -135,7 +135,37 @@ public class CompraResource  implements Serializable {
         }
     }
 
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("id") Long id, Compra entity) {
+        if (id == null || entity == null) {
+            return Response.status(422).header("Missing-parameter", "id and entity must not be null").build();
+        }
+        try {
+            Compra existing = compraDAO.findById(id);
+            if (existing == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + id + " not found").build();
+            }
+
+            if (entity.getIdProveedor() == null || entity.getIdProveedor().getId() == null) {
+                return Response.status(422).header("Missing-parameter", "idProveedor.id is required").build();
+            }
+
+            Proveedor proveedor = compraDAO.findProveedorById(entity.getIdProveedor().getId());
+            if (proveedor == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Proveedor with id " + entity.getIdProveedor().getId() + " not found").build();
+            }
+
+            entity.setIdProveedor(proveedor);
+            entity.setId(id);
+            Compra updated = compraDAO.update(entity);
+            return Response.ok(updated).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", e.getMessage()).build();
+        }
+    }
 
 
 }
-

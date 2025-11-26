@@ -125,5 +125,36 @@ public class AlmacenResource  implements Serializable {
         }
     }
 
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("id") Integer id, Almacen entity) {
+        if (id == null || entity == null) {
+            return Response.status(422).header("Missing-parameter", "id and entity must not be null").build();
+        }
+        try {
+            Almacen existing = almacenDAO.findById(id);
+            if (existing == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + id + " not found").build();
+            }
+
+            if (entity.getIdTipoAlmacen() == null || entity.getIdTipoAlmacen().getId() == null) {
+                return Response.status(422).header("Missing-parameter", "idTipoAlmacen.id is required").build();
+            }
+
+            TipoAlmacen tipo = almacenDAO.findTipoAlmacenById(entity.getIdTipoAlmacen().getId());
+            if (tipo == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "TipoAlmacen with id " + entity.getIdTipoAlmacen().getId() + " not found").build();
+            }
+
+            entity.setIdTipoAlmacen(tipo);
+            entity.setId(id);
+            Almacen updated = almacenDAO.update(entity);
+            return Response.ok(updated).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", e.getMessage()).build();
+        }
+    }
 
 }

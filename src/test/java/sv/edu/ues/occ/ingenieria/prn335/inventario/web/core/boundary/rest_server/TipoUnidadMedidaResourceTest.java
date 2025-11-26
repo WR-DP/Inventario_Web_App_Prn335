@@ -8,22 +8,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProductoDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Producto;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoUnidadMedidaDAO;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoUnidadMedida;
 
 import java.net.URI;
 import java.util.Collections;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ProductoResourceTest {
+class TipoUnidadMedidaResourceTest {
 
     @Mock
-    ProductoDAO productoDAO;
+    TipoUnidadMedidaDAO tipoUnidadMedidaDAO;
 
     @Mock
     UriInfo uriInfo;
@@ -32,32 +32,31 @@ class ProductoResourceTest {
     UriBuilder uriBuilder;
 
     @InjectMocks
-    ProductoResource resource;
+    TipoUnidadMedidaResource resource;
 
     @Test
     void create_success_returnsCreated() throws Exception {
-        Producto p = new Producto();
-        // Simular que al persistir se asigna id
+        TipoUnidadMedida t = new TipoUnidadMedida();
         doAnswer(invocation -> {
-            Producto arg = invocation.getArgument(0);
-            arg.setId(UUID.fromString("00000000-0000-0000-0000-0000000000aa"));
+            TipoUnidadMedida arg = invocation.getArgument(0);
+            arg.setId(77);
             return null;
-        }).when(productoDAO).create(any(Producto.class));
+        }).when(tipoUnidadMedidaDAO).create(any(TipoUnidadMedida.class));
 
         when(uriInfo.getAbsolutePathBuilder()).thenReturn(uriBuilder);
         when(uriBuilder.path(anyString())).thenReturn(uriBuilder);
-        when(uriBuilder.build()).thenReturn(new URI("http://localhost/producto/00000000-0000-0000-0000-0000000000aa"));
+        when(uriBuilder.build()).thenReturn(new URI("http://localhost/tipoUnidadMedida/77"));
 
-        try (Response resp = resource.create(p, uriInfo)) {
+        try (Response resp = resource.create(t, uriInfo)) {
             assertEquals(Response.Status.CREATED.getStatusCode(), resp.getStatus());
             assertNotNull(resp.getLocation());
-            assertTrue(resp.getLocation().toString().contains("00000000-0000-0000-0000-0000000000aa"));
+            assertTrue(resp.getLocation().toString().contains("77"));
             assertTrue(resp.hasEntity());
-            Producto returned = (Producto) resp.getEntity();
+            TipoUnidadMedida returned = (TipoUnidadMedida) resp.getEntity();
             assertNotNull(returned.getId());
         }
 
-        verify(productoDAO).create(any(Producto.class));
+        verify(tipoUnidadMedidaDAO).create(any(TipoUnidadMedida.class));
     }
 
     @Test
@@ -69,8 +68,8 @@ class ProductoResourceTest {
 
     @Test
     void findById_notFound_returns404() {
-        UUID id = UUID.randomUUID();
-        when(productoDAO.findById(id)).thenReturn(null);
+        Integer id = 9999;
+        when(tipoUnidadMedidaDAO.findById(id)).thenReturn(null);
         try (Response resp = resource.findById(id)) {
             assertEquals(Response.Status.NOT_FOUND.getStatusCode(), resp.getStatus());
         }
@@ -78,44 +77,42 @@ class ProductoResourceTest {
 
     @Test
     void findRange_success_returnsOkAndHeader() {
-        when(productoDAO.count()).thenReturn(4);
-        when(productoDAO.findRange(0, 10)).thenReturn(Collections.singletonList(new Producto()));
+        when(tipoUnidadMedidaDAO.count()).thenReturn(2);
+        when(tipoUnidadMedidaDAO.findRange(0, 10)).thenReturn(Collections.singletonList(new TipoUnidadMedida()));
 
         try (Response resp = resource.findRange(0, 10)) {
             assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
-            assertEquals("4", resp.getHeaderString("Total-records"));
+            assertEquals("2", resp.getHeaderString("Total-records"));
         }
 
-        verify(productoDAO).findRange(0, 10);
+        verify(tipoUnidadMedidaDAO).findRange(0, 10);
     }
 
     @Test
     void delete_existing_returnsNoContent() {
-        Producto p = new Producto();
-        UUID id = UUID.randomUUID();
-        p.setId(id);
-        when(productoDAO.findById(id)).thenReturn(p);
+        TipoUnidadMedida t = new TipoUnidadMedida();
+        t.setId(5);
+        when(tipoUnidadMedidaDAO.findById(5)).thenReturn(t);
 
-        try (Response resp = resource.delete(id)) {
+        try (Response resp = resource.delete(5)) {
             assertEquals(Response.Status.NO_CONTENT.getStatusCode(), resp.getStatus());
         }
 
-        verify(productoDAO).delete(p);
+        verify(tipoUnidadMedidaDAO).delete(t);
     }
 
     @Test
     void update_existing_returnsOk() {
-        Producto existing = new Producto();
-        UUID id = UUID.randomUUID();
-        existing.setId(id);
-        Producto toUpdate = new Producto();
-        when(productoDAO.findById(id)).thenReturn(existing);
-        when(productoDAO.update(any(Producto.class))).thenReturn(existing);
+        TipoUnidadMedida existing = new TipoUnidadMedida();
+        existing.setId(6);
+        TipoUnidadMedida toUpdate = new TipoUnidadMedida();
+        when(tipoUnidadMedidaDAO.findById(6)).thenReturn(existing);
+        when(tipoUnidadMedidaDAO.update(any(TipoUnidadMedida.class))).thenReturn(existing);
 
-        try (Response resp = resource.update(id, toUpdate)) {
+        try (Response resp = resource.update(6, toUpdate)) {
             assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
         }
 
-        verify(productoDAO).update(any(Producto.class));
+        verify(tipoUnidadMedidaDAO).update(any(TipoUnidadMedida.class));
     }
 }

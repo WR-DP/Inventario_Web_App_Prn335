@@ -14,6 +14,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Almacen;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoAlmacen;
 
 import java.net.URI;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -96,5 +97,79 @@ class AlmacenResourceTest {
         Response resp = resource.findById(id);
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), resp.getStatus());
+    }
+
+    @Test
+    void findRange_returnsOkAndHeader() {
+        when(almacenDAO.count()).thenReturn(12);
+        when(almacenDAO.findRange(0, 10)).thenReturn(Collections.singletonList(new Almacen()));
+
+        try (Response resp = resource.findRange(0, 10)) {
+            assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
+            assertEquals("12", resp.getHeaderString("Total-records"));
+        }
+
+        verify(almacenDAO).findRange(0, 10);
+    }
+
+    @Test
+    void delete_existing_returnsNoContent() {
+        Almacen a = new Almacen();
+        a.setId(21);
+        when(almacenDAO.findById(21)).thenReturn(a);
+
+        try (Response resp = resource.delete(21)) {
+            assertEquals(Response.Status.NO_CONTENT.getStatusCode(), resp.getStatus());
+        }
+
+        verify(almacenDAO).delete(a);
+    }
+
+    @Test
+    void update_existing_returnsOk() {
+        Almacen existing = new Almacen();
+        existing.setId(22);
+        when(almacenDAO.findById(22)).thenReturn(existing);
+
+        Almacen toUpdate = new Almacen();
+        TipoAlmacen tipoRef = new TipoAlmacen();
+        tipoRef.setId(2);
+        toUpdate.setIdTipoAlmacen(tipoRef);
+
+        TipoAlmacen found = new TipoAlmacen();
+        found.setId(2);
+        when(almacenDAO.findTipoAlmacenById(2)).thenReturn(found);
+        when(almacenDAO.update(any(Almacen.class))).thenReturn(existing);
+
+        try (Response resp = resource.update(22, toUpdate)) {
+            assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
+        }
+
+        verify(almacenDAO).update(any(Almacen.class));
+    }
+
+    @Test
+    void update_missingTipo_returns422() {
+        Almacen toUpdate = new Almacen();
+        // stub existing so resource reaches validation of tipo
+        when(almacenDAO.findById(23)).thenReturn(new Almacen());
+        try (Response resp = resource.update(23, toUpdate)) {
+            assertEquals(422, resp.getStatus());
+        }
+    }
+
+    @Test
+    void update_tipoNotFound_returns404() {
+        Almacen toUpdate = new Almacen();
+        TipoAlmacen tipoRef = new TipoAlmacen();
+        tipoRef.setId(9999);
+        toUpdate.setIdTipoAlmacen(tipoRef);
+
+        when(almacenDAO.findById(24)).thenReturn(new Almacen());
+        when(almacenDAO.findTipoAlmacenById(9999)).thenReturn(null);
+
+        try (Response resp = resource.update(24, toUpdate)) {
+            assertEquals(Response.Status.NOT_FOUND.getStatusCode(), resp.getStatus());
+        }
     }
 }

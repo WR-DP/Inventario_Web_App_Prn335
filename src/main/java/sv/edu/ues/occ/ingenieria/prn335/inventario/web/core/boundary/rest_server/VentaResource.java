@@ -8,11 +8,8 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.VentaDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Caracteristica;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Cliente;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoUnidadMedida;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Venta;
 
 import java.io.Serializable;
@@ -138,7 +135,37 @@ public class VentaResource  implements Serializable {
     }
 
 
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("id") UUID id, Venta entity) {
+        if (id == null || entity == null) {
+            return Response.status(422).header("Missing-parameter", "id and entity must not be null").build();
+        }
+        try {
+            Venta existing = ventaDAO.findById(id);
+            if (existing == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + id + " not found").build();
+            }
+
+            if (entity.getIdCliente() == null || entity.getIdCliente().getId() == null) {
+                return Response.status(422).header("Missing-parameter", "idCliente.id is required").build();
+            }
+
+            Cliente cliente = ventaDAO.findClienteById(entity.getIdCliente().getId());
+            if (cliente == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Cliente with id " + entity.getIdCliente().getId() + " not found").build();
+            }
+
+            entity.setIdCliente(cliente);
+            entity.setId(id);
+            Venta updated = ventaDAO.update(entity);
+            return Response.ok(updated).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", e.getMessage()).build();
+        }
+    }
+
 
 }
-
-
