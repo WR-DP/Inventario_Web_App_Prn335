@@ -48,7 +48,7 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra> implements Serializab
         if (dato != null && dato.getId() !=null){
             return dato.getId().toString();
         }
-        return "";
+        return null;
     }
 
     @Override

@@ -27,7 +27,7 @@ public class ReceptorKardex implements MessageListener {
             System.out.println("Mensaje recibido en ReceptorKardex: " + textMessage.getText());
             kardexEnpoint.enviarMensajeBroadcast(textMessage.getText());
         } catch (Exception e) {
-            Logger.getLogger(ReceptorKardex.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ReceptorKardex.class.getName()).log(Level.SEVERE, e.getMessage(), e);
         }
     }
 }

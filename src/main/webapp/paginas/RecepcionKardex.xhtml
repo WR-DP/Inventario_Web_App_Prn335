@@ -13,7 +13,7 @@
 
     <ui:define name="contenido-tabla">
         <h:panelGrid>
-            <h:outputText value="#{recepcionKardexFrm.random}"/>
+            <h2>#{recepcionKardexFrm.random}</h2>
             <h:form id="frmTop">
 
                 <p:remoteCommand
@@ -75,7 +75,7 @@
 
     <ui:define name="extra">
         <script>
-            var ws = new WebSocket("ws://localhost:9080/InventarioWebAppPRN335/kardex");
+            var ws = new WebSocket("ws://localhost:9080/InventarioWebAppPrn335/kardex");
             ws.onmessage = function (event){
                 let mensaje = event.data;
                 console.log(mensaje);
