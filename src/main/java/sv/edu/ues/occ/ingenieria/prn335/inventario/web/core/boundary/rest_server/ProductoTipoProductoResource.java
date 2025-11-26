@@ -9,14 +9,11 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProductoDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProductoTipoProductoDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoProductoDAO;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.*;
 
-import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
 
 @Path("producto/{idProducto}/tipoProducto")
@@ -122,7 +119,7 @@ public class ProductoTipoProductoResource {
                         .build();
             }
 
-            TipoProducto tp = tipoProductoDAO.findById(entity.getIdProducto().getId());
+            TipoProducto tp = tipoProductoDAO.findById(entity.getIdTipoProducto().getId());
             if (tp == null) {
                 return Response.status(Response.Status.NOT_FOUND)
                         .header("Not-found", "Producto with id " + entity.getIdTipoProducto().getId() + " not found")
@@ -149,5 +146,45 @@ public class ProductoTipoProductoResource {
         }
     }
 
+
+    // update
+
+    @PUT
+    @Path("{idProducto}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("idProducto") java.util.UUID idProducto, ProductoTipoProducto entity) {
+        if (idProducto == null || entity == null) {
+            return Response.status(422).header("Missing-parameter", "id and entity must not be null").build();
+        }
+        try {
+            ProductoTipoProducto existing = productoTipoProductoDAO.findById(idProducto);
+            if (existing == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + idProducto + " not found").build();
+            }
+
+            if (entity.getIdTipoProducto() == null || entity.getIdTipoProducto().getId() == null) {
+                return Response.status(422).header("Missing-parameter", "entity.idTipoProducto.id is required").build();
+            }
+
+            // find managed TipoProducto
+            TipoProducto tp = tipoProductoDAO.findById(entity.getIdTipoProducto().getId());
+            if (tp == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .header("Not-found", "TipoProducto with id " + entity.getIdTipoProducto().getId() + " not found")
+                        .build();
+            }
+
+            // Preserve parent Producto association
+            entity.setIdProducto(existing.getIdProducto());
+            entity.setIdTipoProducto(tp);
+            entity.setId(idProducto);
+
+            ProductoTipoProducto updated = productoTipoProductoDAO.update(entity);
+            return Response.ok(updated).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", e.getMessage()).build();
+        }
+    }
 
 }

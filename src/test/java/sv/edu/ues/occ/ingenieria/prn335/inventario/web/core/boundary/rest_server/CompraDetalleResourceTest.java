@@ -88,5 +88,80 @@ class CompraDetalleResourceTest {
         Response resp = resource.create(entity, compraId, uriInfo);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), resp.getStatus());
     }
-}
 
+    @Test
+    void findById_success_returns200() {
+        java.util.UUID id = UUID.randomUUID();
+        CompraDetalle cd = new CompraDetalle(); cd.setId(id);
+        when(compraDetalleDAO.findById(id)).thenReturn(cd);
+        Response resp = resource.findById(id);
+        assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
+        assertTrue(resp.hasEntity());
+        assertEquals(id, ((CompraDetalle) resp.getEntity()).getId());
+    }
+
+    @Test
+    void findById_notFound_returns404() {
+        java.util.UUID id = UUID.randomUUID();
+        when(compraDetalleDAO.findById(id)).thenReturn(null);
+        Response resp = resource.findById(id);
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), resp.getStatus());
+    }
+
+    @Test
+    void delete_success_returns204() {
+        java.util.UUID id = UUID.randomUUID();
+        CompraDetalle cd = new CompraDetalle(); cd.setId(id);
+        when(compraDetalleDAO.findById(id)).thenReturn(cd);
+        doNothing().when(compraDetalleDAO).delete(cd);
+        Response resp = resource.delete(id);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), resp.getStatus());
+        verify(compraDetalleDAO).delete(cd);
+    }
+
+    @Test
+    void update_success_returns200() {
+        java.util.UUID id = UUID.randomUUID();
+        CompraDetalle existing = new CompraDetalle(); existing.setId(id);
+        Compra compra = new Compra(); compra.setId(1L);
+        existing.setIdCompra(compra);
+        when(compraDetalleDAO.findById(id)).thenReturn(existing);
+
+        CompraDetalle toUpdate = new CompraDetalle();
+        Producto prodRef = new Producto(); prodRef.setId(UUID.randomUUID());
+        toUpdate.setIdProducto(prodRef);
+
+        Producto producto = new Producto(); producto.setId(prodRef.getId());
+        when(productoDAO.findById(prodRef.getId())).thenReturn(producto);
+
+        CompraDetalle updated = new CompraDetalle(); updated.setId(id);
+        when(compraDetalleDAO.update(any(CompraDetalle.class))).thenReturn(updated);
+
+        Response resp = resource.update(id, toUpdate);
+        assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
+        assertTrue(resp.hasEntity());
+        assertEquals(id, ((CompraDetalle) resp.getEntity()).getId());
+        verify(compraDetalleDAO).update(any(CompraDetalle.class));
+    }
+
+    @Test
+    void update_notFound_returns404() {
+        java.util.UUID id = UUID.randomUUID();
+        when(compraDetalleDAO.findById(id)).thenReturn(null);
+        CompraDetalle toUpdate = new CompraDetalle();
+        Response resp = resource.update(id, toUpdate);
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), resp.getStatus());
+    }
+
+    @Test
+    void findRange_returnsList_withHeader() {
+        when(compraDetalleDAO.count()).thenReturn(2);
+        java.util.List<CompraDetalle> list = java.util.List.of(new CompraDetalle(), new CompraDetalle());
+        when(compraDetalleDAO.findRange(0, 100)).thenReturn(list);
+        Response resp = resource.findRange(0, 100, 1L);
+        assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
+        assertTrue(resp.hasEntity());
+        assertEquals("2", resp.getHeaderString("Total-records"));
+    }
+
+}
