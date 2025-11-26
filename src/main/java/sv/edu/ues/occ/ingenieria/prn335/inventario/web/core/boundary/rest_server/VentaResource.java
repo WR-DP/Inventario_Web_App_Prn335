@@ -1,6 +1,5 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.rest_server;
 
-
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -10,26 +9,19 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProductoDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProductoTipoProductoDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoProductoDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.*;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.VentaDAO;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Caracteristica;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Cliente;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoUnidadMedida;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Venta;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
 
-@Path("producto/{idProducto}/tipoProducto")
-public class ProductoTipoProductoResource {
-
+@Path("venta")
+public class VentaResource  implements Serializable {
     @Inject
-    ProductoTipoProductoDAO productoTipoProductoDAO;
-
-    @Inject
-    ProductoDAO productoDAO;
-
-    @Inject
-    TipoProductoDAO tipoProductoDAO;
+    VentaDAO ventaDAO;
 
 
     @GET
@@ -42,14 +34,11 @@ public class ProductoTipoProductoResource {
             @Max(100)
             @DefaultValue("100")
             @QueryParam("max")
-            int max,
-            @PathParam("idProducto")
-            UUID idProducto)
-    {
+            int max) {
         if (first >= 0 && max <= 100) {
             try {
-                int total = productoTipoProductoDAO.count();
-                return Response.ok(productoTipoProductoDAO.findRange(first, max)).header("Total-records", total).build();
+                int total = ventaDAO.count();
+                return Response.ok(ventaDAO.findRange(first, max)).header("Total-records", total).build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
             }
@@ -64,7 +53,7 @@ public class ProductoTipoProductoResource {
     public Response findById(@PathParam("id") UUID id) {
         if (id != null) {
             try {
-                ProductoTipoProducto resp = productoTipoProductoDAO.findById(id);
+                Venta resp = ventaDAO.findById(id);
                 if (resp != null) {
                     return Response.ok(resp).build();
                 }
@@ -81,9 +70,9 @@ public class ProductoTipoProductoResource {
     public Response delete(@PathParam("id") UUID id) {
         if (id != null) {
             try {
-                ProductoTipoProducto resp = productoTipoProductoDAO.findById(id);
+                Venta resp = ventaDAO.findById(id);
                 if (resp != null) {
-                    productoTipoProductoDAO.delete(resp);
+                    ventaDAO.delete(resp);
                     return Response.noContent().build();
                 }
                 return Response.status(Response.Status.NOT_FOUND).header("Not-Found", "Record with id " + id + " not found").build();
@@ -97,46 +86,45 @@ public class ProductoTipoProductoResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(
-            ProductoTipoProducto entity,
-            @PathParam("idProducto") UUID idProducto,
-            @Context UriInfo uriInfo) {
+    public Response create(Venta entity, @Context UriInfo uriInfo) {
 
-        if (entity == null) {
+        // Validación básica
+        if (entity == null || entity.getId() != null) {
             return Response.status(422)
-                    .header("Missing-parameter", "Body cannot be null")
+                    .header("Missing-parameter", "entity must not be null and entity.id must be null")
                     .build();
         }
 
         try {
-            Producto producto = productoDAO.findById(idProducto);
-            if (producto == null) {
-                return Response.status(Response.Status.NOT_FOUND)
-                        .header("Not-found", "Compra with id " + idProducto + " not found")
-                        .build();
-            }
+            // Validación de dependencia: Cliente
+            if (entity.getIdCliente() == null ||
+                    entity.getIdCliente().getId() == null) {
 
-            if (entity.getIdTipoProducto() == null || entity.getIdTipoProducto().getId() == null) {
                 return Response.status(422)
-                        .header("Missing-parameter", "entity.idProducto.id is required")
+                        .header("Missing-parameter", "idCliente.id is required")
                         .build();
             }
 
-            TipoProducto tp = tipoProductoDAO.findById(entity.getIdProducto().getId());
-            if (tp == null) {
+            // Buscar el cliente real en DB
+            Cliente tipo = ventaDAO.findClienteById(entity.getIdCliente().getId());
+
+            if (tipo == null) {
                 return Response.status(Response.Status.NOT_FOUND)
-                        .header("Not-found", "Producto with id " + entity.getIdTipoProducto().getId() + " not found")
+                        .header("Not-found", "TipoUnidadMedida with id "
+                                + entity.getIdCliente().getId() + " not found")
                         .build();
             }
 
-            entity.setId(UUID.randomUUID());
-            entity.setIdProducto(producto);
-            entity.setIdTipoProducto(tp);
-            productoTipoProductoDAO.create(entity);
+            // Asignar la versión administrada por JPA
+            entity.setIdCliente(tipo);
 
+            // Persistir
+            ventaDAO.create(entity);
+
+            // Devolver Location + JSON
             return Response.created(
                             uriInfo.getAbsolutePathBuilder()
-                                    .path(entity.getId().toString())
+                                    .path(String.valueOf(entity.getId()))
                                     .build()
                     )
                     .entity(entity)
@@ -144,10 +132,13 @@ public class ProductoTipoProductoResource {
 
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .header("Server-exception", e.getMessage())
+                    .header("Server-exception", "Cannot access db")
                     .build();
         }
     }
 
 
+
 }
+
+

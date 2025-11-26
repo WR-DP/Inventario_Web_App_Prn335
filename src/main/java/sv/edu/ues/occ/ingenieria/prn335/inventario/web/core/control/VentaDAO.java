@@ -5,6 +5,7 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Cliente;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Venta;
 
 import java.io.Serializable;
@@ -37,21 +38,7 @@ public class VentaDAO extends InventarioDefaultDataAccess<Venta, Object> impleme
         return super.count();
     }
 
-    public List<Venta> buscarVentasParaDespacho(int first, int max) {
-        TypedQuery<Venta> q = em.createQuery(
-                "SELECT v FROM Venta v WHERE v.estado = 'ACTIVA'",
-                Venta.class
-        );
-        q.setFirstResult(first);
-        q.setMaxResults(max);
-        return q.getResultList();
+    public Cliente findClienteById(UUID idCliente) {
+        return em.find(Cliente.class, idCliente);
     }
-
-    public Long contarVentasParaDespacho() {
-        return em.createQuery(
-                "SELECT COUNT(v) FROM Venta v WHERE v.estado = 'ACTIVA'",
-                Long.class
-        ).getSingleResult();
-    }
-
 }

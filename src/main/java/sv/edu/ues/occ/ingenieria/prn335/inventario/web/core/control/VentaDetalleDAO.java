@@ -9,6 +9,7 @@ import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.jsf.VentaFr
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.VentaDetalle;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -84,12 +85,12 @@ public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, O
                 java.math.BigDecimal precioBd = java.math.BigDecimal.ZERO;
                 try {
                     Object p = d.getPrecio();
-                    if (p != null) {
-                        precioBd = (java.math.BigDecimal) p;
+                    if (p instanceof BigDecimal) {
+                        precioBd = (BigDecimal) p;
                     } else if (p instanceof Number) {
-                        precioBd = java.math.BigDecimal.valueOf(((Number) p).doubleValue());
-                    } else {
-                        precioBd = new java.math.BigDecimal(p == null ? "0" : p.toString());
+                        precioBd = BigDecimal.valueOf(((Number) p).doubleValue());
+                    } else if (p != null) {
+                        precioBd = new BigDecimal(p.toString());
                     }
                 } catch (Exception ex) {
                     precioBd = java.math.BigDecimal.ZERO;
@@ -102,6 +103,8 @@ public class VentaDetalleDAO extends InventarioDefaultDataAccess<VentaDetalle, O
         }
         return total;
     }
+
+
 
 
 }

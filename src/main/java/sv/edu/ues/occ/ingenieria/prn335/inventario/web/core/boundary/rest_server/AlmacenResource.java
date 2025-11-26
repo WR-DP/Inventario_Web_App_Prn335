@@ -8,16 +8,18 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProductoDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Producto;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.AlmacenDAO;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Almacen;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoAlmacen;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProducto;
 
 import java.io.Serializable;
-import java.util.UUID;
 
-@Path("producto")
-public class ProductoResource implements Serializable {
+@Path("almacen")
+public class AlmacenResource  implements Serializable {
     @Inject
-    ProductoDAO productoDAO;
+    AlmacenDAO almacenDAO;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -32,8 +34,8 @@ public class ProductoResource implements Serializable {
             int max) {
         if (first >= 0 && max <= 100) {
             try {
-                int total = productoDAO.count();
-                return Response.ok(productoDAO.findRange(first, max)).header("Total-records", total).build();
+                int total = almacenDAO.count();
+                return Response.ok(almacenDAO.findRange(first, max)).header("Total-records", total).build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
             }
@@ -45,14 +47,14 @@ public class ProductoResource implements Serializable {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findById(@PathParam("id") UUID id) {
+    public Response findById(@PathParam("id") Integer id) {
         if (id != null) {
             try {
-                Producto resp = productoDAO.findById(id);
+                Almacen resp = almacenDAO.findById(id);
                 if (resp != null) {
                     return Response.ok(resp).build();
                 }
-                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + id + " not found").build();
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id "+id+" not found").build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
             }
@@ -62,12 +64,12 @@ public class ProductoResource implements Serializable {
 
     @DELETE
     @Path("{id}")
-    public Response delete(@PathParam("id") UUID id) {
+    public Response delete(@PathParam("id") Integer id) {
         if (id != null) {
             try {
-                Producto resp = productoDAO.findById(id);
+                Almacen resp = almacenDAO.findById(id);
                 if (resp != null) {
-                    productoDAO.delete(resp);
+                    almacenDAO.delete(resp);
                     return Response.noContent().build();
                 }
                 return Response.status(Response.Status.NOT_FOUND).header("Not-Found", "Record with id " + id + " not found").build();
@@ -81,44 +83,47 @@ public class ProductoResource implements Serializable {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(Producto entity, @Context UriInfo uriInfo) {
-        if (entity == null) {
+    public Response create(Almacen entity, @Context UriInfo uriInfo) {
+
+        if (entity == null || entity.getId() != null) {
             return Response.status(422)
-                    .header("Missing-parameter", "entity must not be null")
+                    .header("Missing-parameter", "entity must not be null and entity.id must be null")
                     .build();
         }
+
         try {
-            // si el id viene null, el PrePersist lo genera
-            productoDAO.create(entity);
+            // Validar que venga un tipo de almacén
+            if (entity.getIdTipoAlmacen() == null || entity.getIdTipoAlmacen().getId() == null) {
+                return Response.status(422)
+                        .header("Missing-parameter", "idTipoAlmacen.id is required")
+                        .build();
+            }
+
+            // Buscar el tipo en la BD
+            TipoAlmacen tipo = almacenDAO.findTipoAlmacenById(entity.getIdTipoAlmacen().getId());
+
+            if (tipo == null) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .header("Not-found", "TipoAlmacen with id " + entity.getIdTipoAlmacen().getId() + " not found")
+                        .build();
+            }
+
+            // Asociar tipo válido al almacén
+            entity.setIdTipoAlmacen(tipo);
+
+            // Persistir
+            almacenDAO.create(entity);
+
+            // Retornar Location + JSON
             return Response.created(uriInfo.getAbsolutePathBuilder()
-                    .path(entity.getId().toString()).build()).entity(entity).build();
+                    .path(String.valueOf(entity.getId())).build()).entity(entity).build();
 
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .header("Server-exception", e.getMessage())
+                    .header("Server-exception", "Cannot access db")
                     .build();
         }
     }
 
-    @PUT
-    @Path("{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") UUID id, Producto entity) {
-        if (id == null || entity == null) {
-            return Response.status(422).header("Missing-parameter", "id and entity must not be null").build();
-        }
-        try {
-            Producto existing = productoDAO.findById(id);
-            if (existing == null) {
-                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + id + " not found").build();
-            }
-            // asegurar que la entidad tenga el mismo id de la ruta
-            entity.setId(id);
-            Producto updated = productoDAO.update(entity);
-            return Response.ok(updated).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", e.getMessage()).build();
-        }
-    }
+
 }

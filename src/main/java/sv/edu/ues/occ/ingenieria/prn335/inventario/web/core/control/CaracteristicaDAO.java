@@ -7,6 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Caracteristica;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoProducto;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoUnidadMedida;
 
 import java.io.Serializable;
 import java.util.List;
@@ -36,6 +37,10 @@ public class CaracteristicaDAO extends InventarioDefaultDataAccess<Caracteristic
     @Override
     public int count() throws IllegalStateException {
         return super.count();
+    }
+
+    public TipoUnidadMedida findTipoUnidadMedidaById(Integer id){
+        return em.find(TipoUnidadMedida.class, id);
     }
 
     public List<Caracteristica> findByIdCaracteristica(Integer idCaracteristica, int first, int max) {

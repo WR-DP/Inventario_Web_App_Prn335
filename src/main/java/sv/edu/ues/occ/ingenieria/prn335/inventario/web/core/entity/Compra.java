@@ -1,5 +1,6 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity;
 
+import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,6 +24,7 @@ public class Compra  implements Serializable{
     private Proveedor idProveedor;
 
     @NotNull
+   @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss")//para que funcione con JSON-B ya que no soporta Date, deberia usarse LocalDateTime
     @Temporal(TemporalType.TIMESTAMP) // Necesario para almacenar fecha y hora
     @Column(name = "fecha", nullable = false)
     private Date fecha;

@@ -78,7 +78,7 @@ public class ClienteFrm extends DefaultFrm<Cliente> implements Serializable {
     @Override
     protected Cliente nuevoRegistro() {
         Cliente cliente = new Cliente();
-        cliente.setId(UUID.randomUUID());
+        //cliente.setId(UUID.randomUUID());
         cliente.setNombre("");
         cliente.setDui("");
         cliente.setNit("");
