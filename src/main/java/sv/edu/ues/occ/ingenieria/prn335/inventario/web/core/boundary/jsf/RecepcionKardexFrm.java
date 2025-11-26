@@ -1,16 +1,14 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.boundary.jsf;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.event.ActionEvent;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.CompraDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDAOInterface;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProductoDAO;
+import org.primefaces.event.SelectEvent;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.*;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Compra;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.CompraDetalle;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -32,6 +30,9 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra> implements Serializab
     @Inject
     FacesContext facesContext;
 
+    @Inject
+    CompraDetalleDAO compraDetalleDAO;
+
 
     @Override
     protected FacesContext getFacesContext() {
@@ -48,7 +49,7 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra> implements Serializab
         if (dato != null && dato.getId() !=null){
             return dato.getId().toString();
         }
-        return null;
+        return "";
     }
 
     @Override
@@ -68,7 +69,7 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra> implements Serializab
     protected Compra nuevoRegistro() {
         Compra compra = new Compra();
         compra.setFecha(new Date());
-        compra.setEstado("ACTIVA");
+        compra.setEstado("ACTIVO");
         return compra;
     }
 
@@ -86,6 +87,24 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra> implements Serializab
         return "Recibir Productos";
     }
 
+    @Override
+    public void seleccionarRegistro(SelectEvent<Compra> event) {
+        super.seleccionarRegistro(event);
+
+        try {
+            if (this.registro != null && this.registro.getId() != null) {
+                List<CompraDetalle> detalles =
+                        compraDetalleDAO.findByIdCompra(this.registro.getId(), 0, Integer.MAX_VALUE);
+
+                this.registro.setDetalles(detalles);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(RecepcionKardexFrm.class.getName())
+                    .log(Level.SEVERE, ex.getMessage(), ex);
+        }
+
+        this.estado = ESTADO_CRUD.MODIFICAR;  // Para mostrar el tab
+    }
 
     @Override
     public void btnNuevoHandler (ActionEvent actionEvent) { return; }
@@ -100,7 +119,18 @@ public class RecepcionKardexFrm extends DefaultFrm<Compra> implements Serializab
     public void btnGuardarHandler (ActionEvent actionEvent) { return; }
 
     @Override
-    public void btnCancelarHandler (ActionEvent actionEvent) { return; }
+    public void btnCancelarHandler(ActionEvent actionEvent) {
+        try {
+            this.estado = ESTADO_CRUD.NADA;
+            this.registro = null;
+            inicializarRegistros();
+
+        } catch (Exception ex) {
+            Logger.getLogger(RecepcionKardexFrm.class.getName())
+                    .log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
 
     @Override
     public List<Compra> cargarDatos(int first, int max){
