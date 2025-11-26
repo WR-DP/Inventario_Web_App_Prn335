@@ -8,22 +8,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProductoDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Producto;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProveedorDAO;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Proveedor;
 
 import java.net.URI;
 import java.util.Collections;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ProductoResourceTest {
+class ProveedorResourceTest {
 
     @Mock
-    ProductoDAO productoDAO;
+    ProveedorDAO proveedorDAO;
 
     @Mock
     UriInfo uriInfo;
@@ -32,32 +32,31 @@ class ProductoResourceTest {
     UriBuilder uriBuilder;
 
     @InjectMocks
-    ProductoResource resource;
+    ProveedorResource resource;
 
     @Test
     void create_success_returnsCreated() throws Exception {
-        Producto p = new Producto();
-        // Simular que al persistir se asigna id
+        Proveedor p = new Proveedor();
         doAnswer(invocation -> {
-            Producto arg = invocation.getArgument(0);
-            arg.setId(UUID.fromString("00000000-0000-0000-0000-0000000000aa"));
+            Proveedor arg = invocation.getArgument(0);
+            arg.setId(42);
             return null;
-        }).when(productoDAO).create(any(Producto.class));
+        }).when(proveedorDAO).create(any(Proveedor.class));
 
         when(uriInfo.getAbsolutePathBuilder()).thenReturn(uriBuilder);
         when(uriBuilder.path(anyString())).thenReturn(uriBuilder);
-        when(uriBuilder.build()).thenReturn(new URI("http://localhost/producto/00000000-0000-0000-0000-0000000000aa"));
+        when(uriBuilder.build()).thenReturn(new URI("http://localhost/proveedor/42"));
 
         try (Response resp = resource.create(p, uriInfo)) {
             assertEquals(Response.Status.CREATED.getStatusCode(), resp.getStatus());
             assertNotNull(resp.getLocation());
-            assertTrue(resp.getLocation().toString().contains("00000000-0000-0000-0000-0000000000aa"));
+            assertTrue(resp.getLocation().toString().contains("42"));
             assertTrue(resp.hasEntity());
-            Producto returned = (Producto) resp.getEntity();
+            Proveedor returned = (Proveedor) resp.getEntity();
             assertNotNull(returned.getId());
         }
 
-        verify(productoDAO).create(any(Producto.class));
+        verify(proveedorDAO).create(any(Proveedor.class));
     }
 
     @Test
@@ -69,8 +68,8 @@ class ProductoResourceTest {
 
     @Test
     void findById_notFound_returns404() {
-        UUID id = UUID.randomUUID();
-        when(productoDAO.findById(id)).thenReturn(null);
+        Integer id = 999;
+        when(proveedorDAO.findById(id)).thenReturn(null);
         try (Response resp = resource.findById(id)) {
             assertEquals(Response.Status.NOT_FOUND.getStatusCode(), resp.getStatus());
         }
@@ -78,44 +77,43 @@ class ProductoResourceTest {
 
     @Test
     void findRange_success_returnsOkAndHeader() {
-        when(productoDAO.count()).thenReturn(4);
-        when(productoDAO.findRange(0, 10)).thenReturn(Collections.singletonList(new Producto()));
+        when(proveedorDAO.count()).thenReturn(6);
+        when(proveedorDAO.findRange(0, 10)).thenReturn(Collections.singletonList(new Proveedor()));
 
         try (Response resp = resource.findRange(0, 10)) {
             assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
-            assertEquals("4", resp.getHeaderString("Total-records"));
+            assertEquals("6", resp.getHeaderString("Total-records"));
         }
 
-        verify(productoDAO).findRange(0, 10);
+        verify(proveedorDAO).findRange(0, 10);
     }
 
     @Test
     void delete_existing_returnsNoContent() {
-        Producto p = new Producto();
-        UUID id = UUID.randomUUID();
-        p.setId(id);
-        when(productoDAO.findById(id)).thenReturn(p);
+        Proveedor p = new Proveedor();
+        p.setId(99);
+        when(proveedorDAO.findById(99)).thenReturn(p);
 
-        try (Response resp = resource.delete(id)) {
+        try (Response resp = resource.delete(99)) {
             assertEquals(Response.Status.NO_CONTENT.getStatusCode(), resp.getStatus());
         }
 
-        verify(productoDAO).delete(p);
+        verify(proveedorDAO).delete(p);
     }
 
     @Test
     void update_existing_returnsOk() {
-        Producto existing = new Producto();
-        UUID id = UUID.randomUUID();
-        existing.setId(id);
-        Producto toUpdate = new Producto();
-        when(productoDAO.findById(id)).thenReturn(existing);
-        when(productoDAO.update(any(Producto.class))).thenReturn(existing);
+        Proveedor existing = new Proveedor();
+        existing.setId(100);
+        Proveedor toUpdate = new Proveedor();
+        when(proveedorDAO.findById(100)).thenReturn(existing);
+        when(proveedorDAO.update(any(Proveedor.class))).thenReturn(existing);
 
-        try (Response resp = resource.update(id, toUpdate)) {
+        try (Response resp = resource.update(100, toUpdate)) {
             assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
         }
 
-        verify(productoDAO).update(any(Producto.class));
+        verify(proveedorDAO).update(any(Proveedor.class));
     }
 }
+

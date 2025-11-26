@@ -9,10 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.CaracteristicaDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Almacen;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Caracteristica;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoAlmacen;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoUnidadMedida;
 
 import java.io.Serializable;
@@ -136,5 +133,36 @@ public class CaracteristicaResource  implements Serializable {
     }
 
 
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("id") Integer id, Caracteristica entity) {
+        if (id == null || entity == null) {
+            return Response.status(422).header("Missing-parameter", "id and entity must not be null").build();
+        }
+        try {
+            Caracteristica existing = caracteristicaDAO.findById(id);
+            if (existing == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + id + " not found").build();
+            }
+
+            if (entity.getIdTipoUnidadMedida() == null || entity.getIdTipoUnidadMedida().getId() == null) {
+                return Response.status(422).header("Missing-parameter", "idTipoUnidadMedida.id is required").build();
+            }
+
+            TipoUnidadMedida tipo = caracteristicaDAO.findTipoUnidadMedidaById(entity.getIdTipoUnidadMedida().getId());
+            if (tipo == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "TipoUnidadMedida with id " + entity.getIdTipoUnidadMedida().getId() + " not found").build();
+            }
+
+            entity.setIdTipoUnidadMedida(tipo);
+            entity.setId(id);
+            Caracteristica updated = caracteristicaDAO.update(entity);
+            return Response.ok(updated).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", e.getMessage()).build();
+        }
+    }
 
 }

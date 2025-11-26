@@ -8,15 +8,13 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.UnidadMedidaDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Caracteristica;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoUnidadMedida;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.UnidadMedida;
 
 import java.io.Serializable;
 
-//@Path("unidadMedida")
+@Path("unidadMedida")
 public class UnidadMedidaResource  implements Serializable {
     @Inject
     UnidadMedidaDAO unidadMedidaDAO;
@@ -134,6 +132,39 @@ public class UnidadMedidaResource  implements Serializable {
         }
     }
 
+    //update method
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("id") Integer id, UnidadMedida entity) {
+        if (id == null || entity == null) {
+            return Response.status(422).header("Missing-parameter", "id and entity must not be null").build();
+        }
+        try {
+            UnidadMedida existing = unidadMedidaDAO.findById(id);
+            if (existing == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + id + " not found").build();
+            }
+
+            // Validar dependencia: TipoUnidadMedida
+            if (entity.getIdTipoUnidadMedida() == null || entity.getIdTipoUnidadMedida().getId() == null) {
+                return Response.status(422).header("Missing-parameter", "idTipoUnidadMedida.id is required").build();
+            }
+
+            TipoUnidadMedida tipo = unidadMedidaDAO.findTipoUnidadMedidaById(entity.getIdTipoUnidadMedida().getId());
+            if (tipo == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "TipoUnidadMedida with id " + entity.getIdTipoUnidadMedida().getId() + " not found").build();
+            }
+
+            entity.setIdTipoUnidadMedida(tipo);
+            entity.setId(id);
+            UnidadMedida updated = unidadMedidaDAO.update(entity);
+            return Response.ok(updated).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", e.getMessage()).build();
+        }
+    }
 
 
 }

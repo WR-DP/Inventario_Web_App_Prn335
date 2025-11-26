@@ -8,22 +8,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.ProductoDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Producto;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoAlmacenDAO;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoAlmacen;
 
 import java.net.URI;
 import java.util.Collections;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ProductoResourceTest {
+class TipoAlmacenResourceTest {
 
     @Mock
-    ProductoDAO productoDAO;
+    TipoAlmacenDAO tipoAlmacenDAO;
 
     @Mock
     UriInfo uriInfo;
@@ -32,32 +32,32 @@ class ProductoResourceTest {
     UriBuilder uriBuilder;
 
     @InjectMocks
-    ProductoResource resource;
+    TipoAlmacenResource resource;
 
     @Test
     void create_success_returnsCreated() throws Exception {
-        Producto p = new Producto();
+        TipoAlmacen t = new TipoAlmacen();
         // Simular que al persistir se asigna id
         doAnswer(invocation -> {
-            Producto arg = invocation.getArgument(0);
-            arg.setId(UUID.fromString("00000000-0000-0000-0000-0000000000aa"));
+            TipoAlmacen arg = invocation.getArgument(0);
+            arg.setId(123);
             return null;
-        }).when(productoDAO).create(any(Producto.class));
+        }).when(tipoAlmacenDAO).create(any(TipoAlmacen.class));
 
         when(uriInfo.getAbsolutePathBuilder()).thenReturn(uriBuilder);
         when(uriBuilder.path(anyString())).thenReturn(uriBuilder);
-        when(uriBuilder.build()).thenReturn(new URI("http://localhost/producto/00000000-0000-0000-0000-0000000000aa"));
+        when(uriBuilder.build()).thenReturn(new URI("http://localhost/tipoAlmacen/123"));
 
-        try (Response resp = resource.create(p, uriInfo)) {
+        try (Response resp = resource.create(t, uriInfo)) {
             assertEquals(Response.Status.CREATED.getStatusCode(), resp.getStatus());
             assertNotNull(resp.getLocation());
-            assertTrue(resp.getLocation().toString().contains("00000000-0000-0000-0000-0000000000aa"));
+            assertTrue(resp.getLocation().toString().contains("123"));
             assertTrue(resp.hasEntity());
-            Producto returned = (Producto) resp.getEntity();
+            TipoAlmacen returned = (TipoAlmacen) resp.getEntity();
             assertNotNull(returned.getId());
         }
 
-        verify(productoDAO).create(any(Producto.class));
+        verify(tipoAlmacenDAO).create(any(TipoAlmacen.class));
     }
 
     @Test
@@ -69,8 +69,8 @@ class ProductoResourceTest {
 
     @Test
     void findById_notFound_returns404() {
-        UUID id = UUID.randomUUID();
-        when(productoDAO.findById(id)).thenReturn(null);
+        Integer id = 999;
+        when(tipoAlmacenDAO.findById(id)).thenReturn(null);
         try (Response resp = resource.findById(id)) {
             assertEquals(Response.Status.NOT_FOUND.getStatusCode(), resp.getStatus());
         }
@@ -78,44 +78,42 @@ class ProductoResourceTest {
 
     @Test
     void findRange_success_returnsOkAndHeader() {
-        when(productoDAO.count()).thenReturn(4);
-        when(productoDAO.findRange(0, 10)).thenReturn(Collections.singletonList(new Producto()));
+        when(tipoAlmacenDAO.count()).thenReturn(5);
+        when(tipoAlmacenDAO.findRange(0, 10)).thenReturn(Collections.singletonList(new TipoAlmacen()));
 
         try (Response resp = resource.findRange(0, 10)) {
             assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
-            assertEquals("4", resp.getHeaderString("Total-records"));
+            assertEquals("5", resp.getHeaderString("Total-records"));
         }
 
-        verify(productoDAO).findRange(0, 10);
+        verify(tipoAlmacenDAO).findRange(0, 10);
     }
 
     @Test
     void delete_existing_returnsNoContent() {
-        Producto p = new Producto();
-        UUID id = UUID.randomUUID();
-        p.setId(id);
-        when(productoDAO.findById(id)).thenReturn(p);
+        TipoAlmacen t = new TipoAlmacen();
+        t.setId(7);
+        when(tipoAlmacenDAO.findById(7)).thenReturn(t);
 
-        try (Response resp = resource.delete(id)) {
+        try (Response resp = resource.delete(7)) {
             assertEquals(Response.Status.NO_CONTENT.getStatusCode(), resp.getStatus());
         }
 
-        verify(productoDAO).delete(p);
+        verify(tipoAlmacenDAO).delete(t);
     }
 
     @Test
     void update_existing_returnsOk() {
-        Producto existing = new Producto();
-        UUID id = UUID.randomUUID();
-        existing.setId(id);
-        Producto toUpdate = new Producto();
-        when(productoDAO.findById(id)).thenReturn(existing);
-        when(productoDAO.update(any(Producto.class))).thenReturn(existing);
+        TipoAlmacen existing = new TipoAlmacen();
+        existing.setId(8);
+        TipoAlmacen toUpdate = new TipoAlmacen();
+        when(tipoAlmacenDAO.findById(8)).thenReturn(existing);
+        when(tipoAlmacenDAO.update(any(TipoAlmacen.class))).thenReturn(existing);
 
-        try (Response resp = resource.update(id, toUpdate)) {
+        try (Response resp = resource.update(8, toUpdate)) {
             assertEquals(Response.Status.OK.getStatusCode(), resp.getStatus());
         }
 
-        verify(productoDAO).update(any(Producto.class));
+        verify(tipoAlmacenDAO).update(any(TipoAlmacen.class));
     }
 }
