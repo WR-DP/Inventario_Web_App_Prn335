@@ -8,15 +8,13 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoUnidadMedidaDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Proveedor;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoUnidadMedida;
 
 import java.io.Serializable;
 
 @Path("tipoUnidadMedida")
-public class TipoUnidadMedidaResource  implements Serializable {
+public class TipoUnidadMedidaResource implements Serializable {
     @Inject
     TipoUnidadMedidaDAO tipoUnidadMedidaDAO;
 
@@ -36,7 +34,8 @@ public class TipoUnidadMedidaResource  implements Serializable {
                 int total = tipoUnidadMedidaDAO.count();
                 return Response.ok(tipoUnidadMedidaDAO.findRange(first, max)).header("Total-records", total).build();
             } catch (Exception e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .header("Server-exception", "Cannot access db").build();
             }
         }
         return Response.status(422).header("Missing-parameter", "first,max").build();
@@ -53,9 +52,11 @@ public class TipoUnidadMedidaResource  implements Serializable {
                 if (resp != null) {
                     return Response.ok(resp).build();
                 }
-                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + id + " not found").build();
+                return Response.status(Response.Status.NOT_FOUND)
+                        .header("Not-found", "Record with id " + id + " not found").build();
             } catch (Exception e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot access db").build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .header("Server-exception", "Cannot access db").build();
             }
         }
         return Response.status(422).header("Missing-parameter", "id").build();
@@ -71,9 +72,11 @@ public class TipoUnidadMedidaResource  implements Serializable {
                     tipoUnidadMedidaDAO.delete(resp);
                     return Response.noContent().build();
                 }
-                return Response.status(Response.Status.NOT_FOUND).header("Not-Found", "Record with id " + id + " not found").build();
+                return Response.status(Response.Status.NOT_FOUND)
+                        .header("Not-Found", "Record with id " + id + " not found").build();
             } catch (Exception e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", "Cannot acces db").build();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .header("Server-exception", "Cannot acces db").build();
             }
         }
         return Response.status(422).header("Missing-parameter", "id").build();
@@ -88,14 +91,10 @@ public class TipoUnidadMedidaResource  implements Serializable {
                     .header("Missing-parameter", "entity must not be null")
                     .build();
         }
-
         try {
-            // si el id viene null, el PrePersist lo genera
             tipoUnidadMedidaDAO.create(entity);
-
             return Response.created(uriInfo.getAbsolutePathBuilder()
                     .path(entity.getId().toString()).build()).entity(entity).build();
-
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .header("Server-exception", e.getMessage())
@@ -103,5 +102,25 @@ public class TipoUnidadMedidaResource  implements Serializable {
         }
     }
 
-}
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("id") Integer id, TipoUnidadMedida entity) {
+        if (id == null || entity == null) {
+            return Response.status(422).header("Missing-parameter", "id and entity must not be null").build();
+        }
+        try {
+            TipoUnidadMedida existing = tipoUnidadMedidaDAO.findById(id);
+            if (existing == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + id + " not found").build();
+            }
+            entity.setId(id);
+            TipoUnidadMedida updated = tipoUnidadMedidaDAO.update(entity);
+            return Response.ok(updated).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", e.getMessage()).build();
+        }
+    }
 
+}

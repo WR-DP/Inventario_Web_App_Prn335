@@ -8,15 +8,13 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.InventarioDefaultDataAccess;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control.TipoAlmacenDAO;
-import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Proveedor;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoAlmacen;
 
 import java.io.Serializable;
 
 @Path("tipoAlmacen")
-public class TipoAlmacenResource implements Serializable{
+public class TipoAlmacenResource implements Serializable {
     @Inject
     TipoAlmacenDAO tipoAlmacenDAO;
 
@@ -88,9 +86,7 @@ public class TipoAlmacenResource implements Serializable{
                     .header("Missing-parameter", "entity must not be null")
                     .build();
         }
-
         try {
-            // si el id viene null, el PrePersist lo genera
             tipoAlmacenDAO.create(entity);
 
             return Response.created(uriInfo.getAbsolutePathBuilder()
@@ -102,4 +98,27 @@ public class TipoAlmacenResource implements Serializable{
                     .build();
         }
     }
+
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("id") Integer id, TipoAlmacen entity) {
+        if (id == null || entity == null) {
+            return Response.status(422).header("Missing-parameter", "id and entity must not be null").build();
+        }
+        try {
+            TipoAlmacen existing = tipoAlmacenDAO.findById(id);
+            if (existing == null) {
+                return Response.status(Response.Status.NOT_FOUND).header("Not-found", "Record with id " + id + " not found").build();
+            }
+            entity.setId(id);
+            TipoAlmacen updated = tipoAlmacenDAO.update(entity);
+            return Response.ok(updated).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).header("Server-exception", e.getMessage()).build();
+        }
+    }
+
+
 }
