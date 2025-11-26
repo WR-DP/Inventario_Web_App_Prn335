@@ -174,3 +174,9 @@ td {
     padding: 10px 20px !important;
     margin: 0 auto !important;
 }
+
+.boton-navy {
+    background-color: #1f3b57 !important; /* gris */
+    border: 1px solid #1f3b57 !important;
+    color: #ffffff !important; /* letra blanca */
+}
