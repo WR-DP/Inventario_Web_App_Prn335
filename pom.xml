@@ -112,8 +112,7 @@
                 <artifactId>liberty-maven-plugin</artifactId>
                 <version>3.11.4</version>
                 <configuration>
-                    <!-- Use the project's liberty config directory so deployed server.xml includes JMS resources defined in src/main/liberty/config -->
-                    <configDirectory>${project.basedir}/src/main/liberty/config</configDirectory>
+                    <configDirectory>/home/sauron/openliberty/wlp/usr/servers/inventarioServer</configDirectory>
                     <serverName>inventarioServer</serverName>
                     <appsDirectory>dropins</appsDirectory>
                     <looseApplication>true</looseApplication>
