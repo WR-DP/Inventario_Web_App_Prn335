@@ -89,9 +89,7 @@ public class ProveedorResource implements Serializable {
                     .header("Missing-parameter", "entity must not be null")
                     .build();
         }
-
         try {
-            // si el id viene null, la BD lo genera (IDENTITY)
             proveedorDAO.create(entity);
 
             return Response.created(uriInfo.getAbsolutePathBuilder()
