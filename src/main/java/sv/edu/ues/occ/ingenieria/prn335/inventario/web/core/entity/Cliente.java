@@ -15,6 +15,14 @@ public class Cliente {
     @Column(name = "id_cliente", nullable = false)
     private UUID id;
 
+    @PrePersist
+    public void prePersist() {
+        if (id == null) {
+            id = UUID.randomUUID();
+        }
+    }
+
+
     @Size(max = 155)
     @Column(name = "nombre", length = 155)
     private String nombre;

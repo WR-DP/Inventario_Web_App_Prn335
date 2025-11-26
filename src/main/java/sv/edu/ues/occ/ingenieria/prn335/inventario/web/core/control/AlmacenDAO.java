@@ -7,11 +7,10 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Almacen;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoAlmacen;
 
 import java.io.Serializable;
 import java.util.List;
-
-//Revisar esta clase, algo malo tiene xd
 
 @Stateless
 @LocalBean
@@ -36,6 +35,9 @@ public class AlmacenDAO extends InventarioDefaultDataAccess<Almacen, Object> imp
     @Override
     public int count() throws IllegalStateException {
         return super.count();
+    }
+    public TipoAlmacen findTipoAlmacenById(Integer id){
+        return em.find(TipoAlmacen.class, id);
     }
 
 

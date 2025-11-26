@@ -162,3 +162,15 @@ td {
     border: 2px solid #A0522D;
     margin-bottom: 15px;
 }
+
+.texto-blanco {
+    color: #ffffff !important;
+}
+
+.boton-regresar {
+    display: inline-block !important;
+    width: auto !important;
+    max-width: 200px !important;
+    padding: 10px 20px !important;
+    margin: 0 auto !important;
+}

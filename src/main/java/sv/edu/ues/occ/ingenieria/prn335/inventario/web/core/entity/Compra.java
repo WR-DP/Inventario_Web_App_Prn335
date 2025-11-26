@@ -1,11 +1,13 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity;
 
+import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -22,6 +24,7 @@ public class Compra  implements Serializable{
     private Proveedor idProveedor;
 
     @NotNull
+   @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss")//para que funcione con JSON-B ya que no soporta Date, deberia usarse LocalDateTime
     @Temporal(TemporalType.TIMESTAMP) // Necesario para almacenar fecha y hora
     @Column(name = "fecha", nullable = false)
     private Date fecha;
@@ -33,6 +36,16 @@ public class Compra  implements Serializable{
     @Column(name = "observaciones", length = 500)
     private String observaciones;
 
+    @OneToMany(mappedBy = "idCompra", fetch = FetchType.LAZY)
+    private List<CompraDetalle> detalles;
+
+    public List<CompraDetalle> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<CompraDetalle> detalles) {
+        this.detalles = detalles;
+    }
 
     public Long getId() {
         return id;

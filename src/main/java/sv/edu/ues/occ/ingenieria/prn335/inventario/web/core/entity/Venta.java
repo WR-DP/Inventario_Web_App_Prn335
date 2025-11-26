@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -30,6 +31,17 @@ public class Venta implements Serializable {
 
     @Column(name = "observaciones", length = 500)
     private String observaciones;
+
+    @OneToMany(mappedBy = "idVenta", fetch = FetchType.LAZY)
+    private List<VentaDetalle> detalles;
+
+    public List<VentaDetalle> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<VentaDetalle> detalles) {
+        this.detalles = detalles;
+    }
 
     public UUID getId() {
         return id;
