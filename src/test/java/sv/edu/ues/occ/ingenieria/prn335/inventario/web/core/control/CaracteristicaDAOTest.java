@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Caracteristica;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.TipoUnidadMedida;
 
 import java.util.List;
 
@@ -14,96 +15,133 @@ import static org.mockito.Mockito.*;
 
 class CaracteristicaDAOTest {
 
-    private EntityManager emMock;
-    private TypedQuery<Caracteristica> queryMock;
+    private EntityManager em;
+    private TypedQuery<Caracteristica> query;
     private CaracteristicaDAO dao;
 
     @BeforeEach
-    void setUp() {
-        emMock = Mockito.mock(EntityManager.class);
-        queryMock = Mockito.mock(TypedQuery.class);
+    void setup() throws Exception {
+        em = Mockito.mock(EntityManager.class);
+        query = Mockito.mock(TypedQuery.class);
 
         dao = new CaracteristicaDAO();
 
-        // Inyectamos el EntityManager via reflexión
-        try {
-            var field = CaracteristicaDAO.class.getDeclaredField("em");
-            field.setAccessible(true);
-            field.set(dao, emMock);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        // inyectar EntityManager via reflexión
+        var field = CaracteristicaDAO.class.getDeclaredField("em");
+        field.setAccessible(true);
+        field.set(dao, em);
     }
 
-    // ------------------------------------------------------------
-    // TEST: findByIdCaracteristica() con valores válidos
-    // ------------------------------------------------------------
     @Test
-    void testFindByIdCaracteristicaValido() {
+    void testFindTipoUnidadMedidaById_OK() {
+        TipoUnidadMedida tu = new TipoUnidadMedida();
+        when(em.find(TipoUnidadMedida.class, 5)).thenReturn(tu);
+
+        TipoUnidadMedida result = dao.findTipoUnidadMedidaById(5);
+
+        assertSame(tu, result);
+    }
+
+    @Test
+    void testFindTipoUnidadMedidaById_null() {
+        when(em.find(TipoUnidadMedida.class, null)).thenReturn(null);
+
+        TipoUnidadMedida result = dao.findTipoUnidadMedidaById(null);
+
+        assertNull(result);
+    }
+
+    @Test
+    void testFindByIdCaracteristica_valido() {
 
         Caracteristica c = new Caracteristica();
-        List<Caracteristica> resultado = List.of(c);
+        List<Caracteristica> lista = List.of(c);
 
-        when(emMock.createNamedQuery("Caracteristica.findByIdCaracteristica", Caracteristica.class))
-                .thenReturn(queryMock);
-        when(queryMock.setParameter(eq("id"), any()))
-                .thenReturn(queryMock);
-        when(queryMock.setFirstResult(anyInt()))
-                .thenReturn(queryMock);
-        when(queryMock.setMaxResults(anyInt()))
-                .thenReturn(queryMock);
-        when(queryMock.getResultList())
-                .thenReturn(resultado);
+        when(em.createNamedQuery("Caracteristica.findByIdCaracteristica", Caracteristica.class))
+                .thenReturn(query);
+        when(query.setParameter("id", 5))
+                .thenReturn(query);
+        when(query.setFirstResult(0))
+                .thenReturn(query);
+        when(query.setMaxResults(10))
+                .thenReturn(query);
+        when(query.getResultList())
+                .thenReturn(lista);
 
-        List<Caracteristica> lista = dao.findByIdCaracteristica(5, 0, 10);
+        List<Caracteristica> result = dao.findByIdCaracteristica(5, 0, 10);
 
-        assertEquals(1, lista.size());
-        assertSame(c, lista.get(0));
+        assertEquals(1, result.size());
+        assertSame(c, result.get(0));
     }
 
-    // ------------------------------------------------------------
-    // TEST: findByIdCaracteristica() con id NULL → retorna lista vacía
-    // ------------------------------------------------------------
     @Test
-    void testFindByIdCaracteristicaIdNull() {
-        List<Caracteristica> lista = dao.findByIdCaracteristica(null, 0, 10);
-        assertTrue(lista.isEmpty());
-        verify(emMock, never()).createNamedQuery(any(), eq(Caracteristica.class));
+    void testFindByIdCaracteristica_nullId() {
+        List<Caracteristica> result = dao.findByIdCaracteristica(null, 0, 10);
+
+        assertTrue(result.isEmpty());
+        verify(em, never()).createNamedQuery(any(), eq(Caracteristica.class));
     }
 
-    // ------------------------------------------------------------
-    // TEST: findByNombreLike() válido
-    // ------------------------------------------------------------
     @Test
-    void testFindByNombreLikeValido() {
+    void testFindByIdCaracteristica_excepcion() {
+
+        when(em.createNamedQuery("Caracteristica.findByIdCaracteristica", Caracteristica.class))
+                .thenThrow(new RuntimeException("DB error"));
+
+        List<Caracteristica> result = dao.findByIdCaracteristica(5, 0, 10);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testFindByNombreLike_valido() {
 
         Caracteristica c = new Caracteristica();
-        List<Caracteristica> resultado = List.of(c);
+        List<Caracteristica> lista = List.of(c);
 
-        when(emMock.createNamedQuery("Caracteristica.findByNombreLike", Caracteristica.class))
-                .thenReturn(queryMock);
-        when(queryMock.setParameter(eq("nombre"), anyString()))
-                .thenReturn(queryMock);
-        when(queryMock.setFirstResult(anyInt()))
-                .thenReturn(queryMock);
-        when(queryMock.setMaxResults(anyInt()))
-                .thenReturn(queryMock);
-        when(queryMock.getResultList())
-                .thenReturn(resultado);
+        when(em.createNamedQuery("Caracteristica.findByNombreLike", Caracteristica.class))
+                .thenReturn(query);
+        when(query.setParameter("nombre", "%CPU%"))
+                .thenReturn(query);
+        when(query.setFirstResult(0))
+                .thenReturn(query);
+        when(query.setMaxResults(10))
+                .thenReturn(query);
+        when(query.getResultList())
+                .thenReturn(lista);
 
-        List<Caracteristica> lista = dao.findByNombreLike("cpu", 0, 10);
+        List<Caracteristica> result = dao.findByNombreLike("cpu", 0, 10);
 
-        assertEquals(1, lista.size());
-        assertSame(c, lista.get(0));
+        assertEquals(1, result.size());
+        assertSame(c, result.get(0));
     }
 
-    // ------------------------------------------------------------
-    // TEST: findByNombreLike() nombre inválido → retorna vacío
-    // ------------------------------------------------------------
     @Test
-    void testFindByNombreLikeNombreInvalido() {
-        List<Caracteristica> lista = dao.findByNombreLike("   ", 0, 10);
-        assertTrue(lista.isEmpty());
+    void testFindByNombreLike_nombreInvalido() {
+
+        List<Caracteristica> result = dao.findByNombreLike("   ", 0, 10);
+
+        assertTrue(result.isEmpty());
+        verify(em, never()).createNamedQuery(any(), eq(Caracteristica.class));
     }
 
+    @Test
+    void testFindByNombreLike_parametrosInvalidos() {
+
+        List<Caracteristica> result = dao.findByNombreLike("cpu", -1, 10);
+
+        assertTrue(result.isEmpty());
+        verify(em, never()).createNamedQuery(any(), eq(Caracteristica.class));
+    }
+
+    @Test
+    void testFindByNombreLike_excepcion() {
+
+        when(em.createNamedQuery("Caracteristica.findByNombreLike", Caracteristica.class))
+                .thenThrow(new RuntimeException("DB error"));
+
+        List<Caracteristica> result = dao.findByNombreLike("cpu", 0, 10);
+
+        assertTrue(result.isEmpty()); // método atrapa error y devuelve lista vacía
+    }
 }

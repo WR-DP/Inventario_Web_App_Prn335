@@ -26,15 +26,16 @@ class ProductoDAOTest {
 
         dao = new ProductoDAO();
 
-        // Inyectar EntityManager vía reflexión
+        // Inyectar EntityManager via reflección (porque @PersistenceContext no lo pone Mockito)
         var field = ProductoDAO.class.getDeclaredField("em");
         field.setAccessible(true);
         field.set(dao, emMock);
     }
 
-    // -------------------------------------------------------------------------
-    // TEST buscarProductosPorNombre() válido
-    // -------------------------------------------------------------------------
+    // =========================================================================
+    // TESTS PARA buscarProductosPorNombre
+    // =========================================================================
+
     @Test
     void testBuscarProductosPorNombreValido() {
 
@@ -58,9 +59,6 @@ class ProductoDAOTest {
         assertSame(p, lista.get(0));
     }
 
-    // -------------------------------------------------------------------------
-    // TEST buscarProductosPorNombre() nombre null
-    // -------------------------------------------------------------------------
     @Test
     void testBuscarProductosPorNombreNull() {
 
@@ -70,9 +68,6 @@ class ProductoDAOTest {
         verify(emMock, never()).createNamedQuery(any(), eq(Producto.class));
     }
 
-    // -------------------------------------------------------------------------
-    // TEST buscarProductosPorNombre() nombre en blanco
-    // -------------------------------------------------------------------------
     @Test
     void testBuscarProductosPorNombreVacio() {
 
@@ -82,22 +77,15 @@ class ProductoDAOTest {
         verify(emMock, never()).createNamedQuery(any(), eq(Producto.class));
     }
 
-    // -------------------------------------------------------------------------
-    // TEST buscarProductosPorNombre() parámetros inválidos
-    // -------------------------------------------------------------------------
     @Test
     void testBuscarProductosPorNombreParametrosInvalidos() {
 
         List<Producto> lista = dao.buscarProductosPorNombre("laptop", -1, 10);
 
-        // vacío porque no pasa la validación
         assertTrue(lista.isEmpty());
-        verify(emMock, never()).createNamedQuery(any(), any());
+        verify(emMock, never()).createNamedQuery(any(), eq(Producto.class));
     }
 
-    // -------------------------------------------------------------------------
-    // TEST buscarProductosPorNombre() lanza excepción
-    // -------------------------------------------------------------------------
     @Test
     void testBuscarProductosPorNombreExcepcion() {
 
@@ -106,5 +94,69 @@ class ProductoDAOTest {
 
         assertThrows(IllegalStateException.class,
                 () -> dao.buscarProductosPorNombre("pc", 0, 10));
+    }
+
+    // =========================================================================
+    // TESTS PARA buscarProductoPorNombre (EL SEGUNDO MÉTODO)
+    // =========================================================================
+
+    @Test
+    void testBuscarProductoPorNombreValido() {
+
+        Producto p = new Producto();
+        List<Producto> resultado = List.of(p);
+
+        when(emMock.createNamedQuery("Producto.buscarProductosPorNombre", Producto.class))
+                .thenReturn(queryMock);
+        when(queryMock.setParameter("nombreProducto", "%mouse%"))
+                .thenReturn(queryMock);
+        when(queryMock.setFirstResult(0))
+                .thenReturn(queryMock);
+        when(queryMock.setMaxResults(10))
+                .thenReturn(queryMock);
+        when(queryMock.getResultList())
+                .thenReturn(resultado);
+
+        List<Producto> lista = dao.buscarProductoPorNombre("mouse", 0, 10);
+
+        assertEquals(1, lista.size());
+        assertSame(p, lista.get(0));
+    }
+
+    @Test
+    void testBuscarProductoPorNombreNull() {
+
+        List<Producto> lista = dao.buscarProductoPorNombre(null, 0, 10);
+
+        assertTrue(lista.isEmpty());
+        verify(emMock, never()).createNamedQuery(any(), eq(Producto.class));
+    }
+
+    @Test
+    void testBuscarProductoPorNombreVacio() {
+
+        List<Producto> lista = dao.buscarProductoPorNombre("  ", 0, 10);
+
+        assertTrue(lista.isEmpty());
+        verify(emMock, never()).createNamedQuery(any(), eq(Producto.class));
+    }
+
+    @Test
+    void testBuscarProductoPorNombreParametrosInvalidos() {
+
+        List<Producto> lista = dao.buscarProductoPorNombre("mouse", -1, 10);
+
+        assertTrue(lista.isEmpty());
+        verify(emMock, never()).createNamedQuery(any(), eq(Producto.class));
+    }
+
+    @Test
+    void testBuscarProductoPorNombreExcepcion() {
+
+        when(emMock.createNamedQuery("Producto.buscarProductosPorNombre", Producto.class))
+                .thenThrow(new RuntimeException("Error DB"));
+
+        assertThrows(IllegalStateException.class,
+                () -> dao.buscarProductoPorNombre("teclado", 0, 10));
     }
 }

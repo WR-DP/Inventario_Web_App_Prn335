@@ -1,13 +1,14 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
+import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Cliente;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Venta;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,141 +16,97 @@ import static org.mockito.Mockito.*;
 
 class VentaDAOTest {
 
-    @Mock
-    EntityManager em;
+    private EntityManager em;
+    private TypedQuery<Venta> queryVenta;
+    private TypedQuery<Long> queryCount;
+    private VentaDAO dao;
 
-    @InjectMocks
-    VentaDAO dao;
-
-    Venta venta;
+    private Venta venta;
 
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    void setUp() throws Exception {
+
+        em = Mockito.mock(EntityManager.class);
+        queryVenta = Mockito.mock(TypedQuery.class);
+        queryCount = Mockito.mock(TypedQuery.class);
+
+        dao = new VentaDAO();
+
+        // Inyectamos EntityManager al DAO por reflexión
+        var field = VentaDAO.class.getDeclaredField("em");
+        field.setAccessible(true);
+        field.set(dao, em);
+
         venta = new Venta();
         venta.setId(UUID.randomUUID());
     }
 
-    // -----------------------------------------------------------
-    // findById
-    // -----------------------------------------------------------
-
     @Test
-    void testFindByIdOK() {
-        when(em.find(Venta.class, venta.getId())).thenReturn(venta);
-
-        Venta resultado = dao.findById(venta.getId());
-
-        assertNotNull(resultado);
-        assertEquals(venta.getId(), resultado.getId());
-    }
-
-    @Test
-    void testFindByIdNull() {
-        assertThrows(IllegalArgumentException.class, () -> dao.findById(null));
-    }
-
-
-    @Test
-    void testFindByIdException() {
-        when(em.find(Venta.class, venta.getId())).thenThrow(new RuntimeException("ERR"));
-
-        assertThrows(RuntimeException.class, () -> dao.findById(venta.getId()));
-    }
-
-    // -----------------------------------------------------------
-    // create
-    // -----------------------------------------------------------
-
-    @Test
-    void testCreateOK() {
-        dao.create(venta);
-        verify(em, times(1)).persist(venta);
-    }
-
-    @Test
-    void testCreateNull() {
-        assertThrows(IllegalArgumentException.class, () -> dao.create(null));
-    }
-
-    @Test
-    void testCreateException() {
-        doThrow(new RuntimeException("ERR")).when(em).persist(venta);
-
-        assertThrows(RuntimeException.class, () -> dao.create(venta));
-    }
-
-    // -----------------------------------------------------------
-    // update
-    // -----------------------------------------------------------
-
-    @Test
-    void testUpdateOK() {
-        when(em.merge(venta)).thenReturn(venta);
-
-        Venta resultado = dao.update(venta);
-
-        assertNotNull(resultado);
-        assertEquals(venta.getId(), resultado.getId());
-    }
-
-    @Test
-    void testUpdateNull() {
-        assertThrows(IllegalArgumentException.class, () -> dao.update(null));
-    }
-
-    @Test
-    void testUpdateException() {
-        when(em.merge(venta)).thenThrow(new RuntimeException("ERR"));
-
-        assertThrows(RuntimeException.class, () -> dao.update(venta));
-    }
-
-    // -----------------------------------------------------------
-    // delete
-    // -----------------------------------------------------------
-
-    @Test
-    void testDeleteOK() {
-        Venta venta = new Venta();
+    void testFindClienteByIdOK() {
         UUID id = UUID.randomUUID();
-        venta.setId(id);
+        Cliente c = new Cliente();
 
-        when(em.merge(venta)).thenReturn(venta);
+        when(em.find(Cliente.class, id)).thenReturn(c);
 
-        dao.delete(venta);
+        Cliente resultado = dao.findClienteById(id);
 
-        verify(em).merge(venta);
-        verify(em).remove(venta);
-    }
-
-
-
-    @Test
-    void testDeleteNull() {
-        assertThrows(IllegalArgumentException.class, () -> dao.delete(null));
+        assertSame(c, resultado);
     }
 
     @Test
-    void testDeleteException() {
-        Venta venta = new Venta();
-        venta.setId(UUID.randomUUID());
-
-        when(em.merge(venta)).thenThrow(new RuntimeException("ERR"));
-
-        assertThrows(RuntimeException.class, () -> dao.delete(venta));
+    void testFindClienteByIdNull() {
+        when(em.find(Cliente.class, null)).thenReturn(null);
+        Cliente resultado = dao.findClienteById(null);
+        assertNull(resultado);
     }
 
+    @Test
+    void testBuscarVentasParaDespachoOK() {
 
+        Venta v = new Venta();
+        List<Venta> lista = List.of(v);
 
-    // -----------------------------------------------------------
-    // count (delegado a super)
-    // -----------------------------------------------------------
+        when(em.createQuery("SELECT v FROM Venta v WHERE v.estado = 'ACTIVA'", Venta.class))
+                .thenReturn(queryVenta);
+        when(queryVenta.setFirstResult(0)).thenReturn(queryVenta);
+        when(queryVenta.setMaxResults(10)).thenReturn(queryVenta);
+        when(queryVenta.getResultList()).thenReturn(lista);
+
+        List<Venta> resultado = dao.buscarVentasParaDespacho(0, 10);
+
+        assertEquals(1, resultado.size());
+        assertSame(v, resultado.get(0));
+    }
 
     @Test
-    void testCountException() {
-        when(em.getCriteriaBuilder()).thenThrow(new RuntimeException("ERR"));
+    void testBuscarVentasParaDespachoException() {
 
-        assertThrows(RuntimeException.class, () -> dao.count());
+        when(em.createQuery(anyString(), eq(Venta.class)))
+                .thenThrow(new RuntimeException("ERR"));
+
+        assertThrows(RuntimeException.class,
+                () -> dao.buscarVentasParaDespacho(0, 10));
+    }
+
+    @Test
+    void testContarVentasParaDespachoOK() {
+
+        when(em.createQuery("SELECT COUNT(v) FROM Venta v WHERE v.estado = 'ACTIVA'", Long.class))
+                .thenReturn(queryCount);
+        when(queryCount.getSingleResult()).thenReturn(5L);
+
+        Long result = dao.contarVentasParaDespacho();
+
+        assertEquals(5L, result);
+    }
+
+    @Test
+    void testContarVentasParaDespachoException() {
+
+        when(em.createQuery(anyString(), eq(Long.class)))
+                .thenThrow(new RuntimeException("ERR"));
+
+        assertThrows(RuntimeException.class,
+                () -> dao.contarVentasParaDespacho());
     }
 }

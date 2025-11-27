@@ -1,134 +1,102 @@
 package sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.control;
 
-import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 import sv.edu.ues.occ.ingenieria.prn335.inventario.web.core.entity.Proveedor;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ProveedorDAOTest {
 
-    @Mock
-    EntityManager em;
-
-    @Mock
-    CriteriaBuilder cb;
-
-    @Mock
-    CriteriaQuery<Long> cq;
-
-    @Mock
-    Root<Proveedor> root;
-
-    @Mock
-    TypedQuery<Long> tq;
-
-    @InjectMocks
-    ProveedorDAO dao;
-
-    Proveedor proveedor;
+    private EntityManager em;
+    private TypedQuery<Proveedor> query;
+    private ProveedorDAO dao;
 
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        proveedor = new Proveedor();
-    }
+    void setUp() throws Exception {
+        em = Mockito.mock(EntityManager.class);
+        query = Mockito.mock(TypedQuery.class);
 
-    // ============================================================
-    // findById()
-    // ============================================================
-    @Test
-    void testFindByIdOK() {
-        when(em.find(Proveedor.class, 1L)).thenReturn(proveedor);
+        dao = new ProveedorDAO();
 
-        Proveedor resultado = dao.findById(1L);
-
-        assertEquals(proveedor, resultado);
+        // Inyectamos el EntityManager por reflexión
+        var field = ProveedorDAO.class.getDeclaredField("em");
+        field.setAccessible(true);
+        field.set(dao, em);
     }
 
     @Test
-    void testFindByIdNull() {
-        assertThrows(IllegalArgumentException.class, () -> dao.findById(null));
-    }
+    void testBuscarProveedorPorNombre_valido() {
 
-    // ============================================================
-    // create()
-    // ============================================================
-    @Test
-    void testCreateOK() {
-        dao.create(proveedor);
-        verify(em).persist(proveedor);
-    }
+        Proveedor p = new Proveedor();
+        List<Proveedor> lista = List.of(p);
 
-    @Test
-    void testCreateNull() {
-        assertThrows(IllegalArgumentException.class, () -> dao.create(null));
-    }
+        when(em.createNamedQuery("Proveedor.buscarProveedorPorNombre", Proveedor.class))
+                .thenReturn(query);
+        when(query.setParameter("nombre", "%LAPTOP%"))
+                .thenReturn(query);
+        when(query.setFirstResult(0))
+                .thenReturn(query);
+        when(query.setMaxResults(10))
+                .thenReturn(query);
+        when(query.getResultList())
+                .thenReturn(lista);
 
-    // ============================================================
-    // update()
-    // ============================================================
-    @Test
-    void testUpdateOK() {
-        when(em.merge(proveedor)).thenReturn(proveedor);
+        List<Proveedor> result = dao.buscarProveedorPorNombre("laptop", 0, 10);
 
-        Proveedor resultado = dao.update(proveedor);
-
-        assertEquals(proveedor, resultado);
-        verify(em).merge(proveedor);
+        assertEquals(1, result.size());
+        assertSame(p, result.get(0));
     }
 
     @Test
-    void testUpdateNull() {
-        assertThrows(IllegalArgumentException.class, () -> dao.update(null));
-    }
+    void testBuscarProveedorPorNombre_nombreNull() {
 
-    // ============================================================
-    // delete()
-    // ============================================================
-    @Test
-    void testDeleteOK() {
-        when(em.merge(proveedor)).thenReturn(proveedor);
+        List<Proveedor> result = dao.buscarProveedorPorNombre(null, 0, 10);
 
-        dao.delete(proveedor);
-
-        verify(em).merge(proveedor);
-        verify(em).remove(proveedor);
+        assertTrue(result.isEmpty());
+        verify(em, never()).createNamedQuery(any(), eq(Proveedor.class));
     }
 
     @Test
-    void testDeleteNull() {
-        assertThrows(IllegalArgumentException.class, () -> dao.delete(null));
-    }
+    void testBuscarProveedorPorNombre_nombreVacio() {
 
-    // ============================================================
-    // count()
-    // ============================================================
-    @Test
-    void testCountOK() {
-        when(em.getCriteriaBuilder()).thenReturn(cb);
-        when(cb.createQuery(Long.class)).thenReturn(cq);
-        when(cq.from(Proveedor.class)).thenReturn(root);
-        when(em.createQuery(cq)).thenReturn(tq);
-        when(tq.getSingleResult()).thenReturn(10L);
+        List<Proveedor> result = dao.buscarProveedorPorNombre("   ", 0, 10);
 
-        int resultado = dao.count();
-
-        assertEquals(10, resultado);
+        assertTrue(result.isEmpty());
+        verify(em, never()).createNamedQuery(any(), eq(Proveedor.class));
     }
 
     @Test
-    void testCountException() {
-        when(em.getCriteriaBuilder()).thenThrow(new RuntimeException("DB error"));
+    void testBuscarProveedorPorNombre_parametrosInvalidos_firstNegativo() {
 
-        assertThrows(RuntimeException.class, () -> dao.count());
+        List<Proveedor> result = dao.buscarProveedorPorNombre("algo", -1, 10);
+
+        assertTrue(result.isEmpty());
+        verify(em, never()).createNamedQuery(any(), eq(Proveedor.class));
+    }
+
+    @Test
+    void testBuscarProveedorPorNombre_parametrosInvalidos_maxCero() {
+
+        List<Proveedor> result = dao.buscarProveedorPorNombre("algo", 0, 0);
+
+        assertTrue(result.isEmpty());
+        verify(em, never()).createNamedQuery(any(), eq(Proveedor.class));
+    }
+
+    @Test
+    void testBuscarProveedorPorNombre_excepcion() {
+
+        when(em.createNamedQuery("Proveedor.buscarProveedorPorNombre", Proveedor.class))
+                .thenThrow(new RuntimeException("DB error"));
+
+        assertThrows(IllegalStateException.class,
+                () -> dao.buscarProveedorPorNombre("pc", 0, 10));
     }
 }

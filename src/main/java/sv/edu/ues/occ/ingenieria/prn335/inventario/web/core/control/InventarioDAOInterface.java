@@ -7,6 +7,6 @@ public interface InventarioDAOInterface<T, ID> {
     T findById(Object id) throws IllegalArgumentException, IllegalStateException;
     void delete(T registro) throws IllegalStateException, IllegalArgumentException;
     T update(T registro) throws IllegalStateException, IllegalArgumentException;
-    List<T> findRange(int first, int max) throws IllegalArgumentException,IllegalAccessException;
+    List<T> findRange(int first, int max) throws IllegalArgumentException, IllegalStateException;
     int count () throws IllegalStateException;
 }
